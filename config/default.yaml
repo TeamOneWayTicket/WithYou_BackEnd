@@ -1,0 +1,10 @@
+server:
+  port: 3030
+
+db:
+  type: 'postgres'
+  port: 5432
+  database: 'withyoutest'
+
+jwt:
+  expiresIn: 3600

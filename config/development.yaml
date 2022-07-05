@@ -1,0 +1,9 @@
+db:
+  host: 'localhost'
+  username: 'onewayticket'
+  password: '161719'
+  synchronize: true
+
+
+jwt:
+  secret: 'Secret1234'
