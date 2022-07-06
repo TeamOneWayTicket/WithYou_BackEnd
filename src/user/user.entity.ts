@@ -1,13 +1,17 @@
-import { Column, Entity, PrimaryColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, PrimaryColumn } from 'typeorm';
 
-@Entity('users')
+@Object
+@Entity()
 export class User {
-  @PrimaryColumn()
+  @PrimaryGeneratedColumn() // 이 Annotation을 통해 기본키로 사용함을 명시함
   id: number;
 
-  @Column()
-  intra_id: string;
+  @Column({ nullable: false })
+  userId: string;
 
-  @Column()
-  nickname: string;
+  @Column({ nullable: false })
+  userName: string;
+
+  @Column({ nullable: false })
+  userPassword: string;
 }
