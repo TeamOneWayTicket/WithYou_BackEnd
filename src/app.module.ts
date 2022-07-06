@@ -22,8 +22,6 @@ import { ApiConfigService } from './shared/services/api-config.service';
     }),
     UserModule,
   ],
-  controllers: [],
-  providers: [],
 })
 export class AppModule {
   constructor(private readonly dataSource: DataSource) {}

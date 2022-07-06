@@ -12,7 +12,7 @@ import { User } from './user.entity';
 
 @Controller('user')
 export class UserController {
-  constructor(private userService: UserService) {
+  constructor(private readonly userService: UserService) {
     this.userService = userService;
   }
 
@@ -49,10 +49,10 @@ export class UserController {
   }
 
   @Post()
-  async saveUser(@Body() user: User): Promise<string> {
-    await this.userService.saveUser(user);
+  async saveUser(@Body() user: User): Promise<User> {
+    const savedUser = await this.userService.saveUser(user);
     return Object.assign({
-      data: { ...user },
+      data: { savedUser },
       statusCode: 200,
       statusMsg: `saved successfully`,
     });

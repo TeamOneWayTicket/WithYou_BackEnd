@@ -7,7 +7,6 @@ const providers = [ApiConfigService];
 @Global()
 @Module({
   providers,
-  imports: [],
   exports: [...providers],
 })
 export class SharedModule {}

@@ -34,8 +34,8 @@ export class UserService {
    * 유저 저장
    * @param user
    */
-  async saveUser(user: User): Promise<void> {
-    await this.userRepository.save(user);
+  async saveUser(user: User): Promise<User> {
+    return await this.userRepository.save(user);
   }
   /**
    * 유저 삭제
