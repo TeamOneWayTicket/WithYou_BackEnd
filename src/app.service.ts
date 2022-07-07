@@ -6,6 +6,6 @@ export class AppService {
     return 'withyou Server homepages';
   }
   getTest(): string {
-    return 'withyou Server testpages';
+    return 'withyou Server testpages testing';
   }
 }
