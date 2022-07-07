@@ -1,12 +1,12 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { UserController } from './user/user.controller';
-import { UserService } from './user/user.service';
 import { UserModule } from './user/user.module';
 import { DataSource } from 'typeorm';
 import { ConfigModule } from '@nestjs/config';
 import { SharedModule } from './shared/shared.module';
 import { ApiConfigService } from './shared/services/api-config.service';
+import { AppController } from './app.controller';
+import { AppService } from './app.service';
 
 @Module({
   imports: [
@@ -22,6 +22,8 @@ import { ApiConfigService } from './shared/services/api-config.service';
     }),
     UserModule,
   ],
+  controllers: [AppController],
+  providers: [AppService],
 })
 export class AppModule {
   constructor(private readonly dataSource: DataSource) {}
