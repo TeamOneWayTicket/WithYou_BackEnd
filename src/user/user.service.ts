@@ -23,6 +23,11 @@ export class UserService {
   findOne(id: number): Promise<User> {
     return this.userRepository.findOne({ where: { id } });
   }
+
+  findOneByUserId(userId: string): Promise<User> {
+    return this.userRepository.findOne({ where: { userId } });
+  }
+
   /**
    * 유저 수정
    * @param user
