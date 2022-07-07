@@ -110,6 +110,13 @@ export class ApiConfigService {
     };
   }
 
+  get kakaoConfig() {
+    return {
+      restapiKey: this.getString('REST_API_KEY'),
+      callbackUrl: this.getString('CALLBACK_URL'),
+    };
+  }
+
   get appConfig() {
     return {
       port: this.getString('PORT'),
