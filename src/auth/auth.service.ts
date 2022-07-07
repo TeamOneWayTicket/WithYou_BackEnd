@@ -13,30 +13,20 @@ export class AuthService {
     private userService: UserService,
   ) {}
 
-  // async createAccessToken(data: {
-  //   role: RoleType;
-  //   userId: Uuid;
-  // }): Promise<TokenPayloadDto> {
-  //   return new TokenPayloadDto({
-  //     expiresIn: this.configService.authConfig.jwtExpirationTime,
-  //     accessToken: await this.jwtService.signAsync({
-  //       userId: data.userId,
-  //       type: TokenType.ACCESS_TOKEN,
-  //       role: data.role,
-  //     }),
-  //   });
-  // }
-
   async validateUser(userId: string, userPassword: string): Promise<User> {
     const user = await this.userService.findOneByUserId(userId);
 
     console.log('유저 검증 in auth.service');
-    const isPasswordValid = await validateHash(
-      userPassword,
-      user?.userPassword,
-    );
+    console.log(userPassword);
+    console.log(user.userPassword);
 
-    if (!isPasswordValid) {
+    // const isPasswordValid = await validateHash(
+    //   userPassword,
+    //   user?.userPassword,
+    // );
+
+    if (userPassword !== user.userPassword) {
+      console.log('비밀번호 불일치');
       throw new NotFoundException();
     }
 
