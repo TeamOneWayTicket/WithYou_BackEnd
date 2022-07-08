@@ -1,8 +1,6 @@
 import { PassportStrategy } from '@nestjs/passport';
 import { Strategy } from 'passport';
 import { ApiConfigService } from '../../shared/services/api-config.service';
-import { SharedModule } from '../../shared/shared.module';
-import * as config from '../../shared/services/api-config.service';
 
 export class KakaoStrategy extends PassportStrategy(Strategy) {
   constructor(private configService: ApiConfigService) {
