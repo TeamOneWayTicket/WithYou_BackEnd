@@ -1,7 +1,9 @@
 import { PassportStrategy } from '@nestjs/passport';
-import { Strategy } from 'passport';
 import { ApiConfigService } from '../../shared/services/api-config.service';
+import { Injectable } from '@nestjs/common';
+import { Strategy } from 'passport-kakao';
 
+@Injectable()
 export class KakaoStrategy extends PassportStrategy(Strategy) {
   constructor(private configService: ApiConfigService) {
     super({
@@ -25,19 +27,19 @@ export class KakaoStrategy extends PassportStrategy(Strategy) {
       user_provider,
     };
 
-    // const user = await this.authService.validateUser(user_email);
-    //
-    // if (user === null) {
-    //   // 유저가 없을때
-    //   console.log('일회용 토큰 발급');
-    //   const once_token = this.authService.onceToken(user_profile);
-    //   return { once_token, type: 'once' };
-    // }
-    //
-    // // 유저가 있을때
-    // console.log('로그인 토큰 발급');
-    // const access_token = await this.authService.createLoginToken(user);
-    // const refresh_token = await this.authService.createRefreshToken(user);
-    // return { access_token, refresh_token, type: 'login' };
+    const user = await this.authService.validateUser(user_email);
+
+    if (user === null) {
+      // 유저가 없을때
+      console.log('일회용 토큰 발급');
+      const once_token = this.authService.onceToken(user_profile);
+      return { once_token, type: 'once' };
+    }
+
+    // 유저가 있을때
+    console.log('로그인 토큰 발급');
+    const access_token = await this.authService.createLoginToken(user);
+    const refresh_token = await this.authService.createRefreshToken(user);
+    return { access_token, refresh_token, type: 'login' };
   }
 }

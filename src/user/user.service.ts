@@ -28,6 +28,10 @@ export class UserService {
     return this.userRepository.findOne({ where: { userId } });
   }
 
+  findOneByEmail(userEmail: string): Promise<User> {
+    return this.userRepository.findOne({ where: { userEmail } });
+  }
+
   /**
    * 유저 수정
    * @param user

@@ -13,22 +13,12 @@ export class AuthService {
     private userService: UserService,
   ) {}
 
-  async validateUser(userId: string, userPassword: string): Promise<User> {
-    const user = await this.userService.findOneByUserId(userId);
+  async validateUser(userEmail: string): Promise<User> {
+    const user = await this.userService.findOneByEmail(userEmail);
 
     console.log('유저 검증 in auth.service');
-    console.log(userPassword);
+    console.log(userEmail);
     console.log(user.userPassword);
-
-    // const isPasswordValid = await validateHash(
-    //   userPassword,
-    //   user?.userPassword,
-    // );
-
-    if (userPassword !== user.userPassword) {
-      console.log('비밀번호 불일치');
-      throw new NotFoundException();
-    }
 
     return user!;
   }

@@ -22,17 +22,18 @@ export class AuthController {
   @UseGuards(AuthGuard('local'))
   @Post('local')
   async login(@Req() req) {
+    console.log('auth controller local login');
     return req.user;
   }
 
-  @Get('kakaoLogin')
+  @Get('kakaoMenu')
   @Header('Content-Type', 'text/html')
   getKakaoLoginPage(): string {
     return `
       <div>
         <h1>카카오 로그인</h1>
 
-        <form action="/auth/kakaoLoginLogic" method="GET">
+        <form action="/auth/kakaoLogin" method="GET">
           <input type="submit" value="카카오 로그인" />
         </form>
         
@@ -69,7 +70,8 @@ export class AuthController {
       });
   }
 
-  @Get('/kakaoLoginLogic')
+  @UseGuards(AuthGuard('kakao'))
+  @Get('/kakaoLogin')
   @Header('Content-Type', 'text/html')
   kakaoLoginLogic(@Res() res): void {
     const _hostName = 'https://kauth.kakao.com';
@@ -106,7 +108,7 @@ export class AuthController {
           <div>
             <h2>축하합니다!</h2>
             <p>카카오 로그인 성공하였습니다!</p>
-            <a href="/auth/kakaoLogin">메인으로</a>
+            <a href="/auth/kakaoMenu">메인으로</a>
           </div>
         `);
       })
@@ -127,7 +129,7 @@ export class AuthController {
         return res.send(`
           <div>
             <h2>로그아웃 완료(토큰만료)</h2>
-            <a href="/auth/kakaoLogin">메인 화면으로</a>
+            <a href="/auth/kakaoMenu">메인 화면으로</a>
           </div>
         `);
       })
@@ -148,7 +150,7 @@ export class AuthController {
         return res.send(`
           <div>
             <h2>로그아웃 완료(로그삭제)</h2>
-            <a href="/auth/kakaoLogin">메인 화면으로</a>
+            <a href="/auth/kakaoMenu">메인 화면으로</a>
           </div>
         `);
       })
