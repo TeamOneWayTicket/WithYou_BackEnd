@@ -1,4 +1,10 @@
-import { Entity, PrimaryGeneratedColumn, Column, PrimaryColumn } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  PrimaryColumn,
+  OneToOne,
+} from 'typeorm';
 
 @Object
 @Entity()
@@ -17,4 +23,7 @@ export class User {
 
   @Column({ nullable: false })
   userPassword: string;
+
+  // @OneToOne()
+  // localUser: LocalUser;
 }
