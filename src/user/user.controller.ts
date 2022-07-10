@@ -10,11 +10,16 @@ import {
 import { UserService } from './user.service';
 import { User } from '../entity/user.entity';
 import { LocalUser } from '../entity/local.user.entity';
+import { LocalUserService } from './local/local.user.service';
 
 @Controller('user')
 export class UserController {
-  constructor(private readonly userService: UserService) {
+  constructor(
+    private readonly userService: UserService,
+    private readonly localUserService: LocalUserService,
+  ) {
     this.userService = userService;
+    this.localUserService = localUserService;
   }
 
   @Get('list')
@@ -29,6 +34,12 @@ export class UserController {
   @Get(':id')
   async findOne(@Param('id') id: number): Promise<User> {
     const foundUser = await this.userService.findOne(+id);
+    const foundLocalUser = await this.localUserService.findOne(1);
+    console.log(foundUser.local_user);
+    console.log(foundLocalUser.user_email);
+    // console.log(foundUser.local_user.user_id);
+    // console.log(foundUser.local_user.user_password);
+    // console.log(foundUser.local_user.user_email);
     return Object.assign({
       data: foundUser,
       statusCode: 200,
@@ -36,9 +47,12 @@ export class UserController {
     });
   }
 
-  @Patch('addLocal/:id')
-  addLocalUserToUser(@Param('id') id: number, @Body() data: LocalUser) {
-    this.userService.addLocalUserToUser(id, data.user_id);
+  @Patch('addLocal/:id/:localId')
+  addLocalUserToUser(
+    @Param('id') id: number,
+    @Param('localId') localId: number,
+  ) {
+    return this.userService.addLocalUserToUser(id, localId);
   }
 
   @Patch(':id')

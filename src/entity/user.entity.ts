@@ -23,7 +23,10 @@ export class User {
   @Column({ nullable: false })
   gender: string;
 
-  @OneToOne(() => LocalUser)
+  @OneToOne(() => LocalUser, {
+    nullable: true,
+    cascade: true,
+  })
   @JoinColumn({ name: 'userid' })
   local_user: LocalUser;
 }

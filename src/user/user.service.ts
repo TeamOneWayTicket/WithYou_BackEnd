@@ -53,9 +53,22 @@ export class UserService {
       where: { user_id: localUserId },
     });
 
+    if (!user || !localUser) {
+      throw 'user 혹은 localUser 없음';
+    }
+
     console.log(localUser.user_id, localUser.user_email);
     user.local_user = localUser;
-    return this.saveUser(user);
+    console.log(user.local_user.user_id, user.local_user.user_email);
+
+    await this.userRepository.save(user);
+
+    const currentUser = await this.userRepository.findOne({
+      where: { id: userId },
+      relations: ['local_user'],
+    });
+
+    return currentUser;
   }
 
   /**
