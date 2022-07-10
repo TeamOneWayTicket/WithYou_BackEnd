@@ -1,15 +1,19 @@
 import { Injectable, Param } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { User } from './user.entity';
+import { User } from '../entity/user.entity';
+import { LocalUser } from '../entity/local.user.entity';
 
 @Injectable()
 export class UserService {
   //생성자
   constructor(
     @InjectRepository(User) private userRepository: Repository<User>,
+    @InjectRepository(LocalUser)
+    private localUserRepository: Repository<LocalUser>,
   ) {
     this.userRepository = userRepository;
+    this.localUserRepository = localUserRepository;
   }
 
   //유저 리스트 조회
@@ -24,12 +28,8 @@ export class UserService {
     return this.userRepository.findOne({ where: { id } });
   }
 
-  findOneByUserId(userId: string): Promise<User> {
-    return this.userRepository.findOne({ where: { userId } });
-  }
-
-  findOneByEmail(userEmail: string): Promise<User> {
-    return this.userRepository.findOne({ where: { userEmail } });
+  findOneByEmail(nickname: string): Promise<User> {
+    return this.userRepository.findOne({ where: { nickname } });
   }
 
   /**
@@ -46,6 +46,18 @@ export class UserService {
   async saveUser(user: User): Promise<User> {
     return await this.userRepository.save(user);
   }
+
+  async addLocalUserToUser(userId: number, localUserId: number) {
+    const user = await this.findOne(userId);
+    const localUser = await this.localUserRepository.findOne({
+      where: { user_id: localUserId },
+    });
+
+    console.log(localUser.user_id, localUser.user_email);
+    user.local_user = localUser;
+    return this.saveUser(user);
+  }
+
   /**
    * 유저 삭제
    */

@@ -8,7 +8,8 @@ import {
   Post,
 } from '@nestjs/common';
 import { UserService } from './user.service';
-import { User } from './user.entity';
+import { User } from '../entity/user.entity';
+import { LocalUser } from '../entity/local.user.entity';
 
 @Controller('user')
 export class UserController {
@@ -33,6 +34,11 @@ export class UserController {
       statusCode: 200,
       statusMsg: `데이터 조회가 성공적으로 완료되었습니다.`,
     });
+  }
+
+  @Patch('addLocal/:id')
+  addLocalUserToUser(@Param('id') id: number, @Body() data: LocalUser) {
+    this.userService.addLocalUserToUser(id, data.user_id);
   }
 
   @Patch(':id')

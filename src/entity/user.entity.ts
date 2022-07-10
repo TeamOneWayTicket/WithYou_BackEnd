@@ -4,7 +4,9 @@ import {
   Column,
   PrimaryColumn,
   OneToOne,
+  JoinColumn,
 } from 'typeorm';
+import { LocalUser } from './local.user.entity';
 
 @Object
 @Entity()
@@ -12,18 +14,16 @@ export class User {
   @PrimaryGeneratedColumn() // 이 Annotation을 통해 기본키로 사용함을 명시함
   id: number;
 
-  @Column({ nullable: false })
-  userId: string;
+  @Column()
+  family_idx: number;
 
   @Column({ nullable: false })
-  userName: string;
+  nickname: string;
 
   @Column({ nullable: false })
-  userEmail: string;
+  gender: string;
 
-  @Column({ nullable: false })
-  userPassword: string;
-
-  // @OneToOne()
-  // localUser: LocalUser;
+  @OneToOne(() => LocalUser)
+  @JoinColumn({ name: 'userid' })
+  local_user: LocalUser;
 }

@@ -8,6 +8,7 @@ import { ApiConfigService } from './shared/services/api-config.service';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
+import { LocalUserModule } from './user/local/local.user.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { AuthModule } from './auth/auth.module';
     }),
     UserModule,
     AuthModule,
+    LocalUserModule,
   ],
   controllers: [AppController],
   providers: [AppService],
