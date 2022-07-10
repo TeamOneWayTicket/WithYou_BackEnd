@@ -7,6 +7,7 @@ import {
   JoinColumn,
 } from 'typeorm';
 import { LocalUser } from './local.user.entity';
+import { KaKaoUser } from "./kakao.user.entity";
 
 @Object
 @Entity()
@@ -29,4 +30,11 @@ export class User {
   })
   @JoinColumn({ name: 'userid' })
   local_user: LocalUser;
+
+  @OneToOne(() => KaKaoUser, {
+    nullable: true,
+    cascade: true,
+  })
+  @JoinColumn({ name: 'kakao_userid' })
+  kakao_user: KaKaoUser;
 }

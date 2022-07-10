@@ -34,12 +34,18 @@ export class UserController {
   @Get(':id')
   async findOne(@Param('id') id: number): Promise<User> {
     const foundUser = await this.userService.findOne(+id);
-    const foundLocalUser = await this.localUserService.findOne(1);
-    console.log(foundUser.local_user);
-    console.log(foundLocalUser.user_email);
-    // console.log(foundUser.local_user.user_id);
-    // console.log(foundUser.local_user.user_password);
-    // console.log(foundUser.local_user.user_email);
+
+    return Object.assign({
+      data: foundUser,
+      statusCode: 200,
+      statusMsg: `데이터 조회가 성공적으로 완료되었습니다.`,
+    });
+  }
+
+  @Get('localuser/:id')
+  async findLocalUser(@Param('id') id: number): Promise<User> {
+    const foundUser = await this.userService.findLocalUser(+id);
+
     return Object.assign({
       data: foundUser,
       statusCode: 200,

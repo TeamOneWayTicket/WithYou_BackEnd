@@ -47,7 +47,7 @@ export class UserService {
     return await this.userRepository.save(user);
   }
 
-  async addLocalUserToUser(userId: number, localUserId: number) {
+  async addLocalUserToUser(userId: number, localUserId: number): Promise<User> {
     const user = await this.findOne(userId);
     const localUser = await this.localUserRepository.findOne({
       where: { user_id: localUserId },
@@ -69,6 +69,13 @@ export class UserService {
     });
 
     return currentUser;
+  }
+
+  async findLocalUser(userId: number): Promise<User> {
+    return await this.userRepository.findOne({
+      where: { id: userId },
+      relations: ['local_user'],
+    });
   }
 
   /**

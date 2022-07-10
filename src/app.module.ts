@@ -9,6 +9,8 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { LocalUserModule } from './user/local/local.user.module';
+import { User.KakaoController } from './user.kakao/user.kakao.controller';
+import { User.KakaoModule } from './user.kakao/user.kakao.module';
 
 @Module({
   imports: [
@@ -25,8 +27,9 @@ import { LocalUserModule } from './user/local/local.user.module';
     UserModule,
     AuthModule,
     LocalUserModule,
+    User.KakaoModule,
   ],
-  controllers: [AppController],
+  controllers: [AppController, User.KakaoController],
   providers: [AppService],
 })
 export class AppModule {
