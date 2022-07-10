@@ -9,8 +9,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { LocalUserModule } from './user/local/local.user.module';
-import { User.KakaoController } from './user.kakao/user.kakao.controller';
-import { User.KakaoModule } from './user.kakao/user.kakao.module';
+import { KakaoUserModule } from './user/kakao/user.kakao.module';
 
 @Module({
   imports: [
@@ -27,9 +26,9 @@ import { User.KakaoModule } from './user.kakao/user.kakao.module';
     UserModule,
     AuthModule,
     LocalUserModule,
-    User.KakaoModule,
+    KakaoUserModule,
   ],
-  controllers: [AppController, User.KakaoController],
+  controllers: [AppController],
   providers: [AppService],
 })
 export class AppModule {
