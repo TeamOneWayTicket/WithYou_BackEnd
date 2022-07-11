@@ -47,29 +47,27 @@ export class UserService {
     return await this.userRepository.save(user);
   }
 
-  async addLocalUserToUser(userId: number, localUserId: number): Promise<User> {
-    const user = await this.findOne(userId);
-    const localUser = await this.localUserRepository.findOne({
-      where: { user_id: localUserId },
-    });
-
-    if (!user || !localUser) {
-      throw 'user 혹은 localUser 없음';
-    }
-
-    console.log(localUser.user_id, localUser.user_email);
-    user.local_user = localUser;
-    console.log(user.local_user.user_id, user.local_user.user_email);
-
-    await this.userRepository.save(user);
-
-    const currentUser = await this.userRepository.findOne({
-      where: { id: userId },
-      relations: ['local_user'],
-    });
-
-    return currentUser;
-  }
+  // async addLocalUserToUser(userId: number, localUserId: number): Promise<User> {
+  //   const user = await this.findOne(userId);
+  //   const localUser = await this.localUserRepository.findOne({
+  //     where: { user_id: localUserId },
+  //   });
+  //
+  //   if (!user || !localUser) {
+  //     throw 'user 혹은 localUser 없음';
+  //   }
+  //
+  //   user.local_user = localUser;
+  //
+  //   await this.userRepository.save(user);
+  //
+  //   const currentUser = await this.userRepository.findOne({
+  //     where: { id: userId },
+  //     relations: ['local_user'],
+  //   });
+  //
+  //   return currentUser;
+  // }
 
   async findLocalUser(userId: number): Promise<User> {
     return await this.userRepository.findOne({
