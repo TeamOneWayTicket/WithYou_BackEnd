@@ -4,8 +4,9 @@ import {
   Column,
   PrimaryColumn,
   OneToOne,
-  JoinColumn, Index
-} from "typeorm";
+  JoinColumn,
+  Index,
+} from 'typeorm';
 import { LocalUser } from './local.user.entity';
 import { KakaoUser } from './kakao.user.entity';
 
@@ -17,7 +18,7 @@ export class User {
   id: number;
 
   @Column()
-  familyIdx: number;
+  familyId: number;
 
   @Column()
   nickname: string;
