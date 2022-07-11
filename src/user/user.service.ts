@@ -2,14 +2,18 @@ import { Injectable, Param } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './user.entity';
+import { LocalUser } from './local.user.entity';
 
 @Injectable()
 export class UserService {
   //생성자
   constructor(
     @InjectRepository(User) private userRepository: Repository<User>,
+    @InjectRepository(LocalUser)
+    private localUserRepository: Repository<LocalUser>,
   ) {
     this.userRepository = userRepository;
+    this.localUserRepository = localUserRepository;
   }
 
   //유저 리스트 조회
@@ -24,12 +28,8 @@ export class UserService {
     return this.userRepository.findOne({ where: { id } });
   }
 
-  findOneByUserId(userId: string): Promise<User> {
-    return this.userRepository.findOne({ where: { userId } });
-  }
-
-  findOneByEmail(userEmail: string): Promise<User> {
-    return this.userRepository.findOne({ where: { userEmail } });
+  findOneByEmail(nickname: string): Promise<User> {
+    return this.userRepository.findOne({ where: { nickname } });
   }
 
   /**
@@ -46,6 +46,36 @@ export class UserService {
   async saveUser(user: User): Promise<User> {
     return await this.userRepository.save(user);
   }
+
+  // async addLocalUserToUser(userId: number, localUserId: number): Promise<User> {
+  //   const user = await this.findOne(userId);
+  //   const localUser = await this.localUserRepository.findOne({
+  //     where: { user_id: localUserId },
+  //   });
+  //
+  //   if (!user || !localUser) {
+  //     throw 'user 혹은 localUser 없음';
+  //   }
+  //
+  //   user.local_user = localUser;
+  //
+  //   await this.userRepository.save(user);
+  //
+  //   const currentUser = await this.userRepository.findOne({
+  //     where: { id: userId },
+  //     relations: ['local_user'],
+  //   });
+  //
+  //   return currentUser;
+  // }
+
+  async findLocalUser(userId: number): Promise<User> {
+    return await this.userRepository.findOne({
+      where: { id: userId },
+      relations: ['local_user'],
+    });
+  }
+
   /**
    * 유저 삭제
    */
