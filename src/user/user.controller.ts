@@ -8,9 +8,9 @@ import {
   Post,
 } from '@nestjs/common';
 import { UserService } from './user.service';
-import { User } from '../entity/user.entity';
-import { LocalUser } from '../entity/local.user.entity';
-import { LocalUserService } from './local/local.user.service';
+import { User } from './user.entity';
+import { LocalUser } from './local.user.entity';
+import { LocalUserService } from './local.user.service';
 
 @Controller('user')
 export class UserController {

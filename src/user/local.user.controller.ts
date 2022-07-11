@@ -1,17 +1,16 @@
 import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
-import { LocalUser } from '../../entity/local.user.entity';
-import { KakaoUserService } from './user.kakao.service';
-import { KakaoUser } from '../../entity/kakao.user.entity';
+import { LocalUserService } from './local.user.service';
+import { LocalUser } from './local.user.entity';
 
-@Controller('user/kakao')
-export class KakaoUserController {
-  constructor(private readonly kakaoUserService: KakaoUserService) {
-    this.kakaoUserService = kakaoUserService;
+@Controller('user/local')
+export class LocalUserController {
+  constructor(private readonly localUserService: LocalUserService) {
+    this.localUserService = localUserService;
   }
 
   @Get(':id')
   async findOne(@Param('id') id: number): Promise<LocalUser> {
-    const foundUser = await this.kakaoUserService.findOne(+id);
+    const foundUser = await this.localUserService.findOne(+id);
     return Object.assign({
       data: foundUser,
       statusCode: 200,
@@ -20,8 +19,8 @@ export class KakaoUserController {
   }
 
   @Post()
-  async saveUser(@Body() kakaoUser: KakaoUser): Promise<KakaoUser> {
-    const savedUser = await this.kakaoUserService.saveUser(kakaoUser);
+  async saveUser(@Body() localUser: LocalUser): Promise<LocalUser> {
+    const savedUser = await this.localUserService.saveUser(localUser);
     return Object.assign({
       data: { savedUser },
       statusCode: 200,
@@ -31,7 +30,7 @@ export class KakaoUserController {
 
   @Delete(':id')
   async deleteUser(@Param('id') id: string): Promise<string> {
-    await this.kakaoUserService.deleteUser(+id);
+    await this.localUserService.deleteUser(+id);
     return Object.assign({
       data: { userId: id },
       statusCode: 200,

@@ -1,9 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
-import { User } from '../entity/user.entity';
+import { User } from '../user/user.entity';
 import { UserService } from '../user/user.service';
 import { ApiConfigService } from '../shared/services/api-config.service';
-import { validateHash } from '../common/utils';
 
 @Injectable()
 export class AuthService {

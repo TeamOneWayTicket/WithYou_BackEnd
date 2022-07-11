@@ -8,8 +8,6 @@ import { ApiConfigService } from './shared/services/api-config.service';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
-import { LocalUserModule } from './user/local/local.user.module';
-import { KakaoUserModule } from './user/kakao/user.kakao.module';
 
 @Module({
   imports: [
@@ -25,8 +23,6 @@ import { KakaoUserModule } from './user/kakao/user.kakao.module';
     }),
     UserModule,
     AuthModule,
-    LocalUserModule,
-    KakaoUserModule,
   ],
   controllers: [AppController],
   providers: [AppService],

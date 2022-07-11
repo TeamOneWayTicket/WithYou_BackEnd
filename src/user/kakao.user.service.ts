@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DeleteResult, Repository, UpdateResult } from 'typeorm';
-import { KakaoUser } from '../../entity/kakao.user.entity';
+import { KakaoUser } from './kakao.user.entity';
 
 @Injectable()
 export class KakaoUserService {
