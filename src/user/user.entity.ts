@@ -16,7 +16,7 @@ export class User {
   id: number;
 
   @Column()
-  family_idx: number;
+  familyIdx: number;
 
   @Column({ nullable: false })
   nickname: string;
@@ -29,12 +29,12 @@ export class User {
     cascade: true,
   })
   @JoinColumn({ name: 'userid' })
-  local_user: LocalUser;
+  localUser: LocalUser;
 
   @OneToOne(() => KakaoUser, {
     nullable: true,
     cascade: true,
   })
   @JoinColumn({ name: 'kakao_userid' })
-  kakao_user: KakaoUser;
+  kakaoUser: KakaoUser;
 }
