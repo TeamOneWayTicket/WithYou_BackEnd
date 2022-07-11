@@ -47,28 +47,6 @@ export class UserService {
     return await this.userRepository.save(user);
   }
 
-  //   const user = await this.findOne(userId);
-  //   const localUser = await this.localUserRepository.findOne({
-  //     where: { user_id: localUserId },
-  //   });
-  //
-  //   if (!user || !localUser) {
-  //     throw 'user 혹은 localUser 없음';
-  //   }
-  //
-  //   user.local_user = localUser;
-  //
-  //   await this.userRepository.save(user);
-  //
-  //   const currentUser = await this.userRepository.findOne({
-  //     where: { id: userId },
-  //     relations: ['local_user'],
-  //   });
-  //
-  //   return currentUser;
-  // }// async addLocalUserToUser(userId: number, localUserId: number): Promise<User> {
-
-
   async findLocalUser(userId: number): Promise<User> {
     return await this.userRepository.findOne({
       where: { id: userId },
