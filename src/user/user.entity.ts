@@ -6,18 +6,18 @@ import {
   OneToOne,
   JoinColumn,
   Index,
+  Unique,
 } from 'typeorm';
 import { LocalUser } from './local.user.entity';
 import { KakaoUser } from './kakao.user.entity';
 
-@Object
 @Entity()
-@Index(['familyIdx'])
 export class User {
   @PrimaryGeneratedColumn() // 이 Annotation을 통해 기본키로 사용함을 명시함
   id: number;
 
   @Column()
+  @Index()
   familyId: number;
 
   @Column()
@@ -26,17 +26,8 @@ export class User {
   @Column()
   gender: string;
 
-  @OneToOne(() => LocalUser, {
+  @OneToOne(() => LocalUser, (localUser) => localUser.user, {
     nullable: true,
-    cascade: true,
   })
-  @JoinColumn({ name: 'userid' })
   localUser: LocalUser;
-
-  @OneToOne(() => KakaoUser, {
-    nullable: true,
-    cascade: true,
-  })
-  @JoinColumn({ name: 'kakao_userid' })
-  kakaoUser: KakaoUser;
 }

@@ -1,4 +1,12 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToOne } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  OneToOne,
+  JoinColumn,
+  Index,
+} from 'typeorm';
+import { User } from './user.entity';
 
 @Entity()
 export class LocalUser {
@@ -10,4 +18,12 @@ export class LocalUser {
 
   @Column()
   password: string;
+
+  @Column({ unique: true })
+  @Index()
+  userId: number;
+
+  @OneToOne(() => User, (user) => user.localUser)
+  @JoinColumn({ name: 'user_id' })
+  user: User;
 }

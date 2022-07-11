@@ -3,23 +3,17 @@ import {
   Controller,
   Delete,
   Get,
-  Param,
+  Param, ParseIntPipe,
   Patch,
-  Post,
-} from '@nestjs/common';
+  Post
+} from "@nestjs/common";
 import { UserService } from './user.service';
 import { User } from './user.entity';
-import { LocalUser } from './local.user.entity';
-import { LocalUserService } from './local.user.service';
 
 @Controller('user')
 export class UserController {
-  constructor(
-    private readonly userService: UserService,
-    private readonly localUserService: LocalUserService,
-  ) {
+  constructor(private readonly userService: UserService) {
     this.userService = userService;
-    this.localUserService = localUserService;
   }
 
   @Get('list')
@@ -31,6 +25,7 @@ export class UserController {
       statusMsg: '유저 조회 성공적',
     });
   }
+
   @Get(':id')
   async findOne(@Param('id') id: number): Promise<User> {
     const foundUser = await this.userService.findOne(+id);
@@ -43,22 +38,14 @@ export class UserController {
   }
 
   @Get('localuser/:id')
-  async findLocalUser(@Param('id') id: number): Promise<User> {
-    const foundUser = await this.userService.findLocalUser(+id);
+  async findLocalUser(@Param('id', ParseIntPipe) id: number): Promise<User> {
+    const foundUser = await this.userService.findLocalUser(id);
 
     return Object.assign({
       data: foundUser,
       statusCode: 200,
       statusMsg: `데이터 조회가 성공적으로 완료되었습니다.`,
     });
-  }
-
-  @Patch('addLocal/:id/:localId')
-  addLocalUserToUser(
-    @Param('id') id: number,
-    @Param('localId') localId: number,
-  ) {
-    return this.userService.addLocalUserToUser(id, localId);
   }
 
   @Patch(':id')
