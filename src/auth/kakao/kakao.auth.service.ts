@@ -3,7 +3,7 @@ import { HttpService } from '@nestjs/axios';
 import { lastValueFrom } from 'rxjs';
 
 @Injectable()
-export class KakaoService {
+export class KakaoAuthService {
   check: boolean;
   accessToken: string;
   private http: HttpService;

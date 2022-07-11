@@ -4,12 +4,13 @@ import { AuthService } from './auth.service';
 import { LocalStrategy } from './strategy/local.strategy';
 import { UserModule } from '../user/user.module';
 import { PassportModule } from '@nestjs/passport';
-import { KakaoService } from './kakao.service';
+import { KakaoAuthService } from './kakao/kakao.auth.service';
 import { KakaoStrategy } from './strategy/kakao.strategy';
+import { KakaoAuthController } from './kakao/kakao.auth.controller';
 
 @Module({
   imports: [UserModule, PassportModule],
-  controllers: [AuthController],
-  providers: [AuthService, LocalStrategy, KakaoService, KakaoStrategy],
+  controllers: [AuthController, KakaoAuthController],
+  providers: [AuthService, LocalStrategy, KakaoAuthService, KakaoStrategy],
 })
 export class AuthModule {}
