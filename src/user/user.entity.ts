@@ -30,4 +30,9 @@ export class User {
     nullable: true,
   })
   localUser: LocalUser;
+
+  @OneToOne(() => KakaoUser, (kakaoUser) => kakaoUser.user, {
+    nullable: true,
+  })
+  kakaoUser: KakaoUser;
 }

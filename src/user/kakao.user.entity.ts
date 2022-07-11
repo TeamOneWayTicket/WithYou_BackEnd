@@ -4,7 +4,9 @@ import {
   Column,
   OneToOne,
   Index,
+  JoinColumn,
 } from 'typeorm';
+import { User } from './user.entity';
 
 @Entity()
 export class KakaoUser {
@@ -20,4 +22,12 @@ export class KakaoUser {
 
   @Column({ nullable: true })
   refreshToken: string;
+
+  @Column({ unique: true })
+  @Index()
+  userId: number;
+
+  @OneToOne(() => User, (user) => user.kakaoUser)
+  @JoinColumn({ name: 'user_id' })
+  user: User;
 }
