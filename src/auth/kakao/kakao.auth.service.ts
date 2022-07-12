@@ -20,30 +20,23 @@ export class KakaoAuthService {
     this.accessToken = '';
   }
 
-  loginCheck(): void {
-    this.check = !this.check;
-    return;
-  }
-
   async findKakaoUser(kakaoId: string): Promise<KakaoUser> {
     return await this.kakaoUserRepository.findOne({
       where: { kakaoId: kakaoId },
     });
   }
 
-  async register(token: string, kakaoAccountInfo: any): Promise<KakaoUser> {
+  async register(
+    accessToken: string,
+    refreshToken: string,
+    kakaoId: string,
+  ): Promise<KakaoUser> {
     const kakaoUser = new KakaoUser();
-    kakaoUser.accessToken = token;
-    kakaoUser.kakaoId = kakaoAccountInfo.id;
+    kakaoUser.accessToken = accessToken;
+    kakaoUser.kakaoId = kakaoId;
+    kakaoUser.refreshToken = refreshToken;
 
-    const existUser = await this.findKakaoUser(kakaoUser.kakaoId);
-
-    if (existUser) {
-      await this.kakaoUserRepository.update(existUser.kakaoUserid, kakaoUser);
-      return existUser;
-    } else {
-      return await this.kakaoUserRepository.save(kakaoUser);
-    }
+    return await this.kakaoUserRepository.save(kakaoUser);
   }
 
   async login(url: string, headers: any): Promise<any> {
@@ -70,11 +63,49 @@ export class KakaoAuthService {
     return await lastValueFrom(this.http.get(url, { headers }));
   }
 
+  async getUserInfoByToken(accessToken: string): Promise<KakaoUser> {
+    const _url = 'https://kapi.kakao.com/v2/user/me';
+    // console.log(res);
+    const _headers = {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    };
+    // console.log(`토큰: ${res.access_token}`)
+    const kakaoUser = new KakaoUser();
+
+    this.showUserInfo(_url, _headers.headers)
+      .then((e) => {
+        console.log(e);
+        kakaoUser.kakaoId = e.data.id;
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+
+    return kakaoUser;
+  }
+
   async deleteLog(): Promise<any> {
     const _url = 'https://kapi.kakao.com/v1/user/unlink';
     const _headers = {
       Authorization: `Bearer ${this.accessToken}`,
     };
     return await lastValueFrom(this.http.post(_url, '', { headers: _headers }));
+  }
+
+  async validateUser(kakaoId: string): Promise<KakaoUser> {
+    return await this.findKakaoUser(kakaoId);
+  }
+
+  async updateToken(
+    accessToken: string,
+    refreshToken: string,
+    kakaoId: string,
+  ) {
+    const kakaoUser = await this.findKakaoUser(kakaoId);
+    kakaoUser.accessToken = accessToken;
+    kakaoUser.refreshToken = refreshToken;
+    await this.kakaoUserRepository.update(kakaoUser.kakaoUserid, kakaoUser);
   }
 }

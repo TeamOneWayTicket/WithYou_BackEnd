@@ -11,6 +11,7 @@ import {
 import { AuthGuard } from '@nestjs/passport';
 import { KakaoAuthService } from './kakao.auth.service';
 import { ApiConfigService } from '../../shared/services/api-config.service';
+import { query } from "express";
 
 @Controller('auth/kakao')
 export class KakaoAuthController {
@@ -40,31 +41,6 @@ export class KakaoAuthController {
     `;
   }
 
-  @Get('/loginInfo')
-  @Header('Content-Type', 'text/html')
-  async kakaoUserInfo(@Res() res) {
-    //GET요청을 보내기 위해 필요한 정보들
-    const _url = 'https://kapi.kakao.com/v2/user/me';
-    // console.log(res);
-    const _headers = {
-      headers: {
-        Authorization: `Bearer ${res.access_token}`,
-      },
-    };
-    // console.log(`토큰: ${res.access_token}`)
-    this.kakaoAuthService
-      .showUserInfo(_url, _headers.headers)
-      .then((e) => {
-        console.log(e);
-        this.kakaoAuthService.register(res.access_token, e.data);
-      })
-      .catch((err) => {
-        console.log(err);
-        return res.send('error');
-      });
-  }
-
-  @UseGuards(AuthGuard('kakao'))
   @Get('/login')
   @Header('Content-Type', 'text/html')
   kakaoLoginLogic(@Res() res): void {
@@ -79,7 +55,8 @@ export class KakaoAuthController {
   @Get('/loginRedirect')
   @Header('Content-Type', 'text/html')
   kakaoLoginLogicRedirect(@Query() qs, @Res() res): void {
-    //console.log(qs.code); //Query()에서 code를 가져온다
+    console.log('loginRedirect start'); //Query()에서 code를 가져온다
+    console.log(qs.code);
     const _restApiKey = this.configService.kakaoConfig.restapiKey;
     const _redirectUrl = this.configService.kakaoConfig.callbackUrl;
     //code, restApiKey, _redirect_uri를 다시 카카오 api에게 POST요청을 보내준다
@@ -105,6 +82,31 @@ export class KakaoAuthController {
             <a href="/auth/kakao/menu">메인으로</a>
           </div>
         `);
+      })
+      .catch((err) => {
+        console.log(err);
+        return res.send('error');
+      });
+  }
+
+  @UseGuards(AuthGuard('kakao'))
+  @Get('/loginInfo')
+  @Header('Content-Type', 'text/html')
+  async kakaoUserInfo(@Res() res) {
+    //GET요청을 보내기 위해 필요한 정보들
+    const _url = 'https://kapi.kakao.com/v2/user/me';
+    // console.log(res);
+    const _headers = {
+      headers: {
+        Authorization: `Bearer ${res.access_token}`,
+      },
+    };
+    // console.log(`토큰: ${res.access_token}`)
+    this.kakaoAuthService
+      .showUserInfo(_url, _headers.headers)
+      .then((e) => {
+        console.log(e);
+        //this.kakaoAuthService.register(res.access_token, e.data);
       })
       .catch((err) => {
         console.log(err);

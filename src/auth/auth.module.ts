@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
-import { LocalStrategy } from './strategy/local.strategy';
+import { LocalStrategy } from './local.strategy';
 import { UserModule } from '../user/user.module';
 import { PassportModule } from '@nestjs/passport';
 import { KakaoAuthService } from './kakao/kakao.auth.service';
-import { KakaoStrategy } from './strategy/kakao.strategy';
+import { KakaoStrategy } from './kakao/kakao.strategy';
 import { KakaoAuthController } from './kakao/kakao.auth.controller';
 
 @Module({
