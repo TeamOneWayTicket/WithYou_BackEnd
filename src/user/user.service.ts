@@ -11,10 +11,7 @@ export class UserService {
     @InjectRepository(User) private userRepository: Repository<User>,
     @InjectRepository(LocalUser)
     private localUserRepository: Repository<LocalUser>,
-  ) {
-    this.userRepository = userRepository;
-    this.localUserRepository = localUserRepository;
-  }
+  ) {}
 
   //유저 리스트 조회
   findAll(): Promise<User[]> {

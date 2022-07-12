@@ -56,6 +56,7 @@ export class KakaoAuthController {
       .showUserInfo(_url, _headers.headers)
       .then((e) => {
         console.log(e);
+        this.kakaoAuthService.register(res.access_token, e.data);
       })
       .catch((err) => {
         console.log(err);

@@ -13,9 +13,9 @@ export class KakaoUser {
   @PrimaryGeneratedColumn() // 이 Annotation을 통해 기본키로 사용함을 명시함
   kakaoUserid: number;
 
-  @Column()
+  @Column({ type: 'bigint' })
   @Index()
-  kakaoIdx: number;
+  kakaoId: string;
 
   @Column({ nullable: true })
   accessToken: string;
@@ -23,7 +23,7 @@ export class KakaoUser {
   @Column({ nullable: true })
   refreshToken: string;
 
-  @Column({ unique: true })
+  @Column({ nullable: true })
   @Index()
   userId: number;
 

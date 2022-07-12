@@ -10,6 +10,9 @@ import { KakaoUser } from './kakao.user.entity';
   imports: [TypeOrmModule.forFeature([User, LocalUser, KakaoUser])],
   controllers: [UserController],
   providers: [UserService],
-  exports: [UserService],
+  exports: [
+    UserService,
+    TypeOrmModule.forFeature([User, LocalUser, KakaoUser]),
+  ],
 })
 export class UserModule {}
