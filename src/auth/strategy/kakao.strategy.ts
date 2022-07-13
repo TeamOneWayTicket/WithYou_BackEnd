@@ -7,8 +7,8 @@ import { Strategy } from 'passport-kakao';
 export class KakaoStrategy extends PassportStrategy(Strategy) {
   constructor(private configService: ApiConfigService) {
     super({
-      clientID: configService.kakaoConfig.restapiKey,
-      callbackURL: configService.kakaoConfig.callbackUrl,
+      clientID: configService.kakaoConfig.restApiKey,
+      callbackURL: configService.kakaoConfig.callBackUrl,
     });
   }
 
