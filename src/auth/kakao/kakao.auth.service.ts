@@ -25,10 +25,10 @@ export class KakaoAuthService {
     });
   }
 
-  async login(
+  async register(
+    kakaoId: string,
     accessToken: string,
     refreshToken: string,
-    kakaoId: string,
   ): Promise<KakaoUser> {
     const kakaoUser = new KakaoUser();
     kakaoUser.accessToken = accessToken;
@@ -36,6 +36,24 @@ export class KakaoAuthService {
     kakaoUser.refreshToken = refreshToken;
 
     return await this.kakaoUserRepository.save(kakaoUser);
+  }
+
+  async updateUser(user: KakaoUser): Promise<KakaoUser> {
+    const targetUser: KakaoUser = await this.findKakaoUser(user.kakaoId);
+    targetUser.accessToken = user.accessToken;
+    targetUser.refreshToken = user.refreshToken;
+    await this.kakaoUserRepository.update(targetUser.kakaoUserid, targetUser);
+    return targetUser;
+  }
+
+  async login(user: KakaoUser): Promise<KakaoUser> {
+    const existUser = this.validateUser(user.kakaoId);
+
+    if (!existUser) {
+      return this.register(user.kakaoId, user.accessToken, user.refreshToken);
+    } else {
+      return this.updateUser(user);
+    }
   }
 
   async logout(): Promise<any> {
