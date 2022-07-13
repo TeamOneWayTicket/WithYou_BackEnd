@@ -61,8 +61,6 @@ export class KakaoAuthService {
     const _headers = {
       Authorization: `Bearer ${this.accessToken}`,
     };
-    console.log(this.accessToken);
-    //console.log(JSON.stringify(_headers));
     return await lastValueFrom(this.http.post(_url, '', { headers: _headers }));
   }
 

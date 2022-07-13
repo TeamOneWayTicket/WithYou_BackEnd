@@ -2,15 +2,10 @@ import { PassportStrategy } from '@nestjs/passport';
 import { ApiConfigService } from '../../shared/services/api-config.service';
 import { Injectable } from '@nestjs/common';
 import { Strategy } from 'passport-kakao';
-import { KakaoAuthService } from '../kakao/kakao.auth.service';
-import { KakaoUser } from '../../user/kakao.user.entity';
 
 @Injectable()
 export class KakaoStrategy extends PassportStrategy(Strategy) {
-  constructor(
-    private configService: ApiConfigService,
-    private kakaoAuthService: KakaoAuthService,
-  ) {
+  constructor(private configService: ApiConfigService) {
     super({
       clientID: configService.kakaoConfig.restapiKey,
       callbackURL: configService.kakaoConfig.callbackUrl,
