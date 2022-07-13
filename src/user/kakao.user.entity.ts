@@ -27,7 +27,9 @@ export class KakaoUser {
   @Index()
   userId: number;
 
-  @OneToOne(() => User, (user) => user.kakaoUser)
+  @OneToOne(() => User, (user) => user.kakaoUser, {
+    createForeignKeyConstraints: false,
+  })
   @JoinColumn({ name: 'user_id' })
   user: User;
 }
