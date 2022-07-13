@@ -44,6 +44,11 @@ export class UserService {
     return await this.userRepository.save(user);
   }
 
+  async createUser(): Promise<User> {
+    const user = {} as User;
+    return await this.userRepository.save(user);
+  }
+
   async findLocalUser(userId: number): Promise<User> {
     return await this.userRepository.findOne({
       where: { id: userId },

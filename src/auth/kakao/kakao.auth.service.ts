@@ -1,23 +1,17 @@
 import { Injectable } from '@nestjs/common';
-import { HttpService } from '@nestjs/axios';
-import { lastValueFrom } from 'rxjs';
 import { KakaoUser } from '../../user/kakao.user.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
+import { UserService } from '../../user/user.service';
+import { User } from '../../user/user.entity';
 
 @Injectable()
 export class KakaoAuthService {
-  check: boolean;
-  accessToken: string;
-  private http: HttpService;
   constructor(
     @InjectRepository(KakaoUser)
     private kakaoUserRepository: Repository<KakaoUser>,
-  ) {
-    this.check = false;
-    this.http = new HttpService();
-    this.accessToken = '';
-  }
+    private userService: UserService,
+  ) {}
 
   async findKakaoUser(kakaoId: string): Promise<KakaoUser> {
     return await this.kakaoUserRepository.findOne({
@@ -30,7 +24,10 @@ export class KakaoAuthService {
     accessToken: string,
     refreshToken: string,
   ): Promise<KakaoUser> {
+    const user: User = await this.userService.createUser();
     return await this.kakaoUserRepository.save({
+      user: user,
+      userId: user.id,
       accessToken: accessToken,
       kakaoId: kakaoId,
       refreshToken: refreshToken,
@@ -53,7 +50,7 @@ export class KakaoAuthService {
   }
 
   async login(user: KakaoUser): Promise<KakaoUser> {
-    const existUser = this.validateUser(user.kakaoId);
+    const existUser: KakaoUser = await this.validateUser(user.kakaoId);
 
     if (!existUser) {
       return this.register(user.kakaoId, user.accessToken, user.refreshToken);

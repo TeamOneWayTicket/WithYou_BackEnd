@@ -16,14 +16,20 @@ export class User {
   @PrimaryGeneratedColumn() // 이 Annotation을 통해 기본키로 사용함을 명시함
   id: number;
 
-  @Column()
+  @Column({
+    nullable: true,
+  })
   @Index()
   familyId: number;
 
-  @Column()
+  @Column({
+    nullable: true,
+  })
   nickname: string;
 
-  @Column()
+  @Column({
+    nullable: true,
+  })
   gender: string;
 
   @OneToOne(() => LocalUser, (localUser) => localUser.user, {
