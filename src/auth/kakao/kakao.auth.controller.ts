@@ -7,7 +7,7 @@ import { ApiConfigService } from '../../shared/services/api-config.service';
 export class KakaoAuthController {
   constructor(
     private readonly kakaoAuthService: KakaoAuthService,
-    private configService: ApiConfigService,
+    private readonly configService: ApiConfigService,
   ) {}
 
   @Get('menu')
