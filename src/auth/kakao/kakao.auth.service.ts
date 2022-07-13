@@ -56,22 +56,6 @@ export class KakaoAuthService {
     }
   }
 
-  async logout(): Promise<any> {
-    const _url = 'https://kapi.kakao.com/v1/user/logout';
-    const _headers = {
-      Authorization: `Bearer ${this.accessToken}`,
-    };
-    return await lastValueFrom(this.http.post(_url, '', { headers: _headers }));
-  }
-
-  async deleteLog(): Promise<any> {
-    const _url = 'https://kapi.kakao.com/v1/user/unlink';
-    const _headers = {
-      Authorization: `Bearer ${this.accessToken}`,
-    };
-    return await lastValueFrom(this.http.post(_url, '', { headers: _headers }));
-  }
-
   async validateUser(kakaoId: string): Promise<KakaoUser> {
     return await this.findKakaoUser(kakaoId);
   }

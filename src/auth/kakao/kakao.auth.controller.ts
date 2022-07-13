@@ -51,44 +51,4 @@ export class KakaoAuthController {
           </div>
         `);
   }
-
-  // 로그아웃 (일반적인 로그아웃, 토큰 만료)
-  @Get('/logout')
-  @Header('Content-Type', 'text/html')
-  kakaoLogout(@Res() res): void {
-    this.kakaoAuthService
-      .logout()
-      .then((e) => {
-        return res.send(`
-          <div>
-            <h2>로그아웃 완료(토큰만료)</h2>
-            <a href="/auth/kakao/menu">메인 화면으로</a>
-          </div>
-        `);
-      })
-      .catch((err) => {
-        console.log(err);
-        return res.send('logout error');
-      });
-  }
-
-  //로그 아웃 (탈퇴 or 다른 카카오 아이디로 로그인을 유도하는 경우, 로그 삭제)
-  @Get('/unlink')
-  @Header('Content-Type', 'text/html')
-  kakaoUnlink(@Res() res): void {
-    this.kakaoAuthService
-      .deleteLog()
-      .then((e) => {
-        return res.send(`
-          <div>
-            <h2>로그아웃 완료(로그삭제)</h2>
-            <a href="/auth/kakao/menu">메인 화면으로</a>
-          </div>
-        `);
-      })
-      .catch((err) => {
-        console.log(err);
-        return res.send('logout error');
-      });
-  }
 }
