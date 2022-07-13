@@ -27,23 +27,16 @@ export class KakaoStrategy extends PassportStrategy(Strategy) {
     const profileJson = profile._json;
     const kakaoId = profileJson.id;
     try {
-      const user = await this.kakaoAuthService.validateUser(kakaoId);
-
-      if (!user) {
-        // 유저가 없을때 회원가입시키기
-        const newUser: {
-          accessToken: string;
-          kakaoId: string;
-          refreshToken: string;
-        } = {
-          accessToken: accessToken,
-          refreshToken: refreshToken,
-          kakaoId: kakaoId,
-        };
-        done(null, newUser);
-      } else {
-        done(null, user);
-      }
+      const user: {
+        accessToken: string;
+        kakaoId: string;
+        refreshToken: string;
+      } = {
+        accessToken: accessToken,
+        refreshToken: refreshToken,
+        kakaoId: kakaoId,
+      };
+      done(null, user);
     } catch (error) {
       console.log(error);
       done(error);

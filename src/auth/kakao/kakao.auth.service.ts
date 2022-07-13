@@ -25,7 +25,7 @@ export class KakaoAuthService {
     });
   }
 
-  async register(
+  async login(
     accessToken: string,
     refreshToken: string,
     kakaoId: string,
