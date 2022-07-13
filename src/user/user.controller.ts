@@ -3,10 +3,11 @@ import {
   Controller,
   Delete,
   Get,
-  Param, ParseIntPipe,
+  Param,
+  ParseIntPipe,
   Patch,
-  Post
-} from "@nestjs/common";
+  Post,
+} from '@nestjs/common';
 import { UserService } from './user.service';
 import { User } from './user.entity';
 
