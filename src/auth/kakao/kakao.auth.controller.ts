@@ -2,8 +2,11 @@ import {
   Controller,
   Get,
   Header,
+  HttpCode,
+  HttpStatus,
   Post,
   Query,
+  Redirect,
   Req,
   Res,
   UseGuards,
@@ -11,7 +14,8 @@ import {
 import { AuthGuard } from '@nestjs/passport';
 import { KakaoAuthService } from './kakao.auth.service';
 import { ApiConfigService } from '../../shared/services/api-config.service';
-import { query } from "express";
+import { query } from 'express';
+import { KakaoUser } from '../../user/kakao.user.entity';
 
 @Controller('auth/kakao')
 export class KakaoAuthController {
@@ -54,64 +58,42 @@ export class KakaoAuthController {
 
   @Get('/loginRedirect')
   @Header('Content-Type', 'text/html')
-  kakaoLoginLogicRedirect(@Query() qs, @Res() res): void {
+  @UseGuards(AuthGuard('kakao'))
+  kakaoLoginLogicRedirect(@Req() req, @Res() res): void {
     console.log('loginRedirect start'); //Query()에서 code를 가져온다
-    console.log(qs.code);
-    const _restApiKey = this.configService.kakaoConfig.restapiKey;
-    const _redirectUrl = this.configService.kakaoConfig.callbackUrl;
-    //code, restApiKey, _redirect_uri를 다시 카카오 api에게 POST요청을 보내준다
-    const _hostName = `https://kauth.kakao.com/oauth/token?grant_type=authorization_code&client_id=${_restApiKey}&redirect_uri=${_redirectUrl}&code=${qs.code}`;
-    const _headers = {
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
-      },
-    };
-    //POST 요청을 위한 kakaoService
-    this.kakaoAuthService
-      .login(_hostName, _headers)
-      .then((e) => {
-        // console.log(e);
-        console.log(`TOKEN : ${e.data['access_token']}`);
-        this.kakaoAuthService.setToken(e.data['access_token']);
-        this.kakaoUserInfo(e.data);
 
-        return res.send(`
+    console.log(req.user);
+
+    return res.send(`
           <div>
             <h2>축하합니다!</h2>
             <p>카카오 로그인 성공하였습니다!</p>
             <a href="/auth/kakao/menu">메인으로</a>
           </div>
         `);
-      })
-      .catch((err) => {
-        console.log(err);
-        return res.send('error');
-      });
-  }
-
-  @UseGuards(AuthGuard('kakao'))
-  @Get('/loginInfo')
-  @Header('Content-Type', 'text/html')
-  async kakaoUserInfo(@Res() res) {
-    //GET요청을 보내기 위해 필요한 정보들
-    const _url = 'https://kapi.kakao.com/v2/user/me';
-    // console.log(res);
-    const _headers = {
-      headers: {
-        Authorization: `Bearer ${res.access_token}`,
-      },
-    };
-    // console.log(`토큰: ${res.access_token}`)
-    this.kakaoAuthService
-      .showUserInfo(_url, _headers.headers)
-      .then((e) => {
-        console.log(e);
-        //this.kakaoAuthService.register(res.access_token, e.data);
-      })
-      .catch((err) => {
-        console.log(err);
-        return res.send('error');
-      });
+    //POST 요청을 위한 kakaoService
+    // this.kakaoAuthService
+    //   .getToken(_restApiKey, _redirectUrl, qs.code)
+    //   .then((e) => {
+    //     // console.log(e);
+    //     console.log(`TOKEN : ${e.data['access_token']}`);
+    //     this.kakaoAuthService.setToken(e.data['access_token']);
+    //     this.kakaoAuthService.getUserInfo(e.data['access_token']).then((r) => {
+    //       this.kakaoUserInfo(r);
+    //     });
+    //
+    //     return res.send(`
+    //       <div>
+    //         <h2>축하합니다!</h2>
+    //         <p>카카오 로그인 성공하였습니다!</p>
+    //         <a href="/auth/kakao/menu">메인으로</a>
+    //       </div>
+    //     `);
+    //   })
+    //   .catch((err) => {
+    //     console.log(err);
+    //     return res.send('error');
+    //   });
   }
 
   // 로그아웃 (일반적인 로그아웃, 토큰 만료)

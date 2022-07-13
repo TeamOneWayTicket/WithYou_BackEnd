@@ -39,8 +39,30 @@ export class KakaoAuthService {
     return await this.kakaoUserRepository.save(kakaoUser);
   }
 
-  async login(url: string, headers: any): Promise<any> {
-    return await lastValueFrom(this.http.post(url, '', { headers }));
+  async getToken(
+    _restApiKey: string,
+    _redirectUrl: string,
+    code: string,
+  ): Promise<any> {
+    const hostName = `https://kauth.kakao.com/oauth/token?grant_type=authorization_code&client_id=${_restApiKey}&redirect_uri=${_redirectUrl}&code=${code}`;
+    const headers = {
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
+      },
+    };
+    return await lastValueFrom(this.http.post(hostName, '', headers));
+  }
+
+  async getUserInfo(accessToken: string) {
+    //GET요청을 보내기 위해 필요한 정보들
+    const url = 'https://kapi.kakao.com/v2/user/me';
+    // console.log(res);
+    const headers = {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    };
+    return await lastValueFrom(this.http.get(url, headers));
   }
 
   setToken(token: string): boolean {
@@ -56,34 +78,6 @@ export class KakaoAuthService {
     console.log(this.accessToken);
     //console.log(JSON.stringify(_headers));
     return await lastValueFrom(this.http.post(_url, '', { headers: _headers }));
-  }
-
-  async showUserInfo(url: string, headers: any): Promise<any> {
-    console.log(`헤더: ${JSON.stringify(headers.headers)}`);
-    return await lastValueFrom(this.http.get(url, { headers }));
-  }
-
-  async getUserInfoByToken(accessToken: string): Promise<KakaoUser> {
-    const _url = 'https://kapi.kakao.com/v2/user/me';
-    // console.log(res);
-    const _headers = {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    };
-    // console.log(`토큰: ${res.access_token}`)
-    const kakaoUser = new KakaoUser();
-
-    this.showUserInfo(_url, _headers.headers)
-      .then((e) => {
-        console.log(e);
-        kakaoUser.kakaoId = e.data.id;
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-
-    return kakaoUser;
   }
 
   async deleteLog(): Promise<any> {
