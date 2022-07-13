@@ -63,7 +63,11 @@ export class KakaoAuthController {
     console.log('loginRedirect start'); //Query()에서 code를 가져온다
 
     console.log(req.user);
-
+    this.kakaoAuthService.register(
+      req.user.accessToken,
+      req.user.refreshToken,
+      req.user.kakaoId,
+    );
     return res.send(`
           <div>
             <h2>축하합니다!</h2>

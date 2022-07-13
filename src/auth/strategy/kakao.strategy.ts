@@ -26,39 +26,27 @@ export class KakaoStrategy extends PassportStrategy(Strategy) {
     // 유저가 이미 가입되어 있는지 검사
     const profileJson = profile._json;
     const kakaoId = profileJson.id;
-    const user_email = profile._json.kakao_account.email;
-    const user_nick = profile._json.properties.nickname;
-    console.log('kakaoGuard start');
-    console.log('accessToken: ' + accessToken);
-    console.log('refreshToken: ' + refreshToken);
-    console.log('profile: ' + profile);
-    console.log('done: ' + done);
-    console.log(kakaoId + ' ' + user_email + ' ' + user_nick);
     try {
       const user = await this.kakaoAuthService.validateUser(kakaoId);
 
       if (!user) {
         // 유저가 없을때 회원가입시키기
-        const newUser = await this.kakaoAuthService.register(
-          accessToken,
-          refreshToken,
-          kakaoId,
-        );
+        const newUser: {
+          accessToken: string;
+          kakaoId: string;
+          refreshToken: string;
+        } = {
+          accessToken: accessToken,
+          refreshToken: refreshToken,
+          kakaoId: kakaoId,
+        };
         done(null, newUser);
       } else {
-        // 유저가 있을때 token 갱신?
-        // await this.kakaoAuthService.updateToken(
-        //   accessToken,
-        //   refreshToken,
-        //   kakaoId,
-        // );
         done(null, user);
       }
     } catch (error) {
       console.log(error);
       done(error);
     }
-
-    //return { accessToken, refreshToken, type: 'login' };
   }
 }
