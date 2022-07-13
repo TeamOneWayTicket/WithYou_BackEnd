@@ -27,9 +27,9 @@ export class KakaoStrategy extends PassportStrategy(Strategy) {
         kakaoId: string;
         refreshToken: string;
       } = {
-        accessToken: accessToken,
-        refreshToken: refreshToken,
-        kakaoId: kakaoId,
+        accessToken,
+        refreshToken,
+        kakaoId,
       };
       done(null, user);
     } catch (error) {
