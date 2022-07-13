@@ -46,7 +46,6 @@ export class KakaoAuthController {
   @Header('Content-Type', 'text/html')
   @UseGuards(AuthGuard('kakao'))
   kakaoLoginLogicRedirect(@Req() req, @Res() res): void {
-    console.log(req.user);
     this.kakaoAuthService.login(req.user);
     return res.send(`
           <div>
@@ -64,7 +63,6 @@ export class KakaoAuthController {
     this.kakaoAuthService
       .logout()
       .then((e) => {
-        console.log(e);
         return res.send(`
           <div>
             <h2>로그아웃 완료(토큰만료)</h2>
@@ -85,7 +83,6 @@ export class KakaoAuthController {
     this.kakaoAuthService
       .deleteLog()
       .then((e) => {
-        console.log(e);
         return res.send(`
           <div>
             <h2>로그아웃 완료(로그삭제)</h2>
