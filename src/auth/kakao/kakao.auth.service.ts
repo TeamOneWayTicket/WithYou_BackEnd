@@ -21,7 +21,7 @@ export class KakaoAuthService {
 
   async findKakaoUser(kakaoId: string): Promise<KakaoUser> {
     return await this.kakaoUserRepository.findOne({
-      where: { kakaoId: kakaoId },
+      where: { kakaoId },
     });
   }
 
