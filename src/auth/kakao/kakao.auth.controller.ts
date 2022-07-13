@@ -33,13 +33,9 @@ export class KakaoAuthController {
 
   @Get('/login')
   @Header('Content-Type', 'text/html')
+  @UseGuards(AuthGuard('kakao'))
   kakaoLoginLogic(@Res() res): void {
-    const _hostName = 'https://kauth.kakao.com';
-    const _restApiKey = this.configService.kakaoConfig.restapiKey;
-    // 카카오 로그인 redirectURI 등록
-    const _redirectUrl = this.configService.kakaoConfig.callbackUrl;
-    const url = `${_hostName}/oauth/authorize?client_id=${_restApiKey}&redirect_uri=${_redirectUrl}&response_type=code`;
-    return res.redirect(url);
+    // kakaoGuard 가 처리해줌
   }
 
   @Get('/loginRedirect')
