@@ -30,12 +30,11 @@ export class KakaoAuthService {
     accessToken: string,
     refreshToken: string,
   ): Promise<KakaoUser> {
-    const kakaoUser = new KakaoUser();
-    kakaoUser.accessToken = accessToken;
-    kakaoUser.kakaoId = kakaoId;
-    kakaoUser.refreshToken = refreshToken;
-
-    return await this.kakaoUserRepository.save(kakaoUser);
+    return await this.kakaoUserRepository.save({
+      accessToken: accessToken,
+      kakaoId: kakaoId,
+      refreshToken: refreshToken,
+    });
   }
 
   async updateUser(user: KakaoUser): Promise<KakaoUser> {
