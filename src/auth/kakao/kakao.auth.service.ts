@@ -54,12 +54,12 @@ export class KakaoAuthService {
     const { id, userId, user } = targetUser;
     const { accessToken, refreshToken, kakaoId } = _user;
     const updatedUser: KakaoUser = {
-      id: id,
-      accessToken: accessToken,
-      refreshToken: refreshToken,
-      kakaoId: kakaoId,
-      userId: userId,
-      user: user,
+      id,
+      accessToken,
+      refreshToken,
+      kakaoId,
+      userId,
+      user,
     };
 
     await this.kakaoUserRepository.update(targetUser.id, updatedUser);
