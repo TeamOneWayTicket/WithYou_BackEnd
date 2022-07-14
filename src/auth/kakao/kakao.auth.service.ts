@@ -34,11 +34,11 @@ export class KakaoAuthService {
     try {
       await this.userRepository.save(user);
       kakaoUser = await this.kakaoUserRepository.save({
-        user: user,
+        user,
         userId: user.id,
-        accessToken: accessToken,
-        kakaoId: kakaoId,
-        refreshToken: refreshToken,
+        accessToken,
+        kakaoId,
+        refreshToken,
       });
       await queryRunner.commitTransaction();
     } catch (err) {
