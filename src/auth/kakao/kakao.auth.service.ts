@@ -3,7 +3,6 @@ import { KakaoUser } from '../../user/kakao.user.entity';
 import { DataSource, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '../../user/user.entity';
-import { async } from 'rxjs';
 
 @Injectable()
 export class KakaoAuthService {
