@@ -49,15 +49,17 @@ export class KakaoAuthService {
     return kakaoUser;
   }
 
-  async updateUser(user: KakaoUser): Promise<KakaoUser> {
-    const targetUser: KakaoUser = await this.findKakaoUser(user.kakaoId);
+  async updateUser(_user: KakaoUser): Promise<KakaoUser> {
+    const targetUser: KakaoUser = await this.findKakaoUser(_user.kakaoId);
+    const { id, userId, user } = targetUser;
+    const { accessToken, refreshToken, kakaoId } = _user;
     const updatedUser: KakaoUser = {
-      id: targetUser.id,
-      accessToken: user.accessToken,
-      refreshToken: user.refreshToken,
-      kakaoId: user.kakaoId,
-      userId: targetUser.userId,
-      user: targetUser.user,
+      id: id,
+      accessToken: accessToken,
+      refreshToken: refreshToken,
+      kakaoId: kakaoId,
+      userId: userId,
+      user: user,
     };
 
     await this.kakaoUserRepository.update(targetUser.id, updatedUser);
