@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { KakaoUser } from '../../user/kakao.user.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-import { UserService } from '../../user/user.service';
 import { User } from '../../user/user.entity';
 
 @Injectable()
@@ -10,7 +9,8 @@ export class KakaoAuthService {
   constructor(
     @InjectRepository(KakaoUser)
     private kakaoUserRepository: Repository<KakaoUser>,
-    private userService: UserService,
+    @InjectRepository(User)
+    private userRepository: Repository<User>,
   ) {}
 
   async findKakaoUser(kakaoId: string): Promise<KakaoUser> {
@@ -24,7 +24,8 @@ export class KakaoAuthService {
     accessToken: string,
     refreshToken: string,
   ): Promise<KakaoUser> {
-    const user: User = await this.userService.createUser();
+    const user = {} as User;
+    await this.userRepository.save(user);
     return await this.kakaoUserRepository.save({
       user: user,
       userId: user.id,
