@@ -1,8 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { KakaoUser } from '../../user/kakao.user.entity';
-import { Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '../../user/user.entity';
+import { async } from 'rxjs';
 
 @Injectable()
 export class KakaoAuthService {
@@ -11,6 +12,7 @@ export class KakaoAuthService {
     private kakaoUserRepository: Repository<KakaoUser>,
     @InjectRepository(User)
     private userRepository: Repository<User>,
+    private myDataSource: DataSource,
   ) {}
 
   async findKakaoUser(kakaoId: string): Promise<KakaoUser> {
@@ -24,15 +26,27 @@ export class KakaoAuthService {
     accessToken: string,
     refreshToken: string,
   ): Promise<KakaoUser> {
+    const queryRunner = this.myDataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
     const user = {} as User;
-    await this.userRepository.save(user);
-    return await this.kakaoUserRepository.save({
-      user: user,
-      userId: user.id,
-      accessToken: accessToken,
-      kakaoId: kakaoId,
-      refreshToken: refreshToken,
-    });
+    let kakaoUser: KakaoUser;
+    try {
+      await this.userRepository.save(user);
+      kakaoUser = await this.kakaoUserRepository.save({
+        user: user,
+        userId: user.id,
+        accessToken: accessToken,
+        kakaoId: kakaoId,
+        refreshToken: refreshToken,
+      });
+      await queryRunner.commitTransaction();
+    } catch (err) {
+      await queryRunner.rollbackTransaction();
+    } finally {
+      await queryRunner.release();
+    }
+    return kakaoUser;
   }
 
   async updateUser(user: KakaoUser): Promise<KakaoUser> {
