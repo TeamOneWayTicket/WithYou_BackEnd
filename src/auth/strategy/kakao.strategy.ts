@@ -12,10 +12,15 @@ export class KakaoStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  async validate(accessToken, refreshToken, profile, done) {
+  async validate(
+    accessToken: string,
+    refreshToken: string,
+    profile: object,
+    done: any,
+  ) {
     // 유저가 이미 가입되어 있는지 검사
 
-    const profileJson = profile._json;
+    const profileJson = profile['_json'];
     const kakaoId = profileJson.id;
     try {
       const user: {
