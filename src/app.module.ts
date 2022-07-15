@@ -8,6 +8,8 @@ import { ApiConfigService } from './shared/services/api-config.service';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
+import { DiaryController } from './diary/diary.controller';
+import { DiaryModule } from './diary/diary.module';
 
 @Module({
   imports: [
@@ -23,8 +25,9 @@ import { AuthModule } from './auth/auth.module';
     }),
     UserModule,
     AuthModule,
+    DiaryModule,
   ],
-  controllers: [AppController],
+  controllers: [AppController, DiaryController],
   providers: [AppService],
 })
 export class AppModule {
