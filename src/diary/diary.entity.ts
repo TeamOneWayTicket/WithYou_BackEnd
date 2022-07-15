@@ -30,6 +30,7 @@ export class Diary {
   content: string;
 
   @CreateDateColumn()
+  @Index()
   createdAt: Date;
 
   @ManyToOne(() => User, (user) => user.diarys, {
