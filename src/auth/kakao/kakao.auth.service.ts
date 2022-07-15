@@ -62,7 +62,7 @@ export class KakaoAuthService {
     };
 
     await this.kakaoUserRepository.update(targetUser.id, updatedUser);
-    return targetUser;
+    return updatedUser;
   }
 
   async login(user: KakaoUser): Promise<KakaoUser> {
