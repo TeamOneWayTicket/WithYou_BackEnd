@@ -1,4 +1,12 @@
-import { Column, Entity, Index, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  Index,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+import { User } from '../user/user.entity';
 
 @Entity()
 export class Diary {
@@ -12,9 +20,12 @@ export class Diary {
   familyId: number;
 
   @Column()
+  @Index()
   authorId: number;
 
-  @Column()
+  @Column({
+    nullable: true,
+  })
   content: string;
 
   @Column()
@@ -22,4 +33,10 @@ export class Diary {
 
   @Column()
   created_at: Date;
+
+  @ManyToOne(() => User, (user) => user.diarys, {
+    createForeignKeyConstraints: false,
+  })
+  @JoinColumn({ name: 'author_id' })
+  author: User;
 }

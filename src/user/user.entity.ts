@@ -7,9 +7,11 @@ import {
   JoinColumn,
   Index,
   Unique,
+  OneToMany,
 } from 'typeorm';
 import { LocalUser } from './local.user.entity';
 import { KakaoUser } from './kakao.user.entity';
+import { Diary } from '../diary/diary.entity';
 
 @Entity()
 export class User {
@@ -41,4 +43,7 @@ export class User {
     nullable: true,
   })
   kakaoUser: KakaoUser;
+
+  @OneToMany(() => Diary, (diary) => diary.author)
+  diarys: Diary[];
 }
