@@ -11,7 +11,7 @@ export class DiaryService {
   ) {}
 
   async findAllByAuthorId(authorId: number): Promise<Diary[]> {
-    return this.diaryRepository.find({ where: { authorId: authorId } });
+    return this.diaryRepository.find({ where: { authorId } });
   }
 
   async findOne(id: number): Promise<Diary> {
