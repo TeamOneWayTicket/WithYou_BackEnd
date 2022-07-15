@@ -1,5 +1,6 @@
 import {
   Column,
+  CreateDateColumn,
   Entity,
   Index,
   JoinColumn,
@@ -28,11 +29,8 @@ export class Diary {
   })
   content: string;
 
-  @Column()
-  date: Date;
-
-  @Column()
-  created_at: Date;
+  @CreateDateColumn()
+  createdAt: Date;
 
   @ManyToOne(() => User, (user) => user.diarys, {
     createForeignKeyConstraints: false,

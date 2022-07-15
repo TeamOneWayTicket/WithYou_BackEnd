@@ -27,7 +27,7 @@ import { DiaryModule } from './diary/diary.module';
     AuthModule,
     DiaryModule,
   ],
-  controllers: [AppController, DiaryController],
+  controllers: [AppController],
   providers: [AppService],
 })
 export class AppModule {
