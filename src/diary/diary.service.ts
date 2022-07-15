@@ -7,7 +7,7 @@ import { Repository } from 'typeorm';
 export class DiaryService {
   constructor(
     @InjectRepository(Diary)
-    private diaryRepository: Repository<Diary>,
+    private readonly diaryRepository: Repository<Diary>,
   ) {}
 
   async findAllByAuthorId(authorId: number): Promise<Diary[]> {
