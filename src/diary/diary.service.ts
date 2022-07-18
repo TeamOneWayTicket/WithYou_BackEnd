@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Diary } from './diary.entity';
 import { Repository } from 'typeorm';
 import { UpdateDiaryDto } from './diaryDto/updateDiaryDto';
+import { CreateDiaryDto } from './diaryDto/createDiaryDto';
 
 @Injectable()
 export class DiaryService {
@@ -19,7 +20,7 @@ export class DiaryService {
     return this.diaryRepository.findOne({ where: { id } });
   }
 
-  async saveDiary(diary: Diary): Promise<Diary> {
+  async createDiary(diary: CreateDiaryDto): Promise<Diary> {
     return await this.diaryRepository.save(diary);
   }
 

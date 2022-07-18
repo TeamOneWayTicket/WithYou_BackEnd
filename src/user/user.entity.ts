@@ -2,11 +2,8 @@ import {
   Entity,
   PrimaryGeneratedColumn,
   Column,
-  PrimaryColumn,
   OneToOne,
-  JoinColumn,
   Index,
-  Unique,
   OneToMany,
 } from 'typeorm';
 import { LocalUser } from './local.user.entity';

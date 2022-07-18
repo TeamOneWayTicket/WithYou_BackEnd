@@ -11,6 +11,7 @@ import {
 import { UserService } from './user.service';
 import { User } from './user.entity';
 import { UpdateUserDto } from './userDto/updateUserDto';
+import { CreateUserDto } from './userDto/createUserDto';
 
 @Controller('user')
 export class UserController {
@@ -59,8 +60,8 @@ export class UserController {
   }
 
   @Post()
-  async saveUser(@Body() user: User): Promise<User> {
-    const savedUser = await this.userService.saveUser(user);
+  async createUser(@Body() user: CreateUserDto): Promise<User> {
+    const savedUser = await this.userService.createUser(user);
     return Object.assign({
       data: { savedUser },
       statusCode: 200,

@@ -10,6 +10,7 @@ import {
 import { DiaryService } from './diary.service';
 import { Diary } from './diary.entity';
 import { UpdateDiaryDto } from './diaryDto/updateDiaryDto';
+import { CreateDiaryDto } from './diaryDto/createDiaryDto';
 
 @Controller('diary')
 export class DiaryController {
@@ -36,8 +37,8 @@ export class DiaryController {
   }
 
   @Post(':id')
-  async saveDiary(@Body() diary: Diary): Promise<Diary> {
-    const savedDiary = await this.diaryService.saveDiary(diary);
+  async createDiary(@Body() diary: CreateDiaryDto): Promise<Diary> {
+    const savedDiary = await this.diaryService.createDiary(diary);
 
     return Object.assign({
       data: savedDiary,
