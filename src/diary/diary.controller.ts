@@ -9,6 +9,7 @@ import {
 } from '@nestjs/common';
 import { DiaryService } from './diary.service';
 import { Diary } from './diary.entity';
+import { UpdateDiaryDto } from './diaryDto/updateDiaryDto';
 
 @Controller('diary')
 export class DiaryController {
@@ -29,7 +30,7 @@ export class DiaryController {
   @Patch(':id')
   async updateDiary(
     @Param('id', ParseIntPipe) id: number,
-    @Body() diary: Diary,
+    @Body() diary: UpdateDiaryDto,
   ): Promise<Diary> {
     return await this.diaryService.updateDiary(id, diary);
   }

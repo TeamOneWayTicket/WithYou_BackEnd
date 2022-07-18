@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './user.entity';
 import { LocalUser } from './local.user.entity';
+import { UpdateUserDto } from "./userDto/updateUserDto";
 
 @Injectable()
 export class UserService {
@@ -33,7 +34,7 @@ export class UserService {
    * 유저 수정
    * @param user
    */
-  async updateUser(id: number, user: User): Promise<void> {
+  async updateUser(id: number, user: UpdateUserDto): Promise<void> {
     await this.userRepository.update(id, user);
   }
   /**

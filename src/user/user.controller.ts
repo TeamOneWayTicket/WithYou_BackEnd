@@ -10,6 +10,7 @@ import {
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { User } from './user.entity';
+import { UpdateUserDto } from './userDto/updateUserDto';
 
 @Controller('user')
 export class UserController {
@@ -52,7 +53,7 @@ export class UserController {
   @Patch(':id')
   async updateUser(
     @Param('id', ParseIntPipe) id: number,
-    @Body() user: User,
+    @Body() user: UpdateUserDto,
   ): Promise<string> {
     await this.userService.updateUser(id, user);
     return Object.assign({

@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Diary } from './diary.entity';
 import { Repository } from 'typeorm';
+import { UpdateDiaryDto } from './diaryDto/updateDiaryDto';
 
 @Injectable()
 export class DiaryService {
@@ -22,7 +23,7 @@ export class DiaryService {
     return await this.diaryRepository.save(diary);
   }
 
-  async updateDiary(targetId: number, diary: Diary): Promise<Diary> {
+  async updateDiary(targetId: number, diary: UpdateDiaryDto): Promise<Diary> {
     const targetDiary: Diary = await this.findOne(targetId);
     const { id, familyId, authorId, createdAt, author } = targetDiary;
     const { content } = diary;
