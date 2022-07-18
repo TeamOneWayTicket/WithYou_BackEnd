@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Param, Patch, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  ParseIntPipe,
+  Patch,
+  Post,
+} from '@nestjs/common';
 import { DiaryService } from './diary.service';
 import { Diary } from './diary.entity';
 
@@ -7,18 +15,20 @@ export class DiaryController {
   constructor(private readonly diaryService: DiaryService) {}
 
   @Get('userDiarys/:id')
-  async findUserDiarys(@Param('id') id: number): Promise<Diary[]> {
+  async findUserDiarys(
+    @Param('id', ParseIntPipe) id: number,
+  ): Promise<Diary[]> {
     return await this.diaryService.findAllByAuthorId(id);
   }
 
   @Get(':id')
-  async findOne(@Param('id') id: number): Promise<Diary> {
+  async findOne(@Param('id', ParseIntPipe) id: number): Promise<Diary> {
     return await this.diaryService.findOne(id);
   }
 
   @Patch(':id')
   async updateDiary(
-    @Param('id') id: number,
+    @Param('id', ParseIntPipe) id: number,
     @Body() diary: Diary,
   ): Promise<Diary> {
     return await this.diaryService.updateDiary(id, diary);

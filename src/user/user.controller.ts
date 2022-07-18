@@ -28,7 +28,7 @@ export class UserController {
   }
 
   @Get(':id')
-  async findOne(@Param('id') id: number): Promise<User> {
+  async findOne(@Param('id', ParseIntPipe) id: number): Promise<User> {
     const foundUser = await this.userService.findOne(+id);
 
     return Object.assign({
@@ -51,7 +51,7 @@ export class UserController {
 
   @Patch(':id')
   async updateUser(
-    @Param('id') id: number,
+    @Param('id', ParseIntPipe) id: number,
     @Body() user: User,
   ): Promise<string> {
     await this.userService.updateUser(id, user);
@@ -73,8 +73,8 @@ export class UserController {
   }
 
   @Delete(':id')
-  async deleteUser(@Param('id') id: string): Promise<string> {
-    await this.userService.deleteUser(+id);
+  async deleteUser(@Param('id', ParseIntPipe) id: number): Promise<string> {
+    await this.userService.deleteUser(id);
     return Object.assign({
       data: { userId: id },
       statusCode: 200,
