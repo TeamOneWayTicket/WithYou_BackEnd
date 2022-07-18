@@ -10,7 +10,7 @@ import { User } from './user.entity';
 
 @Entity()
 export class LocalUser {
-  @PrimaryGeneratedColumn() // 이 Annotation을 통해 기본키로 사용함을 명시함
+  @PrimaryGeneratedColumn()
   id: number;
 
   @Column()

@@ -3,6 +3,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './user.entity';
 import { LocalUser } from './local.user.entity';
+import { UpdateUserDto } from './userDto/updateUserDto';
+import { CreateUserDto } from './userDto/createUserDto';
 
 @Injectable()
 export class UserService {
@@ -33,19 +35,12 @@ export class UserService {
    * 유저 수정
    * @param user
    */
-  async updateUser(id: number, user: User): Promise<void> {
+  async updateUser(id: number, user: UpdateUserDto): Promise<User> {
     await this.userRepository.update(id, user);
-  }
-  /**
-   * 유저 저장
-   * @param user
-   */
-  async saveUser(user: User): Promise<User> {
-    return await this.userRepository.save(user);
+    return await this.findOne(id);
   }
 
-  async createUser(): Promise<User> {
-    const user = {} as User;
+  async createUser(user: CreateUserDto): Promise<User> {
     return await this.userRepository.save(user);
   }
 

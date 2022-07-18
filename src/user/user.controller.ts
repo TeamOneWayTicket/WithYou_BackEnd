@@ -10,6 +10,8 @@ import {
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { User } from './user.entity';
+import { UpdateUserDto } from './userDto/updateUserDto';
+import { CreateUserDto } from './userDto/createUserDto';
 
 @Controller('user')
 export class UserController {
@@ -28,7 +30,7 @@ export class UserController {
   }
 
   @Get(':id')
-  async findOne(@Param('id') id: number): Promise<User> {
+  async findOne(@Param('id', ParseIntPipe) id: number): Promise<User> {
     const foundUser = await this.userService.findOne(+id);
 
     return Object.assign({
@@ -51,20 +53,15 @@ export class UserController {
 
   @Patch(':id')
   async updateUser(
-    @Param('id') id: number,
-    @Body() user: User,
-  ): Promise<string> {
-    await this.userService.updateUser(id, user);
-    return Object.assign({
-      data: { ...user },
-      statusCode: 200,
-      statusMsg: `updated successfully`,
-    });
+    @Param('id', ParseIntPipe) id: number,
+    @Body() user: UpdateUserDto,
+  ): Promise<User> {
+    return await this.userService.updateUser(id, user);
   }
 
   @Post()
-  async saveUser(@Body() user: User): Promise<User> {
-    const savedUser = await this.userService.saveUser(user);
+  async createUser(@Body() user: CreateUserDto): Promise<User> {
+    const savedUser = await this.userService.createUser(user);
     return Object.assign({
       data: { savedUser },
       statusCode: 200,
@@ -73,8 +70,8 @@ export class UserController {
   }
 
   @Delete(':id')
-  async deleteUser(@Param('id') id: string): Promise<string> {
-    await this.userService.deleteUser(+id);
+  async deleteUser(@Param('id', ParseIntPipe) id: number): Promise<string> {
+    await this.userService.deleteUser(id);
     return Object.assign({
       data: { userId: id },
       statusCode: 200,
