@@ -36,6 +36,6 @@ export class DiaryService {
       content,
     };
     await this.diaryRepository.update(targetId, updatedDiary);
-    return updatedDiary;
+    return await this.findOne(targetId);
   }
 }

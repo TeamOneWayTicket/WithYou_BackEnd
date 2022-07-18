@@ -54,13 +54,8 @@ export class UserController {
   async updateUser(
     @Param('id', ParseIntPipe) id: number,
     @Body() user: UpdateUserDto,
-  ): Promise<string> {
-    await this.userService.updateUser(id, user);
-    return Object.assign({
-      data: { ...user },
-      statusCode: 200,
-      statusMsg: `updated successfully`,
-    });
+  ): Promise<User> {
+    return await this.userService.updateUser(id, user);
   }
 
   @Post()

@@ -34,8 +34,9 @@ export class UserService {
    * 유저 수정
    * @param user
    */
-  async updateUser(id: number, user: UpdateUserDto): Promise<void> {
+  async updateUser(id: number, user: UpdateUserDto): Promise<User> {
     await this.userRepository.update(id, user);
+    return await this.findOne(id);
   }
   /**
    * 유저 저장
