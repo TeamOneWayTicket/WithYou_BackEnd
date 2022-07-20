@@ -11,8 +11,10 @@ import { DiaryService } from './diary.service';
 import { Diary } from './diary.entity';
 import { UpdateDiaryDto } from './diaryDto/updateDiaryDto';
 import { CreateDiaryDto } from './diaryDto/createDiaryDto';
+import { ApiTags } from '@nestjs/swagger';
 
 @Controller('diary')
+@ApiTags('일기장 API')
 export class DiaryController {
   constructor(private readonly diaryService: DiaryService) {}
 

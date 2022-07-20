@@ -2,8 +2,10 @@ import { Controller, Get, Header, Req, Res, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { KakaoAuthService } from './kakao.auth.service';
 import { ApiConfigService } from '../../shared/services/api-config.service';
+import { ApiTags } from '@nestjs/swagger';
 
 @Controller('auth/kakao')
+@ApiTags('카카오 인증 API')
 export class KakaoAuthController {
   constructor(
     private readonly kakaoAuthService: KakaoAuthService,

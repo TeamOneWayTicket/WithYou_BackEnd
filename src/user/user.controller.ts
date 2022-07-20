@@ -12,14 +12,20 @@ import { UserService } from './user.service';
 import { User } from './user.entity';
 import { UpdateUserDto } from './userDto/updateUserDto';
 import { CreateUserDto } from './userDto/createUserDto';
+import { ApiCreatedResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 
 @Controller('user')
+@ApiTags('유저 API')
 export class UserController {
   constructor(private readonly userService: UserService) {
     this.userService = userService;
   }
 
   @Get('list')
+  @ApiOperation({
+    summary: '전체 유저 리스트 조회 API',
+    description: '전체 유저 리스트 받아온다.',
+  })
   async findAll(): Promise<User[]> {
     const userList = await this.userService.findAll();
     return Object.assign({
