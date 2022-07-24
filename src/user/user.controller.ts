@@ -12,7 +12,15 @@ import { UserService } from './user.service';
 import { User } from './user.entity';
 import { UpdateUserDto } from './userDto/updateUserDto';
 import { CreateUserDto } from './userDto/createUserDto';
-import { ApiCreatedResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+import {
+  ApiCreatedResponse,
+  ApiOkResponse,
+  ApiOperation,
+  ApiTags,
+} from '@nestjs/swagger';
+import { BaseUsersResponse } from './userDto/baseUsersResponse';
+import { BaseUserResponse } from './userDto/baseUserResponse';
+import { DeleteUserResponse } from './userDto/deleteUserResponse';
 
 @Controller('user')
 @ApiTags('유저 API')
@@ -22,42 +30,40 @@ export class UserController {
   }
 
   @Get('list')
+  @ApiOkResponse({ description: '성공', type: BaseUsersResponse })
   @ApiOperation({
     summary: '전체 유저 리스트 조회 API',
     description: '전체 유저 리스트 받아온다.',
   })
   async findAll(): Promise<User[]> {
-    const userList = await this.userService.findAll();
-    return Object.assign({
-      data: userList,
-      statusCode: 200,
-      statusMsg: '유저 조회 성공적',
-    });
+    return await this.userService.findAll();
   }
 
   @Get(':id')
+  @ApiOkResponse({ description: '성공', type: BaseUserResponse })
+  @ApiOperation({
+    summary: '특정 유저 가지고 오는 API',
+    description: '특정 id 유저 가지고 온다.',
+  })
   async findOne(@Param('id', ParseIntPipe) id: number): Promise<User> {
-    const foundUser = await this.userService.findOne(+id);
-
-    return Object.assign({
-      data: foundUser,
-      statusCode: 200,
-      statusMsg: `데이터 조회가 성공적으로 완료되었습니다.`,
-    });
+    return await this.userService.findOne(id);
   }
 
   @Get('localuser/:id')
+  @ApiOkResponse({ description: '성공', type: BaseUserResponse })
+  @ApiOperation({
+    summary: '특정 로컬유저 가지고 오는 API(Test 용도)',
+  })
   async findLocalUser(@Param('id', ParseIntPipe) id: number): Promise<User> {
-    const foundUser = await this.userService.findLocalUser(id);
-
-    return Object.assign({
-      data: foundUser,
-      statusCode: 200,
-      statusMsg: `데이터 조회가 성공적으로 완료되었습니다.`,
-    });
+    return await this.userService.findLocalUser(id);
   }
 
   @Patch(':id')
+  @ApiOkResponse({ description: '성공', type: BaseUserResponse })
+  @ApiOperation({
+    summary: '특정 유저 정보 수정하는 API',
+    description: '특정 id 유저 정보를 수정한다.',
+  })
   async updateUser(
     @Param('id', ParseIntPipe) id: number,
     @Body() user: UpdateUserDto,
@@ -66,20 +72,27 @@ export class UserController {
   }
 
   @Post()
+  @ApiOkResponse({ description: '성공', type: BaseUserResponse })
+  @ApiOperation({
+    summary: '유저 정보 받아서 유저 생성하는 API',
+    description: '유저 생성한다.',
+  })
   async createUser(@Body() user: CreateUserDto): Promise<User> {
-    const savedUser = await this.userService.createUser(user);
-    return Object.assign({
-      data: { savedUser },
-      statusCode: 200,
-      statusMsg: `saved successfully`,
-    });
+    return await this.userService.createUser(user);
   }
 
   @Delete(':id')
-  async deleteUser(@Param('id', ParseIntPipe) id: number): Promise<string> {
+  @ApiOperation({
+    summary: '유저 id 받아서 유저 삭제하는 API',
+    description: '유저 삭제한다.',
+  })
+  @ApiOkResponse({ description: '성공', type: DeleteUserResponse })
+  async deleteUser(
+    @Param('id', ParseIntPipe) id: number,
+  ): Promise<DeleteUserResponse> {
     await this.userService.deleteUser(id);
     return Object.assign({
-      data: { userId: id },
+      id: id,
       statusCode: 200,
       statusMsg: `deleted successfully`,
     });
