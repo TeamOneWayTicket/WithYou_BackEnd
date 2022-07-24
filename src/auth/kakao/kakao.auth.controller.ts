@@ -2,7 +2,7 @@ import { Controller, Get, Header, Req, Res, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { KakaoAuthService } from './kakao.auth.service';
 import { ApiConfigService } from '../../shared/services/api-config.service';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
 
 @Controller('auth/kakao')
 @ApiTags('카카오 인증 API')
@@ -14,6 +14,10 @@ export class KakaoAuthController {
 
   @Get('menu')
   @Header('Content-Type', 'text/html')
+  @ApiOperation({
+    summary: 'kakao 로그인 테스트용 메뉴',
+    description: 'kakao 로그인 테스트용 메뉴',
+  })
   getKakaoLoginPage(): string {
     return `
       <div>
@@ -36,6 +40,10 @@ export class KakaoAuthController {
   @Get('/login')
   @Header('Content-Type', 'text/html')
   @UseGuards(AuthGuard('kakao'))
+  @ApiOperation({
+    summary: 'kakao 로그인 ',
+    description: 'kakao 로그인',
+  })
   kakaoLoginLogic(@Res() res): void {
     // kakaoGuard 가 처리해줌
   }
@@ -43,6 +51,10 @@ export class KakaoAuthController {
   @Get('/loginRedirect')
   @Header('Content-Type', 'text/html')
   @UseGuards(AuthGuard('kakao'))
+  @ApiOperation({
+    summary: 'kakao 로그인 redirect',
+    description: 'kakao 로그인 redirect',
+  })
   kakaoLoginLogicRedirect(@Req() req, @Res() res): void {
     this.kakaoAuthService.login(req.user);
     return res.send(`
