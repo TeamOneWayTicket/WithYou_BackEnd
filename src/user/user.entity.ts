@@ -10,6 +10,7 @@ import { LocalUser } from './local.user.entity';
 import { KakaoUser } from './kakao.user.entity';
 import { Diary } from '../diary/diary.entity';
 import { ApiProperty } from '@nestjs/swagger';
+import { GoogleUser } from "./google.user.entity";
 
 @Entity()
 export class User {
@@ -45,6 +46,11 @@ export class User {
     nullable: true,
   })
   kakaoUser: KakaoUser;
+
+  @OneToOne(() => GoogleUser, (googleUser) => googleUser.user, {
+    nullable: true,
+  })
+  googleUser: GoogleUser;
 
   @OneToMany(() => Diary, (diary) => diary.author)
   diarys: Diary[];

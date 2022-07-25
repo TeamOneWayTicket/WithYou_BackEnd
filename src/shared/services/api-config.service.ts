@@ -110,6 +110,14 @@ export class ApiConfigService {
     };
   }
 
+  get googleConfig() {
+    return {
+      restApiKey: this.getString('GOOGLE_OAUTH_API_KEY'),
+      restApiPassword: this.getString('GOOGLE_OAUTH_PASSWORD'),
+      callBackUrl: this.getString('CALLBACK_URL'),
+    };
+  }
+
   get kakaoConfig() {
     return {
       restApiKey: this.getString('REST_API_KEY'),
