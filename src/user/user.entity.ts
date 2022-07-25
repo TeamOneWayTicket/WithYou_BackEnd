@@ -10,11 +10,11 @@ import { LocalUser } from './local.user.entity';
 import { KakaoUser } from './kakao.user.entity';
 import { Diary } from '../diary/diary.entity';
 import { ApiProperty } from '@nestjs/swagger';
-import { GoogleUser } from "./google.user.entity";
+import { GoogleUser } from './google.user.entity';
 
 @Entity()
 export class User {
-  @PrimaryGeneratedColumn() // 이 Annotation을 통해 기본키로 사용함을 명시함
+  @PrimaryGeneratedColumn()
   @ApiProperty({ description: 'id' })
   id: number;
 
