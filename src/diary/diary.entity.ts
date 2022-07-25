@@ -8,35 +8,37 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { User } from '../user/user.entity';
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiExtraModels } from '@nestjs/swagger';
+import { ApiModelProperty } from '@nestjs/swagger/dist/decorators/api-model-property.decorator';
 
 @Entity()
+@ApiExtraModels()
 export class Diary {
   @PrimaryGeneratedColumn()
-  @ApiProperty({ description: 'id' })
+  @ApiModelProperty({ description: 'id' })
   id: number;
 
   @Column({
     nullable: true,
   })
   @Index()
-  @ApiProperty({ description: '가족 id' })
+  @ApiModelProperty({ description: '가족 id' })
   familyId: number;
 
   @Column()
   @Index()
-  @ApiProperty({ description: '일기장 쓴 사람의 id' })
+  @ApiModelProperty({ description: '일기장 쓴 사람의 id' })
   authorId: number;
 
   @Column({
     nullable: true,
   })
-  @ApiProperty({ description: '일기장 내용' })
+  @ApiModelProperty({ description: '일기장 내용' })
   content: string;
 
   @CreateDateColumn()
   @Index()
-  @ApiProperty({ description: '일기장 작성 시점' })
+  @ApiModelProperty({ description: '일기장 작성 시점' })
   createdAt: Date;
 
   @ManyToOne(() => User, (user) => user.diarys, {
