@@ -1,43 +1,48 @@
 import { Injectable } from '@nestjs/common';
 import { DataSource, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-import { KakaoUser } from '../../user/kakao.user.entity';
 import { User } from '../../user/user.entity';
+import { GoogleUser } from '../../user/google.user.entity';
 
 @Injectable()
 export class GoogleAuthService {
   constructor(
-    @InjectRepository(KakaoUser)
-    private kakaoUserRepository: Repository<KakaoUser>,
+    @InjectRepository(GoogleUser)
+    private googleUserRepository: Repository<GoogleUser>,
     @InjectRepository(User)
     private userRepository: Repository<User>,
     private myDataSource: DataSource,
   ) {}
 
-  async findKakaoUser(kakaoId: string): Promise<KakaoUser> {
-    return await this.kakaoUserRepository.findOne({
-      where: { kakaoId },
+  //  provider: 'google',
+  //   providerId: '117770623805303981785',
+  //   name: 'wilhustlel',
+  //   email: 'jobum923@gmail.com'
+
+  async findGoogleUser(googleId: string): Promise<GoogleUser> {
+    return await this.googleUserRepository.findOne({
+      where: { googleId },
     });
   }
 
   async register(
-    kakaoId: string,
-    accessToken: string,
-    refreshToken: string,
-  ): Promise<KakaoUser> {
+    googleId: string,
+    email: string,
+    nickname: string,
+  ): Promise<GoogleUser> {
     const queryRunner = this.myDataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
     const user = {} as User;
-    let kakaoUser: KakaoUser;
+    let googleUser: GoogleUser;
     try {
       await this.userRepository.save(user);
-      kakaoUser = await this.kakaoUserRepository.save({
+      googleUser = await this.googleUserRepository.save({
         user,
         userId: user.id,
-        accessToken,
-        kakaoId,
-        refreshToken,
+        googleId,
+        email,
+        nickname,
       });
       await queryRunner.commitTransaction();
     } catch (err) {
@@ -45,37 +50,37 @@ export class GoogleAuthService {
     } finally {
       await queryRunner.release();
     }
-    return kakaoUser;
+    return googleUser;
   }
 
-  async updateUser(_user: KakaoUser): Promise<KakaoUser> {
-    const targetUser: KakaoUser = await this.findKakaoUser(_user.kakaoId);
+  async updateUser(_user: GoogleUser): Promise<GoogleUser> {
+    const targetUser: GoogleUser = await this.findGoogleUser(_user.googleId);
     const { id, userId, user } = targetUser;
-    const { accessToken, refreshToken, kakaoId } = _user;
-    const updatedUser: KakaoUser = {
+    const { nickname, email, googleId } = _user;
+    const updatedUser: GoogleUser = {
       id,
-      accessToken,
-      refreshToken,
-      kakaoId,
+      nickname,
+      email,
+      googleId,
       userId,
       user,
     };
 
-    await this.kakaoUserRepository.update(targetUser.id, updatedUser);
+    await this.googleUserRepository.update(targetUser.id, updatedUser);
     return updatedUser;
   }
 
-  async login(user: KakaoUser): Promise<KakaoUser> {
-    const existUser: KakaoUser = await this.validateUser(user.kakaoId);
+  async login(user: GoogleUser): Promise<GoogleUser> {
+    const existUser: GoogleUser = await this.validateUser(user.googleId);
 
     if (!existUser) {
-      return this.register(user.kakaoId, user.accessToken, user.refreshToken);
+      return this.register(user.googleId, user.nickname, user.email);
     } else {
       return this.updateUser(user);
     }
   }
 
-  async validateUser(kakaoId: string): Promise<KakaoUser> {
-    return await this.findKakaoUser(kakaoId);
+  async validateUser(googleId: string): Promise<GoogleUser> {
+    return await this.findGoogleUser(googleId);
   }
 }

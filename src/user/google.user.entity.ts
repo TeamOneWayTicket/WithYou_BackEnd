@@ -17,18 +17,18 @@ export class GoogleUser {
   @ApiModelProperty({ description: 'id' })
   id: number;
 
-  @Column({ type: 'bigint' })
+  @Column()
   @Index()
   @ApiModelProperty({ description: 'google id' })
   googleId: string;
 
-  @Column({ nullable: true })
+  @Column()
   @ApiModelProperty({ description: 'google email' })
   email: string;
 
-  @Column({ nullable: true })
+  @Column()
   @ApiModelProperty({ description: 'google name' })
-  name: string;
+  nickname: string;
 
   @Column({ nullable: true })
   @Index()

@@ -42,8 +42,7 @@ export class GoogleAuthController {
   @Get('/loginRedirect')
   @UseGuards(AuthGuard('google'))
   async googleAuthCallback(@Req() req, @Res() res): Promise<void> {
-    const user = req.user;
-    console.log(user);
+    this.googleAuthService.login(req.user);
     return res.send(`
           <div>
             <h2>축하합니다!</h2>
