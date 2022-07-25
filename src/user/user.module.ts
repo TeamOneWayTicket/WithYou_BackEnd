@@ -11,9 +11,6 @@ import { GoogleUser } from './google.user.entity';
   imports: [TypeOrmModule.forFeature([User, LocalUser, KakaoUser, GoogleUser])],
   controllers: [UserController],
   providers: [UserService],
-  exports: [
-    UserService,
-    TypeOrmModule.forFeature([User, LocalUser, KakaoUser, GoogleUser]),
-  ],
+  exports: [UserService],
 })
 export class UserModule {}
