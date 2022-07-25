@@ -39,19 +39,13 @@ export class User {
   @ApiModelProperty({ description: '성별' })
   gender: string;
 
-  @OneToOne(() => LocalUser, (localUser) => localUser.user, {
-    nullable: true,
-  })
+  @OneToOne(() => LocalUser, (localUser) => localUser.user)
   localUser: LocalUser;
 
-  @OneToOne(() => KakaoUser, (kakaoUser) => kakaoUser.user, {
-    nullable: true,
-  })
+  @OneToOne(() => KakaoUser, (kakaoUser) => kakaoUser.user)
   kakaoUser: KakaoUser;
 
-  @OneToOne(() => GoogleUser, (googleUser) => googleUser.user, {
-    nullable: true,
-  })
+  @OneToOne(() => GoogleUser, (googleUser) => googleUser.user)
   googleUser: GoogleUser;
 
   @OneToMany(() => Diary, (diary) => diary.author)
