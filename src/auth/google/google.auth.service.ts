@@ -48,30 +48,13 @@ export class GoogleAuthService {
     return googleUser;
   }
 
-  async updateUser(_user: GoogleUser): Promise<GoogleUser> {
-    const targetUser: GoogleUser = await this.findGoogleUser(_user.googleId);
-    const { id, userId, user } = targetUser;
-    const { nickname, email, googleId } = _user;
-    const updatedUser: GoogleUser = {
-      id,
-      nickname,
-      email,
-      googleId,
-      userId,
-      user,
-    };
-
-    await this.googleUserRepository.update(targetUser.id, updatedUser);
-    return updatedUser;
-  }
-
   async login(user: GoogleUser): Promise<GoogleUser> {
     const existUser: GoogleUser = await this.validateUser(user.googleId);
 
     if (!existUser) {
       return this.register(user.googleId, user.nickname, user.email);
     } else {
-      return this.updateUser(user);
+      return existUser;
     }
   }
 
