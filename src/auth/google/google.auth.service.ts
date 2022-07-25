@@ -14,11 +14,6 @@ export class GoogleAuthService {
     private myDataSource: DataSource,
   ) {}
 
-  //  provider: 'google',
-  //   providerId: '117770623805303981785',
-  //   name: 'wilhustlel',
-  //   email: 'jobum923@gmail.com'
-
   async findGoogleUser(googleId: string): Promise<GoogleUser> {
     return await this.googleUserRepository.findOne({
       where: { googleId },
