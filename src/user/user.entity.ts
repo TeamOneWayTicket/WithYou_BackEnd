@@ -9,32 +9,34 @@ import {
 import { LocalUser } from './local.user.entity';
 import { KakaoUser } from './kakao.user.entity';
 import { Diary } from '../diary/diary.entity';
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiExtraModels } from '@nestjs/swagger';
 import { GoogleUser } from './google.user.entity';
+import { ApiModelProperty } from '@nestjs/swagger/dist/decorators/api-model-property.decorator';
 
 @Entity()
+@ApiExtraModels()
 export class User {
   @PrimaryGeneratedColumn()
-  @ApiProperty({ description: 'id' })
+  @ApiModelProperty({ description: 'id' })
   id: number;
 
   @Column({
     nullable: true,
   })
   @Index()
-  @ApiProperty({ description: '가족 id' })
+  @ApiModelProperty({ description: '가족 id' })
   familyId: number;
 
   @Column({
     nullable: true,
   })
-  @ApiProperty({ description: '닉네임' })
+  @ApiModelProperty({ description: '닉네임' })
   nickname: string;
 
   @Column({
     nullable: true,
   })
-  @ApiProperty({ description: '성별' })
+  @ApiModelProperty({ description: '성별' })
   gender: string;
 
   @OneToOne(() => LocalUser, (localUser) => localUser.user, {
