@@ -19,7 +19,7 @@ export class KakaoUser {
 
   @Column({ type: 'bigint' })
   @Index()
-  @ApiModelProperty({ description: 'kakaoid' })
+  @ApiModelProperty({ description: 'kakaoId' })
   kakaoId: string;
 
   @Column({ nullable: true })
@@ -32,7 +32,7 @@ export class KakaoUser {
 
   @Column({ nullable: true })
   @Index()
-  @ApiModelProperty({ description: 'userid' })
+  @ApiModelProperty({ description: 'userId' })
   userId: number;
 
   @OneToOne(() => User, (user) => user.kakaoUser, {
