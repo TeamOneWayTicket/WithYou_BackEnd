@@ -25,11 +25,26 @@ export class KakaoAuthService {
     accessToken: string,
     refreshToken: string,
   ): Promise<KakaoUser> {
-    return await this.kakaoUserRepository.save({
-      accessToken,
-      kakaoId,
-      refreshToken,
-    });
+    const queryRunner = this.myDataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+    const user = {} as User;
+    let kakaoUser: KakaoUser;
+    try {
+      await this.userRepository.save(user);
+      kakaoUser = await this.kakaoUserRepository.save({
+        userId: user.id,
+        accessToken,
+        kakaoId,
+        refreshToken,
+      });
+      await queryRunner.commitTransaction();
+    } catch (err) {
+      await queryRunner.rollbackTransaction();
+    } finally {
+      await queryRunner.release();
+    }
+    return kakaoUser;
   }
 
   async updateUser(_user: KakaoUser): Promise<KakaoUser> {
