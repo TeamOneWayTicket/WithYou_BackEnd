@@ -7,18 +7,27 @@ import { KakaoAuthService } from './kakao/kakao.auth.service';
 import { KakaoStrategy } from './strategy/kakao.strategy';
 import { KakaoAuthController } from './kakao/kakao.auth.controller';
 import { GoogleAuthController } from './google/google.auth.controller';
-import { GoogleStrategy } from './strategy/google.strategy';
 import { GoogleAuthService } from './google/google.auth.service';
+import { GoogleStrategy } from './strategy/google.strategy';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { User } from '../user/user.entity';
+import { LocalUser } from '../user/local.user.entity';
+import { KakaoUser } from '../user/kakao.user.entity';
+import { GoogleUser } from '../user/google.user.entity';
 
 @Module({
-  imports: [UserModule, PassportModule],
+  imports: [
+    UserModule,
+    PassportModule,
+    TypeOrmModule.forFeature([User, LocalUser, KakaoUser, GoogleUser]),
+  ],
   controllers: [AuthController, KakaoAuthController, GoogleAuthController],
   providers: [
     AuthService,
     KakaoAuthService,
     KakaoStrategy,
-    GoogleStrategy,
     GoogleAuthService,
+    GoogleStrategy,
   ],
 })
 export class AuthModule {}

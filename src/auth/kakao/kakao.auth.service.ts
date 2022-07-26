@@ -33,7 +33,6 @@ export class KakaoAuthService {
     try {
       await this.userRepository.save(user);
       kakaoUser = await this.kakaoUserRepository.save({
-        user,
         userId: user.id,
         accessToken,
         kakaoId,

@@ -12,30 +12,30 @@ import { ApiModelProperty } from '@nestjs/swagger/dist/decorators/api-model-prop
 
 @Entity()
 @ApiExtraModels()
-export class KakaoUser {
+export class GoogleUser {
   @PrimaryGeneratedColumn()
   @ApiModelProperty({ description: 'id' })
   id: number;
 
-  @Column({ type: 'bigint' })
+  @Column()
   @Index()
-  @ApiModelProperty({ description: 'kakaoId' })
-  kakaoId: string;
+  @ApiModelProperty({ description: 'google id' })
+  googleId: string;
 
-  @Column({ nullable: true })
-  @ApiModelProperty({ description: 'accessToken' })
-  accessToken: string;
+  @Column()
+  @ApiModelProperty({ description: 'google email' })
+  email: string;
 
-  @Column({ nullable: true })
-  @ApiModelProperty({ description: 'refreshToken' })
-  refreshToken: string;
+  @Column()
+  @ApiModelProperty({ description: 'google name' })
+  nickname: string;
 
   @Column({ nullable: true })
   @Index()
-  @ApiModelProperty({ description: 'userId' })
+  @ApiModelProperty({ description: '연결된 유저 id' })
   userId: number;
 
-  @OneToOne(() => User, (user) => user.kakaoUser, {
+  @OneToOne(() => User, (user) => user.googleUser, {
     createForeignKeyConstraints: false,
   })
   @JoinColumn({ name: 'user_id' })
