@@ -6,7 +6,7 @@ import { ApiOperation } from '@nestjs/swagger';
 export class AppController {
   constructor(private readonly appService: AppService) {}
 
-  @Get('menu')
+  @Get('')
   @Header('Content-Type', 'text/html')
   @ApiOperation({
     summary: 'dev 홈페이지',
