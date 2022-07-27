@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Get,
+  HttpException,
   Param,
   ParseIntPipe,
   Patch,
@@ -14,11 +15,58 @@ import { CreateDiaryDto } from './diaryDto/createDiaryDto';
 import { ApiBody, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { BaseDiaryResponse } from './diaryDto/baseDiaryResponse';
 import { BaseDiarysResponse } from './diaryDto/baseDiarysResponse';
+import { v4 as uuid } from 'uuid';
+import { ApiConfigService } from '../shared/services/api-config.service';
+import AWS from 'aws-sdk';
+import { GetSignedUrlDto } from './diaryDto/getSignedUrlDto';
 
 @Controller('diary')
 @ApiTags('일기장 API')
 export class DiaryController {
-  constructor(private readonly diaryService: DiaryService) {}
+  constructor(
+    private readonly diaryService: DiaryService,
+    private readonly config: ApiConfigService,
+  ) {}
+
+  @Post('/signedUrl')
+  async getSignedUrlForProductImage(@Body() input: GetSignedUrlDto): Promise<{
+    fileName: string;
+    s3Url: string;
+  }> {
+    if (!input.contentType) {
+      throw new HttpException('Missing contentType', 400);
+    }
+
+    if (!input.filePath) {
+      throw new HttpException('Missing filePath', 400);
+    }
+
+    const filetype: string = input.contentType.split('/')[1];
+
+    // Rename file, I just want to show there is a way to rename file before you it into S3
+    // Renaming file might be necessary for SEO
+    const fileName = `${uuid()}.${filetype}`;
+
+    const s3 = new AWS.S3({ useAccelerateEndpoint: true });
+    AWS.config.update({
+      accessKeyId: this.config.awsConfig.accessKey,
+      secretAccessKey: this.config.awsConfig.secretAccessKey,
+    });
+    const params = {
+      Bucket: this.config.awsConfig.bucketName,
+      Key: fileName,
+      Expires: 3600,
+      ContentType: input.contentType,
+      ACL: 'public-read',
+    };
+
+    const s3Url = await s3.getSignedUrlPromise('putObject', params);
+
+    return {
+      fileName,
+      s3Url,
+    };
+  }
 
   @Get('userDiarys/:id')
   @ApiOkResponse({ description: '성공', type: BaseDiarysResponse })
@@ -67,5 +115,10 @@ export class DiaryController {
     const savedDiary = await this.diaryService.createDiary(diary);
 
     return await this.diaryService.findOne(savedDiary.id);
+  }
+
+  @Get('/test')
+  async getSignedUrlForProductImage2() {
+    console.log('hello');
   }
 }

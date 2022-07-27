@@ -3,7 +3,6 @@ import { AppModule } from './app.module';
 import { SharedModule } from './shared/shared.module';
 import { ApiConfigService } from './shared/services/api-config.service';
 import { setupSwagger } from './utils/swagger';
-import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
 
 async function bootstrap() {
@@ -24,8 +23,6 @@ async function bootstrap() {
       }
     },
   });
-
-  //app.use(helmet());
   app.use(
     rateLimit({
       windowMs: 15 * 60 * 1000, // 15 minutes

@@ -1,6 +1,5 @@
 import {
   Column,
-  CreateDateColumn,
   Entity,
   Index,
   JoinColumn,
@@ -9,8 +8,7 @@ import {
 } from 'typeorm';
 import { ApiExtraModels } from '@nestjs/swagger';
 import { ApiModelProperty } from '@nestjs/swagger/dist/decorators/api-model-property.decorator';
-import { User } from "../user/user.entity";
-import { Diary } from "./diary.entity";
+import { Diary } from './diary.entity';
 
 @Entity()
 @ApiExtraModels()
