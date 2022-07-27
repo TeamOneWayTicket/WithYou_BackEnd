@@ -4,12 +4,14 @@ import { Diary } from './diary.entity';
 import { Repository } from 'typeorm';
 import { UpdateDiaryDto } from './diaryDto/updateDiaryDto';
 import { CreateDiaryDto } from './diaryDto/createDiaryDto';
+import { ApiConfigService } from '../shared/services/api-config.service';
 
 @Injectable()
 export class DiaryService {
   constructor(
     @InjectRepository(Diary)
     private readonly diaryRepository: Repository<Diary>,
+    private readonly configService: ApiConfigService,
   ) {}
 
   async findAllByAuthorId(authorId: number): Promise<Diary[]> {
@@ -26,7 +28,7 @@ export class DiaryService {
 
   async updateDiary(targetId: number, diary: UpdateDiaryDto): Promise<Diary> {
     const targetDiary: Diary = await this.findOne(targetId);
-    const { id, familyId, authorId, createdAt, author } = targetDiary;
+    const { id, familyId, authorId, createdAt, author, mediums } = targetDiary;
     const { content } = diary;
     const updatedDiary: Diary = {
       id,
@@ -35,6 +37,7 @@ export class DiaryService {
       createdAt,
       author,
       content,
+      mediums,
     };
     await this.diaryRepository.update(targetId, updatedDiary);
     return await this.findOne(targetId);

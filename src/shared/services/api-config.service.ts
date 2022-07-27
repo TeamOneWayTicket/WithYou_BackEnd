@@ -79,8 +79,10 @@ export class ApiConfigService {
     };
   }
 
-  get awsS3Config() {
+  get awsConfig() {
     return {
+      accessKey: this.getString('AWS_ACCESS_KEY_ID'),
+      secretAccessKey: this.getString('AWS_SECRET_ACCESS_KEY'),
       bucketRegion: this.getString('AWS_S3_BUCKET_REGION'),
       bucketApiVersion: this.getString('AWS_S3_API_VERSION'),
       bucketName: this.getString('AWS_S3_BUCKET_NAME'),

@@ -4,12 +4,13 @@ import {
   Entity,
   Index,
   JoinColumn,
-  ManyToOne,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
+  ManyToOne, OneToMany,
+  PrimaryGeneratedColumn
+} from "typeorm";
 import { User } from '../user/user.entity';
 import { ApiExtraModels } from '@nestjs/swagger';
 import { ApiModelProperty } from '@nestjs/swagger/dist/decorators/api-model-property.decorator';
+import { DiaryMedium } from "./diary.medium.entity";
 
 @Entity()
 @ApiExtraModels()
@@ -46,4 +47,7 @@ export class Diary {
   })
   @JoinColumn({ name: 'author_id' })
   author: User;
+
+  @OneToMany(() => DiaryMedium, (diaryMedium) => diaryMedium.diary)
+  mediums: DiaryMedium[];
 }
