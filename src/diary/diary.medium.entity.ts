@@ -17,9 +17,7 @@ export class DiaryMedium {
   @ApiModelProperty({ description: 'id' })
   id: number;
 
-  @Column({
-    nullable: true,
-  })
+  @Column()
   @Index()
   @ApiModelProperty({ description: '일기장 id' })
   diaryId: number;
@@ -27,9 +25,12 @@ export class DiaryMedium {
   @Column({
     nullable: true,
   })
-  @Index()
   @ApiModelProperty({ description: '순서 번호' })
   order: number;
+
+  @Column()
+  @ApiModelProperty({ description: 's3에 저장된 파일명' })
+  fileNameInS3: string;
 
   @ManyToOne(() => Diary, (diary) => diary.mediums, {
     createForeignKeyConstraints: false,
