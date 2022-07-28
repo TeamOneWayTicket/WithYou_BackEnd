@@ -20,6 +20,8 @@ import { ApiConfigService } from '../shared/services/api-config.service';
 import AWS from 'aws-sdk';
 import { PutSignedUrlDto } from './diaryDto/putSignedUrlDto';
 import { GetSignedUrlDto } from './diaryDto/getSignedUrlDto';
+import { PutSignedUrlResponse } from './diaryDto/putSignedUrlResponse';
+import { GetSignedUrlResponse } from './diaryDto/getSignedUrlResponse';
 
 @Controller('diary')
 @ApiTags('일기장 API')
@@ -29,13 +31,17 @@ export class DiaryController {
     private readonly config: ApiConfigService,
   ) {}
 
-  @Post('/signedUrl')
-  async getSignedUrlForPutObject(@Body() input: PutSignedUrlDto): Promise<{
-    fileName: string;
-    s3Url: string;
-  }> {
+  @Get('/putSignedUrl')
+  @ApiOkResponse({ description: '성공', type: PutSignedUrlResponse })
+  @ApiOperation({
+    summary: 'preSigned URL 발급 api',
+    description: 's3에 특정 객체 Put할 수 있는 preSigned URL 발급 api.',
+  })
+  async getSignedUrlForPutObject(
+    @Body() input: PutSignedUrlDto,
+  ): Promise<PutSignedUrlResponse> {
     const filetype: string = input.contentType.split('/')[1];
-    const fileName = `${uuid()}.${filetype}`;
+    const fileName = `${input.userId}/${uuid()}.${filetype}`;
 
     AWS.config.update({
       region: this.config.awsConfig.bucketRegion,
@@ -58,9 +64,14 @@ export class DiaryController {
   }
 
   @Get('/getSignedUrl')
+  @ApiOkResponse({ description: '성공', type: GetSignedUrlResponse })
+  @ApiOperation({
+    summary: 'preSigned URL 발급 api',
+    description: 's3에서 특정 객체 Get할 수 있는 preSigned URL 발급 api.',
+  })
   async getSignedUrlForGetObject(
     @Body() input: GetSignedUrlDto,
-  ): Promise<string> {
+  ): Promise<GetSignedUrlResponse> {
     AWS.config.update({
       region: this.config.awsConfig.bucketRegion,
       accessKeyId: this.config.awsConfig.accessKey,
@@ -74,7 +85,10 @@ export class DiaryController {
       Expires: 3600,
     });
 
-    return s3Url;
+    const res = {
+      s3Url,
+    } as GetSignedUrlResponse;
+    return res;
   }
 
   @Get('userDiarys/:id')

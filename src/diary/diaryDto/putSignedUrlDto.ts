@@ -1,9 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
 
 export class PutSignedUrlDto {
-  @ApiProperty({ description: 'media type' })
-  contentType: string;
+  @ApiProperty({ description: 'userid', example: 1 })
+  userId: number;
 
-  @ApiProperty({ description: 'filePath' })
-  filePath: string;
+  @ApiProperty({ description: 'media type', example: 'image/png' })
+  contentType: string;
 }
