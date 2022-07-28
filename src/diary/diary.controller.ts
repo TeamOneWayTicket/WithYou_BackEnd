@@ -18,6 +18,7 @@ import { BaseDiarysResponse } from './diaryDto/baseDiarysResponse';
 import { v4 as uuid } from 'uuid';
 import { ApiConfigService } from '../shared/services/api-config.service';
 import AWS from 'aws-sdk';
+import { PutSignedUrlDto } from './diaryDto/putSignedUrlDto';
 import { GetSignedUrlDto } from './diaryDto/getSignedUrlDto';
 
 @Controller('diary')
@@ -29,43 +30,51 @@ export class DiaryController {
   ) {}
 
   @Post('/signedUrl')
-  async getSignedUrlForProductImage(@Body() input: GetSignedUrlDto): Promise<{
+  async getSignedUrlForPutObject(@Body() input: PutSignedUrlDto): Promise<{
     fileName: string;
     s3Url: string;
   }> {
-    if (!input.contentType) {
-      throw new HttpException('Missing contentType', 400);
-    }
-
-    if (!input.filePath) {
-      throw new HttpException('Missing filePath', 400);
-    }
-
     const filetype: string = input.contentType.split('/')[1];
-
-    // Rename file, I just want to show there is a way to rename file before you it into S3
-    // Renaming file might be necessary for SEO
     const fileName = `${uuid()}.${filetype}`;
 
-    const s3 = new AWS.S3({ useAccelerateEndpoint: true });
     AWS.config.update({
+      region: this.config.awsConfig.bucketRegion,
       accessKeyId: this.config.awsConfig.accessKey,
       secretAccessKey: this.config.awsConfig.secretAccessKey,
     });
-    const params = {
+    const s3 = new AWS.S3({ useAccelerateEndpoint: true });
+
+    const s3Url = await s3.getSignedUrlPromise('putObject', {
       Bucket: this.config.awsConfig.bucketName,
       Key: fileName,
       Expires: 3600,
-      ContentType: input.contentType,
-      ACL: 'public-read',
-    };
-
-    const s3Url = await s3.getSignedUrlPromise('putObject', params);
+      //ContentType: input.contentType,
+    });
 
     return {
       fileName,
       s3Url,
     };
+  }
+
+  @Get('/getSignedUrl')
+  async getSignedUrlForGetObject(
+    @Body() input: GetSignedUrlDto,
+  ): Promise<string> {
+    AWS.config.update({
+      region: this.config.awsConfig.bucketRegion,
+      accessKeyId: this.config.awsConfig.accessKey,
+      secretAccessKey: this.config.awsConfig.secretAccessKey,
+    });
+    const s3 = new AWS.S3({ useAccelerateEndpoint: true });
+
+    const s3Url = await s3.getSignedUrlPromise('getObject', {
+      Bucket: this.config.awsConfig.bucketName,
+      Key: input.fileNameInS3,
+      Expires: 3600,
+    });
+
+    return s3Url;
   }
 
   @Get('userDiarys/:id')
