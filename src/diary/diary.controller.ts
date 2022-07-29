@@ -36,8 +36,8 @@ export class DiaryController {
   @Get('/SignedUrlForPut')
   @ApiOkResponse({ description: '성공', type: PutSignedUrlsResponse })
   @ApiOperation({
-    summary: 'preSigned URL 발급 api',
-    description: 's3에 특정 객체 Put할 수 있는 preSigned URL 발급 api.',
+    summary: 's3 업로드용 preSigned URL 발급 api',
+    description: 's3에 medium Put할 수 있는 preSigned URL들 발급 api.',
   })
   async getSignedUrlsForPutObject(
     @Body() input: PutSignedUrlDto,
@@ -48,8 +48,8 @@ export class DiaryController {
   @Get('/SignedUrlForGet')
   @ApiOkResponse({ description: '성공', type: GetSignedUrlsResponse })
   @ApiOperation({
-    summary: 'preSigned URL 발급 api',
-    description: 's3에서 특정 객체 Get할 수 있는 preSigned URL 발급 api.',
+    summary: 's3 다운로드용 preSigned URL 발급 api',
+    description: 's3에서 특정 객체 Get할 수 있는 preSigned URL들 발급 api.',
   })
   async getSignedUrlsForGetObject(
     @Body() input: GetSignedUrlsDto,
@@ -60,8 +60,8 @@ export class DiaryController {
   @Get('/signedUrls/:diaryId')
   @ApiOkResponse({ description: '성공', type: GetSignedUrlsResponse })
   @ApiOperation({
-    summary: '일기의 medium preSigned URL 가져오는 api',
-    description: '일기의 medium preSigned URL 가져오는 api',
+    summary: '특정 일기 medium 의 다운로드용 preSigned URL 들 가져오는 api',
+    description: '특정 일기 medium 의 다운로드용 preSigned URL 들 가져오는 api',
   })
   async getDiarySignedUrls(
     @Param('diaryId', ParseIntPipe) diaryId: number,
@@ -72,8 +72,8 @@ export class DiaryController {
   @Post('/uploadMediums')
   @ApiOkResponse({ description: '성공', type: CreateMediumsResponse })
   @ApiOperation({
-    summary: '업로드 완료 request 처리',
-    description: '업로드할 medium 객체들 생성 api.',
+    summary: '클라이언트 측의 업로드 완료 request 처리',
+    description: '업로드한 medium 객체 생성 및 저장 api.',
   })
   async createMediums(
     @Body() input: CreateMediumsDto,
