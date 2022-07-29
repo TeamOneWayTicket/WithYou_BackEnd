@@ -59,7 +59,7 @@ export class DiaryService {
     const fileNames = mediums.fileNamesInS3;
     const diaryId = mediums.diaryId;
     const diary = await this.findOne(mediums.diaryId);
-    let diaryMediums: DiaryMedium[];
+    const diaryMediums: DiaryMedium[] = [];
     for (let i = 0; i < fileNames.length; i++) {
       const medium: CreateMediumDto = {
         fileNameInS3: fileNames[i],
@@ -67,6 +67,7 @@ export class DiaryService {
         diaryId,
         order: i,
       };
+      console.log(typeof diaryMediums);
       diaryMediums.push(await this.createDiaryMedium(medium));
     }
 

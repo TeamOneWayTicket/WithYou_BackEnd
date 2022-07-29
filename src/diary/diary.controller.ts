@@ -93,7 +93,7 @@ export class DiaryController {
     return res;
   }
 
-  @Get('/saveMediums')
+  @Post('/uploadMediums')
   @ApiOkResponse({ description: '성공', type: CreateMediumsResponse })
   @ApiOperation({
     summary: '업로드 완료 request 처리',
