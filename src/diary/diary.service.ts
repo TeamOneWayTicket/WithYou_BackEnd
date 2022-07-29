@@ -8,6 +8,7 @@ import { ApiConfigService } from '../shared/services/api-config.service';
 import { DiaryMedium } from './diary.medium.entity';
 import { CreateMediumDto } from './diaryDto/createMediumDto';
 import { CreateMediumsDto } from './diaryDto/createMediumsDto';
+import { CreateMediumsResponse } from './diaryDto/createMediumsResponse';
 
 @Injectable()
 export class DiaryService {
@@ -52,10 +53,13 @@ export class DiaryService {
     return await this.diaryMediumRepository.save(diaryMedium);
   }
 
-  async createDiaryMediums(mediums: CreateMediumsDto) {
+  async createDiaryMediums(
+    mediums: CreateMediumsDto,
+  ): Promise<CreateMediumsResponse> {
     const fileNames = mediums.fileNamesInS3;
     const diaryId = mediums.diaryId;
     const diary = await this.findOne(mediums.diaryId);
+    let diaryMediums: DiaryMedium[];
     for (let i = 0; i < fileNames.length; i++) {
       const medium: CreateMediumDto = {
         fileNameInS3: fileNames[i],
@@ -63,7 +67,9 @@ export class DiaryService {
         diaryId,
         order: i,
       };
-      await this.createDiaryMedium(medium);
+      diaryMediums.push(await this.createDiaryMedium(medium));
     }
+
+    return { diaryMediums } as CreateMediumsResponse;
   }
 }

@@ -23,6 +23,7 @@ import { GetSignedUrlDto } from './diaryDto/getSignedUrlDto';
 import { PutSignedUrlResponse } from './diaryDto/putSignedUrlResponse';
 import { GetSignedUrlResponse } from './diaryDto/getSignedUrlResponse';
 import { CreateMediumsDto } from './diaryDto/createMediumsDto';
+import { CreateMediumsResponse } from './diaryDto/createMediumsResponse';
 
 @Controller('diary')
 @ApiTags('일기장 API')
@@ -93,13 +94,15 @@ export class DiaryController {
   }
 
   @Get('/saveMediums')
-  @ApiOkResponse({ description: '성공', type: GetSignedUrlResponse })
+  @ApiOkResponse({ description: '성공', type: CreateMediumsResponse })
   @ApiOperation({
     summary: '업로드 완료 request 처리',
-    description: '업로드할 mediums 객체 생성 api.',
+    description: '업로드할 medium 객체들 생성 api.',
   })
-  async createMediums(@Body() input: CreateMediumsDto): Promise<void> {
-    await this.diaryService.createDiaryMediums(input);
+  async createMediums(
+    @Body() input: CreateMediumsDto,
+  ): Promise<CreateMediumsResponse> {
+    return await this.diaryService.createDiaryMediums(input);
   }
 
   @Get('userDiarys/:id')
