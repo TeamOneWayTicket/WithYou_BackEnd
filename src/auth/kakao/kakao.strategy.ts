@@ -5,7 +5,7 @@ import { Strategy } from 'passport-kakao';
 
 @Injectable()
 export class KakaoStrategy extends PassportStrategy(Strategy) {
-  constructor(private configService: ApiConfigService) {
+  constructor(private readonly configService: ApiConfigService) {
     super({
       clientID: configService.kakaoConfig.restApiKey,
       callbackURL: configService.kakaoConfig.callBackUrl,
