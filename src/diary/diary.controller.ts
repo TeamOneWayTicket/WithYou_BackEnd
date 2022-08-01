@@ -6,6 +6,9 @@ import {
   ParseIntPipe,
   Patch,
   Post,
+  Query,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import { DiaryService } from './diary.service';
 import { Diary } from './diary.entity';
@@ -15,15 +18,10 @@ import { ApiBody, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { BaseDiaryResponse } from './diaryDto/baseDiaryResponse';
 import { BaseDiarysResponse } from './diaryDto/baseDiarysResponse';
 import { ApiConfigService } from '../shared/services/api-config.service';
-import { PutSignedUrlDto } from './diaryDto/putSignedUrlDto';
-import { GetSignedUrlDto } from './diaryDto/getSignedUrlDto';
-import { PutSignedUrlResponse } from './diaryDto/putSignedUrlResponse';
-import { GetSignedUrlResponse } from './diaryDto/getSignedUrlResponse';
-import { CreateMediumsDto } from './diaryDto/createMediumsDto';
 import { CreateMediumsResponse } from './diaryDto/createMediumsResponse';
 import { PutSignedUrlsResponse } from './diaryDto/putSignedUrlsResponse';
 import { GetSignedUrlsResponse } from './diaryDto/getSignedUrlsResponse';
-import { GetSignedUrlsDto } from './diaryDto/getSignedUrlsDto';
+import { PutSignedUrlsDto } from './diaryDto/putSignedUrlsDto';
 
 @Controller('diary')
 @ApiTags('일기장 API')
@@ -33,31 +31,31 @@ export class DiaryController {
     private readonly configService: ApiConfigService,
   ) {}
 
-  @Get('/SignedUrlForPut')
+  @Get('/presigned-put')
   @ApiOkResponse({ description: '성공', type: PutSignedUrlsResponse })
   @ApiOperation({
     summary: 's3 업로드용 preSigned URL 발급 api',
     description: 's3에 medium Put할 수 있는 preSigned URL들 발급 api.',
   })
   async getSignedUrlsForPutObject(
-    @Body() input: PutSignedUrlDto,
+    @Query() query: PutSignedUrlsDto,
   ): Promise<PutSignedUrlsResponse> {
-    return await this.diaryService.getSignedUrlsForPutObject(input);
+    return await this.diaryService.getSignedUrlsForPutObject(query);
   }
 
-  @Get('/SignedUrlForGet')
+  @Get('/presigned-get')
   @ApiOkResponse({ description: '성공', type: GetSignedUrlsResponse })
   @ApiOperation({
     summary: 's3 다운로드용 preSigned URL 발급 api',
     description: 's3에서 특정 객체 Get할 수 있는 preSigned URL들 발급 api.',
   })
   async getSignedUrlsForGetObject(
-    @Body() input: GetSignedUrlsDto,
+    @Query('fileNamesInS3') fileNamesInS3: string[],
   ): Promise<GetSignedUrlsResponse> {
-    return await this.diaryService.getSignedUrlsForGetObject(input);
+    return await this.diaryService.getSignedUrlsForGetObject(fileNamesInS3);
   }
 
-  @Get('/signedUrls/:diaryId')
+  @Get('/:diaryId/presigned-put')
   @ApiOkResponse({ description: '성공', type: GetSignedUrlsResponse })
   @ApiOperation({
     summary: '특정 일기 medium 의 다운로드용 preSigned URL 들 가져오는 api',
@@ -69,16 +67,17 @@ export class DiaryController {
     return await this.diaryService.getDiaryMediumsSignedUrl(diaryId);
   }
 
-  @Post('/uploadMediums')
+  @Post('/:diaryId/upload-mediums')
   @ApiOkResponse({ description: '성공', type: CreateMediumsResponse })
   @ApiOperation({
     summary: '클라이언트 측의 업로드 완료 request 처리',
     description: '업로드한 medium 객체 생성 및 저장 api.',
   })
   async createMediums(
-    @Body() input: CreateMediumsDto,
+    @Param('diaryId', ParseIntPipe) diaryId: number,
+    @Query('fileNamesInS3') fileNamesInS3: string[],
   ): Promise<CreateMediumsResponse> {
-    return await this.diaryService.createDiaryMediums(input);
+    return await this.diaryService.createDiaryMediums(diaryId, fileNamesInS3);
   }
 
   @Get('userDiarys/:id')
