@@ -24,6 +24,8 @@ export class GoogleAuthService {
     googleId: string,
     email: string,
     nickname: string,
+    accessToken: string,
+    refreshToken: string,
   ): Promise<GoogleUser> {
     const queryRunner = this.myDataSource.createQueryRunner();
     await queryRunner.connect();
@@ -37,6 +39,8 @@ export class GoogleAuthService {
         googleId,
         email,
         nickname,
+        accessToken,
+        refreshToken,
       });
       await queryRunner.commitTransaction();
     } catch (err) {
@@ -51,7 +55,13 @@ export class GoogleAuthService {
     const existUser: GoogleUser = await this.validateUser(user.googleId);
 
     if (!existUser) {
-      return this.register(user.googleId, user.nickname, user.email);
+      return this.register(
+        user.googleId,
+        user.nickname,
+        user.email,
+        user.accessToken,
+        user.refreshToken,
+      );
     } else {
       return existUser;
     }

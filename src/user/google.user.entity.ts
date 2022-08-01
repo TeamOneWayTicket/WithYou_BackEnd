@@ -30,6 +30,18 @@ export class GoogleUser {
   @ApiModelProperty({ description: 'google name' })
   nickname: string;
 
+  @Column({
+    nullable: true,
+  })
+  @ApiModelProperty({ description: 'access Token' })
+  accessToken: string;
+
+  @Column({
+    nullable: true,
+  })
+  @ApiModelProperty({ description: 'refresh Token' })
+  refreshToken: string;
+
   @Column({ nullable: true })
   @Index()
   @ApiModelProperty({ description: '연결된 유저 id' })

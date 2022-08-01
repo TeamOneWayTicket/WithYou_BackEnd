@@ -8,4 +8,8 @@ export class AuthService {
     private configService: ApiConfigService,
     private userService: UserService,
   ) {}
+
+  async validateUser() {
+    // f
+  }
 }
