@@ -123,12 +123,12 @@ export class DiaryService {
   async getSignedUrlsForPutObject(
     query: PutSignedUrlsDto,
   ): Promise<PutSignedUrlsResponse> {
-    const filetype: string = query.contentType.split('/')[1];
+    const fileType: string = query.contentType.split('/')[1];
     const s3 = new AWS.S3({ useAccelerateEndpoint: true });
-    const SignedUrls: PutSignedUrlResponse[] = [];
+    const signedUrls: PutSignedUrlResponse[] = [];
 
     for (let i = 0; i < query.quantity; i++) {
-      const fileName = `diary/${query.diaryId}/${uuid()}.${filetype}`;
+      const fileName = `diary/${query.diaryId}/${uuid()}.${fileType}`;
       const s3Url = await s3.getSignedUrlPromise('putObject', {
         Bucket: this.configService.awsConfig.bucketName,
         Key: fileName,
@@ -140,9 +140,9 @@ export class DiaryService {
         s3Url,
       } as PutSignedUrlResponse;
 
-      SignedUrls.push(info);
+      signedUrls.push(info);
     }
 
-    return { SignedUrls } as PutSignedUrlsResponse;
+    return { signedUrls } as PutSignedUrlsResponse;
   }
 }

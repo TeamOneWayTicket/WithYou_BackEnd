@@ -20,5 +20,5 @@ export class PutSignedUrlsResponse {
       '        }\n' +
       '    ]',
   })
-  SignedUrls: PutSignedUrlResponse[];
+  signedUrls: PutSignedUrlResponse[];
 }
