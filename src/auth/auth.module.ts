@@ -44,5 +44,6 @@ import { ApiConfigService } from '../shared/services/api-config.service';
     GoogleStrategy,
     JwtStrategy,
   ],
+  exports: [JwtStrategy, PassportModule],
 })
 export class AuthModule {}

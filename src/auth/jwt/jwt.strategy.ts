@@ -1,9 +1,7 @@
-import { ExtractJwt, Strategy, VerifiedCallback } from 'passport-jwt';
+import { ExtractJwt, Strategy } from 'passport-jwt';
 import { PassportStrategy } from '@nestjs/passport';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { Request } from 'express';
 import { ApiConfigService } from '../../shared/services/api-config.service';
-import { JwtTokenPayload } from './jwt.token.payload';
 import { UserService } from '../../user/user.service';
 import { AuthService } from '../auth.service';
 
@@ -15,25 +13,16 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     private readonly authService: AuthService,
   ) {
     super({
-      jwtFromRequest: ExtractJwt.fromExtractors([
-        (request: Request) => {
-          return request?.cookies?.Authentication;
-        },
-      ]),
-      secretOrKey: configService.authConfig.privateKey,
+      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+      secretOrKey: configService.authConfig.secretkey,
     });
   }
-  async validate(
-    payload: JwtTokenPayload,
-    done: VerifiedCallback,
-  ): Promise<any> {
+  async validate(payload): Promise<any> {
     const user = await this.authService.tokenValidateUser(payload);
     console.log('jwt전략 시동');
     if (!user) {
-      return done(
-        new UnauthorizedException({ message: 'user does not exist' }),
-      );
+      throw new UnauthorizedException();
     }
-    return done(null, user);
+    return user;
   }
 }
