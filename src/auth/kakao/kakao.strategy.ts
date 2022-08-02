@@ -8,7 +8,7 @@ export class KakaoStrategy extends PassportStrategy(Strategy) {
   constructor(private readonly configService: ApiConfigService) {
     super({
       clientID: configService.kakaoConfig.restApiKey,
-      callbackURL: configService.kakaoConfig.callBackUrl,
+      callbackURL: configService.kakaoConfig.loginRedirectUrl,
     });
   }
 
@@ -20,6 +20,7 @@ export class KakaoStrategy extends PassportStrategy(Strategy) {
   ) {
     const profileJson = profile['_json'];
     const kakaoId = profileJson.id;
+    console.log(profileJson);
     try {
       const user: {
         accessToken;

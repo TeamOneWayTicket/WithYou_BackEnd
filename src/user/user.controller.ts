@@ -7,6 +7,7 @@ import {
   ParseIntPipe,
   Patch,
   Post,
+  UseGuards,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { User } from './user.entity';
@@ -21,6 +22,8 @@ import {
 import { BaseUsersResponse } from './userDto/baseUsersResponse';
 import { BaseUserResponse } from './userDto/baseUserResponse';
 import { DeleteUserResponse } from './userDto/deleteUserResponse';
+import JwtAuthGuard from '../auth/jwt/jwt.auth.guard';
+import { AuthGuard } from "@nestjs/passport";
 
 @Controller('user')
 @ApiTags('유저 API')
@@ -39,6 +42,7 @@ export class UserController {
     return await this.userService.findAll();
   }
 
+  @UseGuards(AuthGuard('jwt'))
   @Get(':id')
   @ApiOkResponse({ description: '성공', type: BaseUserResponse })
   @ApiOperation({

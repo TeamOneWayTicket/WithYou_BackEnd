@@ -14,12 +14,25 @@ import { User } from '../user/user.entity';
 import { LocalUser } from '../user/local.user.entity';
 import { KakaoUser } from '../user/kakao.user.entity';
 import { GoogleUser } from '../user/google.user.entity';
+import { JwtStrategy } from './jwt/jwt.strategy';
+import { JwtModule } from '@nestjs/jwt';
+import { ApiConfigService } from '../shared/services/api-config.service';
 
 @Module({
   imports: [
     UserModule,
     PassportModule,
     TypeOrmModule.forFeature([User, LocalUser, KakaoUser, GoogleUser]),
+    JwtModule.registerAsync({
+      useFactory: (configService: ApiConfigService) => ({
+        privateKey: configService.authConfig.privateKey,
+        publicKey: configService.authConfig.publicKey,
+        signOptions: {
+          expiresIn: configService.authConfig.jwtExpirationTime,
+        },
+      }),
+      inject: [ApiConfigService],
+    }),
   ],
   controllers: [AuthController, KakaoAuthController, GoogleAuthController],
   providers: [
@@ -28,6 +41,7 @@ import { GoogleUser } from '../user/google.user.entity';
     KakaoStrategy,
     GoogleAuthService,
     GoogleStrategy,
+    JwtStrategy,
   ],
 })
 export class AuthModule {}

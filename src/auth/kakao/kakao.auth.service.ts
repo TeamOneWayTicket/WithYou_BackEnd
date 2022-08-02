@@ -3,6 +3,8 @@ import { DataSource, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { KakaoUser } from '../../user/kakao.user.entity';
 import { User } from '../../user/user.entity';
+import axios from 'axios';
+import { ApiConfigService } from '../../shared/services/api-config.service';
 
 @Injectable()
 export class KakaoAuthService {
@@ -12,11 +14,18 @@ export class KakaoAuthService {
     @InjectRepository(User)
     private userRepository: Repository<User>,
     private myDataSource: DataSource,
+    private configService: ApiConfigService,
   ) {}
 
   async findKakaoUser(kakaoId: string): Promise<KakaoUser> {
     return await this.kakaoUserRepository.findOne({
       where: { kakaoId },
+    });
+  }
+
+  async findKakaoUserByUserId(userId: number): Promise<KakaoUser> {
+    return await this.kakaoUserRepository.findOne({
+      where: { userId },
     });
   }
 
@@ -76,5 +85,26 @@ export class KakaoAuthService {
 
   async validateUser(kakaoId: string): Promise<KakaoUser> {
     return await this.findKakaoUser(kakaoId);
+  }
+
+  async renewToken(kakaoUser: KakaoUser) {
+    try {
+      const _hostName = 'https://kauth.kakao.com/oauth/token';
+      const res = await axios({
+        method: 'get',
+        url: _hostName,
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
+        },
+        data: {
+          grant_type: 'refresh_token',
+          client_id: this.configService.kakaoConfig.restApiKey,
+          refresh_token: kakaoUser.refreshToken,
+        },
+      });
+      console.log(res);
+    } catch (error) {
+      console.error(error);
+    }
   }
 }

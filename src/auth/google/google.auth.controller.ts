@@ -18,7 +18,7 @@ export class GoogleAuthController {
     summary: 'google 로그인 테스트용 메뉴',
     description: 'google 로그인 테스트용 메뉴',
   })
-  googleLoginPage(): string {
+  async googleLoginPage(): Promise<string> {
     return `
       <div>
         <h1>구글 로그인</h1>
