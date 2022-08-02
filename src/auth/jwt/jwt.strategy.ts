@@ -5,8 +5,6 @@ import { Request } from 'express';
 import { ApiConfigService } from '../../shared/services/api-config.service';
 import { JwtTokenPayload } from './jwt.token.payload';
 import { UserService } from '../../user/user.service';
-import { KakaoAuthService } from '../kakao/kakao.auth.service';
-import { GoogleAuthService } from '../google/google.auth.service';
 import { AuthService } from '../auth.service';
 
 @Injectable()

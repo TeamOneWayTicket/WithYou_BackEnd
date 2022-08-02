@@ -25,6 +25,7 @@ import { ApiConfigService } from '../shared/services/api-config.service';
     TypeOrmModule.forFeature([User, LocalUser, KakaoUser, GoogleUser]),
     JwtModule.registerAsync({
       useFactory: (configService: ApiConfigService) => ({
+        secret: configService.authConfig.secretkey,
         privateKey: configService.authConfig.privateKey,
         publicKey: configService.authConfig.publicKey,
         signOptions: {

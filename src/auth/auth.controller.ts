@@ -3,20 +3,22 @@ import { ApiTags } from '@nestjs/swagger';
 import JwtAuthGuard from './jwt/jwt.auth.guard';
 import { AuthService } from './auth.service';
 import { JwtTokenPayload } from './jwt/jwt.token.payload';
+import { JwtResponse } from './auth.DTO/jwtResponse';
 
 @Controller('auth')
 @ApiTags('인증 API')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  @Post('local')
-  async login(@Req() req) {
-    return req.user;
-  }
-
   @Get('/authenticate')
   //@UseGuards(JwtAuthGuard)
   async isAuthenticated(@Query() query: JwtTokenPayload): Promise<any> {
-    return await this.authService.login(query);
+    return await this.authService.tokenValidateUser(query);
+  }
+
+  @Get('/get-jwt-token')
+  //@UseGuards(JwtAuthGuard)
+  async login(@Query() query: JwtTokenPayload): Promise<JwtResponse> {
+    return await this.authService.getJwtToken(query);
   }
 }

@@ -43,7 +43,7 @@ export class GoogleAuthController {
   @UseGuards(AuthGuard('google'))
   async googleAuthCallback(@Req() req, @Res() res): Promise<void> {
     console.log(req.user);
-    this.googleAuthService.login(req.user);
+    await this.googleAuthService.login(req.user);
     return res.send(`
           <div>
             <h2>축하합니다!</h2>

@@ -7,8 +7,9 @@ import {
   ParseIntPipe,
   Patch,
   Post,
-  UseGuards,
-} from '@nestjs/common';
+  Req, Res,
+  UseGuards
+} from "@nestjs/common";
 import { UserService } from './user.service';
 import { User } from './user.entity';
 import { UpdateUserDto } from './userDto/updateUserDto';
@@ -23,7 +24,7 @@ import { BaseUsersResponse } from './userDto/baseUsersResponse';
 import { BaseUserResponse } from './userDto/baseUserResponse';
 import { DeleteUserResponse } from './userDto/deleteUserResponse';
 import JwtAuthGuard from '../auth/jwt/jwt.auth.guard';
-import { AuthGuard } from "@nestjs/passport";
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('user')
 @ApiTags('유저 API')
@@ -43,6 +44,20 @@ export class UserController {
   }
 
   @UseGuards(AuthGuard('jwt'))
+  @Get('/login/:id')
+  @ApiOkResponse({ description: '성공', type: BaseUserResponse })
+  @ApiOperation({
+    summary: '특정 유저 로그인 처리 API',
+    description: '특정 id 유저 가지고 온다.',
+  })
+  async login(
+    @Param('id', ParseIntPipe) id: number,
+    @Res() res,
+  ): Promise<User> {
+    console.log(res);
+    return await this.userService.findOne(id);
+  }
+
   @Get(':id')
   @ApiOkResponse({ description: '성공', type: BaseUserResponse })
   @ApiOperation({
