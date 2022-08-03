@@ -4,7 +4,8 @@ import { ApiConfigService } from '../shared/services/api-config.service';
 import { JwtTokenPayload } from './jwt/jwt.token.payload';
 import { User } from '../user/user.entity';
 import { JwtService } from '@nestjs/jwt';
-import { JwtResponse } from './auth.DTO/jwtResponse';
+import { JwtTokenResponse } from './auth.DTO/jwtTokenResponse';
+import { JwtAccessTokenResponse } from './auth.DTO/jwtAccessTokenResponse';
 
 @Injectable()
 export class AuthService {
@@ -14,12 +15,14 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async tokenValidateUser(payload: JwtTokenPayload): Promise<User> {
+  async findUser(user: JwtTokenResponse): Promise<User> {
     console.log('tokenValidate');
-    return await this.userService.findOne(payload.userId);
+    return await this.userService.findOne(user.userId);
   }
 
-  async getJwtToken(payload: JwtTokenPayload): Promise<JwtResponse> {
-    return { accessToken: this.jwtService.sign(payload) } as JwtResponse;
+  async getJwtToken(payload: JwtTokenPayload): Promise<JwtAccessTokenResponse> {
+    return {
+      accessToken: this.jwtService.sign(payload),
+    } as JwtAccessTokenResponse;
   }
 }
