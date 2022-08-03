@@ -15,7 +15,7 @@ import { LocalUser } from '../user/local.user.entity';
 import { KakaoUser } from '../user/kakao.user.entity';
 import { GoogleUser } from '../user/google.user.entity';
 import { JwtStrategy } from './jwt/jwt.strategy';
-import { JwtModule, JwtService } from "@nestjs/jwt";
+import { JwtModule } from '@nestjs/jwt';
 import { ApiConfigService } from '../shared/services/api-config.service';
 
 @Module({

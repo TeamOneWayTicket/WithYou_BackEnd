@@ -45,14 +45,11 @@ export default class JwtAuthGuard extends AuthGuard('jwt') {
     const secretKey = this.configService.authConfig.secretkey;
 
     try {
-      console.log(token);
       const verify = this.jwtService.verify(token, {
         secret: secretKey,
       }) as JwtTokenResponse;
-      console.log(verify);
       return verify;
     } catch (e) {
-      console.log(e.message);
       switch (e.message) {
         // 토큰에 대한 오류를 판단합니다.
         case 'invalid token':

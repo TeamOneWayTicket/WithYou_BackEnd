@@ -13,6 +13,8 @@ import { KakaoAuthService } from './kakao.auth.service';
 import { ApiConfigService } from '../../shared/services/api-config.service';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import axios from 'axios';
+import { AuthService } from '../auth.service';
+import { JwtTokenPayload } from '../jwt/jwt.token.payload';
 
 @Controller('auth/kakao')
 @ApiTags('카카오 인증 API')
@@ -20,6 +22,7 @@ export class KakaoAuthController {
   constructor(
     private readonly kakaoAuthService: KakaoAuthService,
     private readonly configService: ApiConfigService,
+    private readonly authService: AuthService,
   ) {}
 
   @Get('menu')
@@ -66,7 +69,12 @@ export class KakaoAuthController {
     description: 'kakao 로그인 redirect',
   })
   async kakaoLoginLogicRedirect(@Req() req, @Res() res): Promise<void> {
-    this.kakaoAuthService.login(req.user);
+    const kakaoUser = await this.kakaoAuthService.login(req.user);
+    const payload = {
+      userType: 'kakao',
+      userId: kakaoUser.userId,
+    } as JwtTokenPayload;
+    res.setHeader('Authorization', await this.authService.getJwtToken(payload));
     return res.send(`
           <div>
             <h2>축하합니다!</h2>

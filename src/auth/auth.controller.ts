@@ -19,7 +19,6 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Get('/get-jwt-token')
-  //@UseGuards(JwtAuthGuard)
   async login(
     @Query() query: JwtTokenPayload,
   ): Promise<JwtAccessTokenResponse> {
@@ -29,6 +28,7 @@ export class AuthController {
   @Post('/test-signin')
   @UseGuards(JwtAuthGuard)
   signin(@Req() req) {
+    console.log(req);
     return req.user;
   }
 }
