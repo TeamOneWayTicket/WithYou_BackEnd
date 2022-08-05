@@ -7,9 +7,10 @@ import {
   ParseIntPipe,
   Patch,
   Post,
-  Req, Res,
-  UseGuards
-} from "@nestjs/common";
+  Req,
+  Res,
+  UseGuards,
+} from '@nestjs/common';
 import { UserService } from './user.service';
 import { User } from './user.entity';
 import { UpdateUserDto } from './userDto/updateUserDto';
@@ -54,7 +55,7 @@ export class UserController {
     @Param('id', ParseIntPipe) id: number,
     @Res() res,
   ): Promise<User> {
-    console.log(res);
+    console.log('user.login', res);
     return await this.userService.findOne(id);
   }
 

@@ -74,17 +74,13 @@ export class KakaoAuthService {
   }
 
   async login(user: KakaoUser): Promise<KakaoUser> {
-    const existUser: KakaoUser = await this.validateUser(user.kakaoId);
+    const existUser: KakaoUser = await this.findKakaoUser(user.kakaoId);
 
     if (!existUser) {
       return this.register(user.kakaoId, user.accessToken, user.refreshToken);
     } else {
       return this.updateUser(user);
     }
-  }
-
-  async validateUser(kakaoId: string): Promise<KakaoUser> {
-    return await this.findKakaoUser(kakaoId);
   }
 
   async renewToken(kakaoUser: KakaoUser) {
@@ -102,7 +98,7 @@ export class KakaoAuthService {
           refresh_token: kakaoUser.refreshToken,
         },
       });
-      console.log(res);
+      console.log('kakao.auth.service', res);
     } catch (error) {
       console.error(error);
     }

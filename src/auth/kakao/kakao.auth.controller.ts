@@ -51,37 +51,54 @@ export class KakaoAuthController {
   }
 
   @Get('/login')
-  @Header('Content-Type', 'text/html')
   @UseGuards(AuthGuard('kakao'))
   @ApiOperation({
     summary: 'kakao 로그인 ',
     description: 'kakao 로그인',
   })
-  async kakaoLoginLogic(@Res() res): Promise<void> {
+  async kakaoLoginLogic(@Res() res) {
     // kakaoGuard 가 처리해줌
   }
 
-  @Get('/loginRedirect')
-  @Header('Content-Type', 'text/html')
+  @Get('/callback')
   @UseGuards(AuthGuard('kakao'))
   @ApiOperation({
     summary: 'kakao 로그인 redirect',
     description: 'kakao 로그인 redirect',
   })
-  async kakaoLoginLogicRedirect(@Req() req, @Res() res): Promise<void> {
-    const kakaoUser = await this.kakaoAuthService.login(req.user);
-    const payload = {
-      userType: 'kakao',
-      userId: kakaoUser.userId,
-    } as JwtTokenPayload;
-    res.setHeader('Authorization', await this.authService.getJwtToken(payload));
-    return res.send(`
-          <div>
-            <h2>축하합니다!</h2>
-            <p>카카오 로그인 성공하였습니다!</p>
-            <a href="/auth/kakao/menu">메인으로</a>
-          </div>
-        `);
+  async kakaoLoginRedirect(@Req() req, @Res() res) {
+    console.log(req.user);
+    const state = req.state;
+    const kakaoUser = await this.kakaoAuthService.findKakaoUser(req.user);
+    // need to register
+    if (!kakaoUser) {
+      const newKakaoUser = await this.kakaoAuthService.register(
+        req.user.kakaoId,
+        req.user.accessToken,
+        req.user.refreshToken,
+      );
+
+      const payload = {
+        userType: 'kakao',
+        userId: newKakaoUser.userId,
+      } as JwtTokenPayload;
+      res.setHeader(
+        'Authorization',
+        await this.authService.getJwtToken(payload),
+      );
+    } else {
+      // just login
+      const payload = {
+        userType: 'kakao',
+        userId: kakaoUser.userId,
+      } as JwtTokenPayload;
+      res.setHeader(
+        'Authorization',
+        await this.authService.getJwtToken(payload),
+      );
+      console.log('kakao.login.redirect.res', res);
+    }
+    return res.redirect(state ? state : '/');
   }
 
   @Get('/:id/logout')
@@ -100,7 +117,7 @@ export class KakaoAuthController {
           Authorization: `Bearer ${kakaoUser.accessToken}`,
         },
       });
-      console.log(logout.request);
+      console.log('kakao.auth.logout ', logout.request);
       //res.redirect(logout.request.res);
     } catch (error) {
       console.error(error);
@@ -159,6 +176,6 @@ export class KakaoAuthController {
   })
   async kakakoRenewToken(@Param('id', ParseIntPipe) id: number) {
     const kakaoUser = await this.kakaoAuthService.findKakaoUserByUserId(id);
-    this.kakaoAuthService.renewToken(kakaoUser);
+    await this.kakaoAuthService.renewToken(kakaoUser);
   }
 }
