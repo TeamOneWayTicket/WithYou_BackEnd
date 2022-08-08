@@ -16,7 +16,6 @@ export class AuthService {
   ) {}
 
   async findUser(user: JwtTokenResponse): Promise<User> {
-    console.log('tokenValidate');
     return await this.userService.findOne(user.userId);
   }
 
@@ -24,5 +23,9 @@ export class AuthService {
     return {
       accessToken: this.jwtService.sign(payload),
     } as JwtAccessTokenResponse;
+  }
+
+  async validateJwtToken(jwtToken: JwtAccessTokenResponse) {
+    return await this.jwtService.verify(jwtToken.accessToken);
   }
 }

@@ -1,20 +1,25 @@
 import {
+  Body,
   Controller,
   Get,
   Header,
   Param,
   ParseIntPipe,
+  Post,
+  Query,
   Req,
   Res,
   UseGuards,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { KakaoAuthService } from './kakao.auth.service';
 import { ApiConfigService } from '../../shared/services/api-config.service';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
-import axios from 'axios';
 import { AuthService } from '../auth.service';
-import { JwtTokenPayload } from '../jwt/jwt.token.payload';
+import axios from 'axios';
+import { KakaoTokenDTO } from '../auth.DTO/kakaoTokenDto';
 
 @Controller('auth/kakao')
 @ApiTags('카카오 인증 API')
@@ -50,6 +55,26 @@ export class KakaoAuthController {
     `;
   }
 
+  // @Get('validate')
+  // @ApiOperation({
+  //   summary: 'token 검증 ',
+  //   description: 'token 유효성 검증',
+  // })
+  // async validateToken() {
+  //   this.authService.
+  // }
+
+  @Post('callback')
+  @UsePipes(ValidationPipe)
+  async getProfile(@Body() tokens: KakaoTokenDTO) {
+    console.log(tokens.access_token);
+    console.log(tokens.refresh_token);
+    const user = await this.kakaoAuthService.getKakaoProfile(
+      tokens.access_token,
+    );
+    console.log(user);
+  }
+
   @Get('/login')
   @UseGuards(AuthGuard('kakao'))
   @ApiOperation({
@@ -61,44 +86,42 @@ export class KakaoAuthController {
   }
 
   @Get('/callback')
-  @UseGuards(AuthGuard('kakao'))
   @ApiOperation({
     summary: 'kakao 로그인 redirect',
     description: 'kakao 로그인 redirect',
   })
-  async kakaoLoginRedirect(@Req() req, @Res() res) {
-    console.log(req.user);
-    const state = req.state;
-    const kakaoUser = await this.kakaoAuthService.findKakaoUser(req.user);
-    // need to register
-    if (!kakaoUser) {
-      const newKakaoUser = await this.kakaoAuthService.register(
-        req.user.kakaoId,
-        req.user.accessToken,
-        req.user.refreshToken,
-      );
-
-      const payload = {
-        userType: 'kakao',
-        userId: newKakaoUser.userId,
-      } as JwtTokenPayload;
-      res.setHeader(
-        'Authorization',
-        await this.authService.getJwtToken(payload),
-      );
-    } else {
-      // just login
-      const payload = {
-        userType: 'kakao',
-        userId: kakaoUser.userId,
-      } as JwtTokenPayload;
-      res.setHeader(
-        'Authorization',
-        await this.authService.getJwtToken(payload),
-      );
-      console.log('kakao.login.redirect.res', res);
-    }
-    return res.redirect(state ? state : '/');
+  async kakaoLoginRedirect(@Query() code, @Res() res) {
+    console.log(code);
+    // const kakaoUser = await this.kakaoAuthService.findKakaoUser(req.user);
+    // // need to register
+    // if (!kakaoUser) {
+    //   const newKakaoUser = await this.kakaoAuthService.register(
+    //     req.user.kakaoId,
+    //     req.user.accessToken,
+    //     req.user.refreshToken,
+    //   );
+    //
+    //   const payload = {
+    //     userType: 'kakao',
+    //     userId: newKakaoUser.userId,
+    //   } as JwtTokenPayload;
+    //   res.setHeader(
+    //     'Authorization',
+    //     await this.authService.getJwtToken(payload),
+    //   );
+    // } else {
+    //   // just login
+    //   const payload = {
+    //     userType: 'kakao',
+    //     userId: kakaoUser.userId,
+    //   } as JwtTokenPayload;
+    //   res.setHeader(
+    //     'Authorization',
+    //     await this.authService.getJwtToken(payload),
+    //   );
+    //   console.log('kakao.login.redirect.res', res);
+    // }
+    // return res.redirect(state ? state : '/');
   }
 
   @Get('/:id/logout')

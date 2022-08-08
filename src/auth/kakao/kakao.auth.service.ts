@@ -5,6 +5,7 @@ import { KakaoUser } from '../../user/kakao.user.entity';
 import { User } from '../../user/user.entity';
 import axios from 'axios';
 import { ApiConfigService } from '../../shared/services/api-config.service';
+import { KakaoStrategy } from './kakao.strategy';
 
 @Injectable()
 export class KakaoAuthService {
@@ -26,6 +27,21 @@ export class KakaoAuthService {
   async findKakaoUserByUserId(userId: number): Promise<KakaoUser> {
     return await this.kakaoUserRepository.findOne({
       where: { userId },
+    });
+  }
+
+  async getKakaoProfile(accessToken: string) {
+    return new Promise((resolve, reject) => {
+      new KakaoStrategy(this.configService).userProfile(
+        accessToken,
+        (error, user) => {
+          if (error) {
+            return reject(error);
+          } else {
+            return resolve(user);
+          }
+        },
+      );
     });
   }
 
