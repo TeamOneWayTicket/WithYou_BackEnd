@@ -20,6 +20,11 @@ import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { AuthService } from '../auth.service';
 import axios from 'axios';
 import { KakaoTokenDTO } from '../auth.DTO/kakaoTokenDto';
+import { JwtTokenPayload } from '../jwt/jwt.token.payload';
+import { JwtTokenResponse } from '../auth.DTO/jwtTokenResponse';
+import { JwtAccessTokenResponse } from '../auth.DTO/jwtAccessTokenResponse';
+import { contains } from 'class-validator';
+import { JwtService } from '@nestjs/jwt';
 
 @Controller('auth/kakao')
 @ApiTags('카카오 인증 API')
@@ -28,6 +33,7 @@ export class KakaoAuthController {
     private readonly kakaoAuthService: KakaoAuthService,
     private readonly configService: ApiConfigService,
     private readonly authService: AuthService,
+    private readonly jwtService: JwtService,
   ) {}
 
   @Get('menu')
@@ -66,13 +72,38 @@ export class KakaoAuthController {
 
   @Post('callback')
   @UsePipes(ValidationPipe)
-  async getProfile(@Body() tokens: KakaoTokenDTO) {
-    console.log(tokens.access_token);
-    console.log(tokens.refresh_token);
-    const user = await this.kakaoAuthService.getKakaoProfile(
+  async kakaoLoginCallback(
+    @Body() tokens: KakaoTokenDTO,
+  ): Promise<JwtAccessTokenResponse> {
+    const kakaoId = await this.kakaoAuthService.getKakaoProfile(
       tokens.access_token,
     );
-    console.log(user);
+    let jwtToken;
+    const kakaoUser = await this.kakaoAuthService.findKakaoUser(kakaoId);
+    // need to register
+    if (!kakaoUser) {
+      const newKakaoUser = await this.kakaoAuthService.register(
+        kakaoId,
+        tokens.access_token,
+        tokens.refresh_token,
+      );
+
+      const payload = {
+        userType: 'kakao',
+        userId: newKakaoUser.userId,
+      } as JwtTokenPayload;
+      jwtToken = this.jwtService.sign(payload);
+    } else {
+      // just login
+      const payload = {
+        userType: 'kakao',
+        userId: kakaoUser.userId,
+      } as JwtTokenPayload;
+      jwtToken = this.jwtService.sign(payload);
+    }
+    return {
+      accessToken: jwtToken,
+    };
   }
 
   @Get('/login')
@@ -86,12 +117,13 @@ export class KakaoAuthController {
   }
 
   @Get('/callback')
+  @UseGuards(AuthGuard('kakao'))
   @ApiOperation({
     summary: 'kakao 로그인 redirect',
     description: 'kakao 로그인 redirect',
   })
-  async kakaoLoginRedirect(@Query() code, @Res() res) {
-    console.log(code);
+  async kakaoLoginRedirect(@Req() req, @Res() res) {
+    console.log(req.user);
     // const kakaoUser = await this.kakaoAuthService.findKakaoUser(req.user);
     // // need to register
     // if (!kakaoUser) {

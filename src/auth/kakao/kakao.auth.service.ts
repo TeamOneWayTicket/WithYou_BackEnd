@@ -31,14 +31,14 @@ export class KakaoAuthService {
   }
 
   async getKakaoProfile(accessToken: string) {
-    return new Promise((resolve, reject) => {
+    return new Promise<string>((resolve, reject) => {
       new KakaoStrategy(this.configService).userProfile(
         accessToken,
         (error, user) => {
           if (error) {
             return reject(error);
           } else {
-            return resolve(user);
+            return resolve(user.id);
           }
         },
       );

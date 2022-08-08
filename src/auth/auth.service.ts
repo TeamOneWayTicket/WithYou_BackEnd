@@ -19,10 +19,8 @@ export class AuthService {
     return await this.userService.findOne(user.userId);
   }
 
-  async getJwtToken(payload: JwtTokenPayload): Promise<JwtAccessTokenResponse> {
-    return {
-      accessToken: this.jwtService.sign(payload),
-    } as JwtAccessTokenResponse;
+  getJwtToken(payload: JwtTokenPayload): string {
+    return this.jwtService.sign(payload);
   }
 
   async validateJwtToken(jwtToken: JwtAccessTokenResponse) {

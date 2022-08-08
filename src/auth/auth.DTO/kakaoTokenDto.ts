@@ -1,12 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString } from 'class-validator';
+import { IsOptional, IsString } from 'class-validator';
 
 export class KakaoTokenDTO {
-  @ApiProperty({ description: '유저 타입' })
+  @ApiProperty({ description: 'access token' })
   @IsString()
   access_token: string;
 
-  @ApiProperty({ description: '유저 id' })
+  @ApiProperty({ description: 'refresh token' })
   @IsString()
   refresh_token: string;
 }

@@ -18,7 +18,6 @@ async function bootstrap() {
   app.enableCors({
     //origin: '*',
     origin: function (origin, callback) {
-      console.log('main.origin ', origin);
       if (!origin || whitelist.indexOf(origin) !== -1) {
         callback(null, true);
       } else {

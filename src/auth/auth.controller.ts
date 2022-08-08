@@ -18,12 +18,12 @@ import { JwtAccessTokenResponse } from './auth.DTO/jwtAccessTokenResponse';
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  @Get('/get-jwt-token')
-  async login(
-    @Query() query: JwtTokenPayload,
-  ): Promise<JwtAccessTokenResponse> {
-    return await this.authService.getJwtToken(query);
-  }
+  // @Get('/get-jwt-token')
+  // async login(
+  //   @Query() query: JwtTokenPayload,
+  // ): Promise<JwtAccessTokenResponse> {
+  //   return await this.authService.getJwtToken(query);
+  // }
 
   @Post('/test-signin')
   @UseGuards(JwtAuthGuard)
