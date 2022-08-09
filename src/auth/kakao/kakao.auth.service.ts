@@ -31,25 +31,21 @@ export class KakaoAuthService {
   }
 
   async getKakaoProfile(accessToken: string) {
-    return new Promise<string>((resolve, reject) => {
+    return new Promise<any>((resolve, reject) => {
       new KakaoStrategy(this.configService).userProfile(
         accessToken,
         (error, user) => {
           if (error) {
             return reject(error);
           } else {
-            return resolve(user.id);
+            return resolve(user);
           }
         },
       );
     });
   }
 
-  async register(
-    kakaoId: string,
-    accessToken: string,
-    refreshToken: string,
-  ): Promise<KakaoUser> {
+  async register(kakaoId: string, accessToken: string): Promise<KakaoUser> {
     const queryRunner = this.myDataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
@@ -61,7 +57,6 @@ export class KakaoAuthService {
         userId: user.id,
         accessToken,
         kakaoId,
-        refreshToken,
       });
       await queryRunner.commitTransaction();
     } catch (err) {
@@ -93,7 +88,7 @@ export class KakaoAuthService {
     const existUser: KakaoUser = await this.findKakaoUser(user.kakaoId);
 
     if (!existUser) {
-      return this.register(user.kakaoId, user.accessToken, user.refreshToken);
+      return this.register(user.kakaoId, user.accessToken);
     } else {
       return this.updateUser(user);
     }

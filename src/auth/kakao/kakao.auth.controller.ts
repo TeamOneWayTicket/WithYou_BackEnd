@@ -19,12 +19,11 @@ import { ApiConfigService } from '../../shared/services/api-config.service';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { AuthService } from '../auth.service';
 import axios from 'axios';
-import { KakaoTokenDTO } from '../auth.DTO/kakaoTokenDto';
+import { KakaoTokenDTO } from '../auth.DTO/kakaoTokenDTO';
 import { JwtTokenPayload } from '../jwt/jwt.token.payload';
-import { JwtTokenResponse } from '../auth.DTO/jwtTokenResponse';
 import { JwtAccessTokenResponse } from '../auth.DTO/jwtAccessTokenResponse';
-import { contains } from 'class-validator';
 import { JwtService } from '@nestjs/jwt';
+import { JwtTokenDTO } from '../auth.DTO/jwtTokenDTO';
 
 @Controller('auth/kakao')
 @ApiTags('카카오 인증 API')
@@ -61,49 +60,69 @@ export class KakaoAuthController {
     `;
   }
 
-  // @Get('validate')
-  // @ApiOperation({
-  //   summary: 'token 검증 ',
-  //   description: 'token 유효성 검증',
-  // })
-  // async validateToken() {
-  //   this.authService.
-  // }
+  @Post('validate')
+  @ApiOperation({
+    summary: 'token 검증 ',
+    description: 'token 유효성 검증',
+  })
+  async validateToken(@Body() token: JwtTokenDTO) {
+    const result = await this.jwtService.verify(token.jwtToken);
+    console.log(result);
+  }
 
   @Post('callback')
   @UsePipes(ValidationPipe)
   async kakaoLoginCallback(
     @Body() tokens: KakaoTokenDTO,
   ): Promise<JwtAccessTokenResponse> {
-    const kakaoId = await this.kakaoAuthService.getKakaoProfile(
-      tokens.access_token,
+    const _kakaoProfile = await this.kakaoAuthService.getKakaoProfile(
+      tokens.accessToken,
     );
+    console.log(_kakaoProfile);
+    const _kakaoInfo = _kakaoProfile._json;
+    const kakaoId = _kakaoInfo.id;
+    const kakaoName = _kakaoInfo.properties.nickname;
+    const kakaoProfileImage = _kakaoInfo.properties.profile_image;
+
+    console.log(kakaoId);
+    console.log(kakaoName);
+    console.log(kakaoProfileImage);
+
     let jwtToken;
     const kakaoUser = await this.kakaoAuthService.findKakaoUser(kakaoId);
     // need to register
     if (!kakaoUser) {
       const newKakaoUser = await this.kakaoAuthService.register(
         kakaoId,
-        tokens.access_token,
-        tokens.refresh_token,
+        tokens.accessToken,
       );
 
       const payload = {
         userType: 'kakao',
         userId: newKakaoUser.userId,
+        userName: kakaoName,
+        userProfile: kakaoProfileImage,
       } as JwtTokenPayload;
       jwtToken = this.jwtService.sign(payload);
+      return {
+        accessToken: jwtToken,
+        isNew: false,
+      };
     } else {
       // just login
       const payload = {
         userType: 'kakao',
         userId: kakaoUser.userId,
+        userName: kakaoName,
+        userProfile: kakaoProfileImage,
       } as JwtTokenPayload;
       jwtToken = this.jwtService.sign(payload);
+      console.log(jwtToken);
+      return {
+        accessToken: jwtToken,
+        isNew: true,
+      };
     }
-    return {
-      accessToken: jwtToken,
-    };
   }
 
   @Get('/login')
@@ -123,37 +142,31 @@ export class KakaoAuthController {
     description: 'kakao 로그인 redirect',
   })
   async kakaoLoginRedirect(@Req() req, @Res() res) {
-    console.log(req.user);
-    // const kakaoUser = await this.kakaoAuthService.findKakaoUser(req.user);
-    // // need to register
-    // if (!kakaoUser) {
-    //   const newKakaoUser = await this.kakaoAuthService.register(
-    //     req.user.kakaoId,
-    //     req.user.accessToken,
-    //     req.user.refreshToken,
-    //   );
-    //
-    //   const payload = {
-    //     userType: 'kakao',
-    //     userId: newKakaoUser.userId,
-    //   } as JwtTokenPayload;
-    //   res.setHeader(
-    //     'Authorization',
-    //     await this.authService.getJwtToken(payload),
-    //   );
-    // } else {
-    //   // just login
-    //   const payload = {
-    //     userType: 'kakao',
-    //     userId: kakaoUser.userId,
-    //   } as JwtTokenPayload;
-    //   res.setHeader(
-    //     'Authorization',
-    //     await this.authService.getJwtToken(payload),
-    //   );
-    //   console.log('kakao.login.redirect.res', res);
-    // }
-    // return res.redirect(state ? state : '/');
+    const kakaoUser = await this.kakaoAuthService.findKakaoUser(req.user);
+    let jwtToken;
+    // need to register
+    if (!kakaoUser) {
+      const newKakaoUser = await this.kakaoAuthService.register(
+        req.user.kakaoId,
+        req.user.accessToken,
+      );
+
+      const payload = {
+        userType: 'kakao',
+        userId: newKakaoUser.userId,
+      } as JwtTokenPayload;
+      jwtToken = this.jwtService.sign(payload);
+    } else {
+      // just login
+      const payload = {
+        userType: 'kakao',
+        userId: kakaoUser.userId,
+      } as JwtTokenPayload;
+      jwtToken = this.jwtService.sign(payload);
+    }
+    return {
+      accessToken: jwtToken,
+    };
   }
 
   @Get('/:id/logout')
