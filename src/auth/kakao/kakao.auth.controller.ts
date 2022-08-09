@@ -6,7 +6,6 @@ import {
   Param,
   ParseIntPipe,
   Post,
-  Query,
   Req,
   Res,
   UseGuards,
@@ -123,50 +122,6 @@ export class KakaoAuthController {
         isNew: true,
       };
     }
-  }
-
-  @Get('/login')
-  @UseGuards(AuthGuard('kakao'))
-  @ApiOperation({
-    summary: 'kakao 로그인 ',
-    description: 'kakao 로그인',
-  })
-  async kakaoLoginLogic(@Res() res) {
-    // kakaoGuard 가 처리해줌
-  }
-
-  @Get('/callback')
-  @UseGuards(AuthGuard('kakao'))
-  @ApiOperation({
-    summary: 'kakao 로그인 redirect',
-    description: 'kakao 로그인 redirect',
-  })
-  async kakaoLoginRedirect(@Req() req, @Res() res) {
-    const kakaoUser = await this.kakaoAuthService.findKakaoUser(req.user);
-    let jwtToken;
-    // need to register
-    if (!kakaoUser) {
-      const newKakaoUser = await this.kakaoAuthService.register(
-        req.user.kakaoId,
-        req.user.accessToken,
-      );
-
-      const payload = {
-        userType: 'kakao',
-        userId: newKakaoUser.userId,
-      } as JwtTokenPayload;
-      jwtToken = this.jwtService.sign(payload);
-    } else {
-      // just login
-      const payload = {
-        userType: 'kakao',
-        userId: kakaoUser.userId,
-      } as JwtTokenPayload;
-      jwtToken = this.jwtService.sign(payload);
-    }
-    return {
-      accessToken: jwtToken,
-    };
   }
 
   @Get('/:id/logout')
