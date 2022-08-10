@@ -24,6 +24,7 @@ import { JwtAccessTokenResponseDto } from '../authDto/jwt-access-token-response.
 import { JwtService } from '@nestjs/jwt';
 import { JwtTokenDto } from '../authDto/jwt-token.dto';
 import { JwtTokenValidationDto } from '../authDto/jwt-token-validation.dto';
+import { UserService } from '../../user/user.service';
 
 @Controller('auth/kakao')
 @ApiTags('카카오 인증 API')
@@ -33,6 +34,7 @@ export class KakaoAuthController {
     private readonly configService: ApiConfigService,
     private readonly authService: AuthService,
     private readonly jwtService: JwtService,
+    private readonly userService: UserService,
   ) {}
 
   @Get('menu')
@@ -71,7 +73,7 @@ export class KakaoAuthController {
     try {
       const result = await this.jwtService.verify(token.jwtToken);
       return {
-        isNew: await this.authService.validateUserInfo(result.user),
+        isNew: !(await this.userService.hasMinimumInfo(result.userId)),
       };
     } catch (e) {
       return 'invalid jwtToken';
