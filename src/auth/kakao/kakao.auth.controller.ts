@@ -118,12 +118,12 @@ export class KakaoAuthController {
       };
     } else {
       // just login
-      const payload = {
+      const payload: JwtTokenPayload = {
         userType: 'kakao',
         userId: kakaoUser.userId,
         userName: kakaoName,
         userProfile: kakaoProfileImage,
-      } as JwtTokenPayload;
+      };
       const jwtToken = this.jwtService.sign(payload);
       return {
         accessToken: jwtToken,
@@ -163,7 +163,6 @@ export class KakaoAuthController {
     description: 'kakao 로그인 redirect',
   })
   async kakaoLogoutLogicRedirect(@Req() req, @Res() res): Promise<void> {
-    //this.kakaoAuthService.login(req.user);
     return res.send(`
           <div>
             <h2>축하합니다!</h2>
