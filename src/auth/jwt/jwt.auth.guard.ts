@@ -13,7 +13,7 @@ import { AuthService } from '../auth.service';
 @Injectable()
 export default class JwtAuthGuard extends AuthGuard('jwt') {
   constructor(
-    private jwtService: JwtService,
+    private readonly jwtService: JwtService,
     private readonly configService: ApiConfigService,
     private readonly authService: AuthService,
   ) {
