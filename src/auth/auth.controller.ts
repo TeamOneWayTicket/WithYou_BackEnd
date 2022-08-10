@@ -1,17 +1,8 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Query,
-  Req,
-  Res,
-  UseGuards,
-} from '@nestjs/common';
+import { Controller, Get, Post, Query, Req, UseGuards } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import JwtAuthGuard from './jwt/jwt.auth.guard';
 import { AuthService } from './auth.service';
 import { JwtPayload } from './jwt/jwt.payload.interface';
-import { AuthGuard } from '@nestjs/passport';
+import JwtAuthGuard from './jwt/jwt.auth.guard';
 
 @Controller('auth')
 @ApiTags('인증 API')
@@ -24,7 +15,7 @@ export class AuthController {
   }
 
   @Post('/test-signin')
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(JwtAuthGuard)
   signin(@Req() req) {
     return req.user;
   }
