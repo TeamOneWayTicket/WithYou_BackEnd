@@ -55,7 +55,6 @@ export class UserController {
     @Param('id', ParseIntPipe) id: number,
     @Res() res,
   ): Promise<User> {
-    console.log('user.login', res);
     return await this.userService.findOne(id);
   }
 

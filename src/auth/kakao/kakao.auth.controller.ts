@@ -68,10 +68,8 @@ export class KakaoAuthController {
   async validateToken(
     @Body() token: JwtTokenDto,
   ): Promise<JwtTokenValidationDto | string> {
-    console.log(token);
     try {
       const result = await this.jwtService.verify(token.jwtToken);
-      console.log(result);
       return {
         isNew: await this.authService.validateUserInfo(result.user),
       };
@@ -150,7 +148,6 @@ export class KakaoAuthController {
           Authorization: `Bearer ${kakaoUser.accessToken}`,
         },
       });
-      console.log('kakao.auth.logout ', logout.request);
       //res.redirect(logout.request.res);
     } catch (error) {
       console.error(error);

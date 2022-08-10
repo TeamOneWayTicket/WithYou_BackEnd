@@ -25,7 +25,6 @@ export class AuthController {
   @Post('/test-signin')
   @UseGuards(JwtAuthGuard)
   signin(@Req() req) {
-    console.log(req);
     return req.user;
   }
 }

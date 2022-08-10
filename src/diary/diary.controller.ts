@@ -129,9 +129,4 @@ export class DiaryController {
 
     return await this.diaryService.findOne(savedDiary.id);
   }
-
-  @Get('/test')
-  async getSignedUrlForProductImage2() {
-    console.log('hello');
-  }
 }

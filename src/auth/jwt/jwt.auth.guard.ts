@@ -23,7 +23,6 @@ export default class JwtAuthGuard extends AuthGuard('jwt') {
   }
 
   async canActivate(context: ExecutionContext): Promise<any> {
-    console.log('가드 시동');
     const request = context.switchToHttp().getRequest();
 
     const { authorization } = request.headers;
