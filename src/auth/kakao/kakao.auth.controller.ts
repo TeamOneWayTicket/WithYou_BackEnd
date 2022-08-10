@@ -88,10 +88,10 @@ export class KakaoAuthController {
     description: '카카오 access 토큰 받아 jwt 토큰 발급',
   })
   async kakaoLoginCallback(
-    @Body() token: KakaoTokenDto,
+    @Body() dto: KakaoTokenDto,
   ): Promise<JwtAccessTokenResponseDto> {
     const _kakaoProfile = await this.kakaoAuthService.getKakaoProfile(
-      token.accessToken,
+      dto.accessToken,
     );
 
     const _kakaoInfo = _kakaoProfile._json;
@@ -104,7 +104,7 @@ export class KakaoAuthController {
       // need to register
       const newKakaoUser = await this.kakaoAuthService.register(
         kakaoId,
-        token.accessToken,
+        dto.accessToken,
       );
       const payload: JwtPayload = {
         userType: 'kakao',
