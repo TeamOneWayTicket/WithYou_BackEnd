@@ -19,12 +19,12 @@ import { ApiConfigService } from '../../shared/services/api-config.service';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { AuthService } from '../auth.service';
 import axios from 'axios';
-import { KakaoTokenDto } from '../authDto/kakao-token.dto';
+import { KakaoTokenDto } from '../dto/kakao-token.dto';
 import { JwtPayload } from '../jwt/jwt.payload.interface';
-import { JwtAccessTokenResponseDto } from '../authDto/jwt-access-token-response.dto';
+import { JwtAccessTokenResponseDto } from '../dto/jwt-access-token-response.dto';
 import { JwtService } from '@nestjs/jwt';
-import { JwtTokenDto } from '../authDto/jwt-token.dto';
-import { JwtTokenValidationDto } from '../authDto/jwt-token-validation.dto';
+import { JwtTokenDto } from '../dto/jwt-token.dto';
+import { JwtTokenValidationDto } from '../dto/jwt-token-validation.dto';
 import { UserService } from '../../user/user.service';
 
 @Controller('auth/kakao')
