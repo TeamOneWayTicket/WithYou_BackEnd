@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-export class JwtTokenResponse {
+export class JwtTokenResponseDto {
   @ApiProperty({ description: '유저 타입' })
   userType: string;
 

@@ -7,7 +7,7 @@ import {
 import { AuthGuard } from '@nestjs/passport';
 import { JwtService } from '@nestjs/jwt';
 import { ApiConfigService } from '../../shared/services/api-config.service';
-import { JwtTokenResponse } from '../auth.DTO/jwtTokenResponse';
+import { JwtTokenResponseDto } from '../authDto/jwt-token-response.dto';
 import { AuthService } from '../auth.service';
 
 @Injectable()
@@ -46,7 +46,7 @@ export default class JwtAuthGuard extends AuthGuard('jwt') {
     try {
       const verify = this.jwtService.verify(token, {
         secret: secretKey,
-      }) as JwtTokenResponse;
+      }) as JwtTokenResponseDto;
       return verify;
     } catch (e) {
       switch (e.message) {

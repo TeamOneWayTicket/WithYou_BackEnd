@@ -18,12 +18,12 @@ import { ApiConfigService } from '../../shared/services/api-config.service';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { AuthService } from '../auth.service';
 import axios from 'axios';
-import { KakaoTokenDTO } from '../auth.DTO/kakaoTokenDTO';
+import { KakaoTokenDto } from '../authDto/kakao-token.dto';
 import { JwtTokenPayload } from '../jwt/jwt.token.payload';
-import { JwtAccessTokenResponse } from '../auth.DTO/jwtAccessTokenResponse';
+import { JwtAccessTokenResponseDto } from '../authDto/jwt-access-token-response.dto';
 import { JwtService } from '@nestjs/jwt';
-import { JwtTokenDTO } from '../auth.DTO/jwtTokenDTO';
-import { JwtTokenValidationDTO } from '../auth.DTO/jwtTokenValidationDTO';
+import { JwtTokenDto } from '../authDto/jwt-token.dto';
+import { JwtTokenValidationDto } from '../authDto/jwt-token-validation.dto';
 
 @Controller('auth/kakao')
 @ApiTags('카카오 인증 API')
@@ -66,8 +66,8 @@ export class KakaoAuthController {
     description: 'token 유효성 검사 및 유저 최소 정보가 입력되었는지 알려줌',
   })
   async validateToken(
-    @Body() token: JwtTokenDTO,
-  ): Promise<JwtTokenValidationDTO | string> {
+    @Body() token: JwtTokenDto,
+  ): Promise<JwtTokenValidationDto | string> {
     console.log(token);
     try {
       const result = await this.jwtService.verify(token.jwtToken);
@@ -87,8 +87,8 @@ export class KakaoAuthController {
     description: '카카오 access 토큰 받아 jwt 토큰 발급',
   })
   async kakaoLoginCallback(
-    @Body() tokens: KakaoTokenDTO,
-  ): Promise<JwtAccessTokenResponse> {
+    @Body() tokens: KakaoTokenDto,
+  ): Promise<JwtAccessTokenResponseDto> {
     const _kakaoProfile = await this.kakaoAuthService.getKakaoProfile(
       tokens.accessToken,
     );

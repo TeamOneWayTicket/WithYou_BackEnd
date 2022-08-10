@@ -4,7 +4,7 @@ import { ApiConfigService } from '../shared/services/api-config.service';
 import { JwtTokenPayload } from './jwt/jwt.token.payload';
 import { User } from '../user/user.entity';
 import { JwtService } from '@nestjs/jwt';
-import { JwtTokenResponse } from './auth.DTO/jwtTokenResponse';
+import { JwtTokenResponseDto } from './authDto/jwt-token-response.dto';
 
 @Injectable()
 export class AuthService {
@@ -14,7 +14,7 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async findUser(user: JwtTokenResponse): Promise<User> {
+  async findUser(user: JwtTokenResponseDto): Promise<User> {
     return await this.userService.findOne(user.userId);
   }
 
