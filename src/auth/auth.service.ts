@@ -14,8 +14,8 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async findUser(user: JwtTokenResponseDto): Promise<User> {
-    return await this.userService.findOne(user.userId);
+  async findUser(token: JwtTokenResponseDto): Promise<User> {
+    return await this.userService.findOne(token.userId);
   }
 
   async getJwtToken(payload: JwtTokenPayload): Promise<string> {
