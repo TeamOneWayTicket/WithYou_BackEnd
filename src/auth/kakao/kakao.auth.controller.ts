@@ -23,7 +23,6 @@ import { JwtTokenPayload } from '../jwt/jwt.token.payload';
 import { JwtAccessTokenResponse } from '../auth.DTO/jwtAccessTokenResponse';
 import { JwtService } from '@nestjs/jwt';
 import { JwtTokenDTO } from '../auth.DTO/jwtTokenDTO';
-import { JwtTokenResponse } from '../auth.DTO/jwtTokenResponse';
 import { JwtTokenValidationDTO } from '../auth.DTO/jwtTokenValidationDTO';
 
 @Controller('auth/kakao')
@@ -83,6 +82,10 @@ export class KakaoAuthController {
 
   @Post('callback')
   @UsePipes(ValidationPipe)
+  @ApiOperation({
+    summary: '카카오 로그인 콜백',
+    description: '카카오 access 토큰 받아 jwt 토큰 발급',
+  })
   async kakaoLoginCallback(
     @Body() tokens: KakaoTokenDTO,
   ): Promise<JwtAccessTokenResponse> {
@@ -124,7 +127,6 @@ export class KakaoAuthController {
         userProfile: kakaoProfileImage,
       } as JwtTokenPayload;
       jwtToken = this.jwtService.sign(payload);
-      console.log(jwtToken);
       return {
         accessToken: jwtToken,
         isNew: false,
@@ -198,15 +200,5 @@ export class KakaoAuthController {
       res.json(error);
     }
     res.redirect('/auth/kakao/menu');
-  }
-
-  @Get('/:id/renew-Token')
-  @ApiOperation({
-    summary: 'kakao 로그인 상태 unlink',
-    description: 'kakao accessToken ',
-  })
-  async kakakoRenewToken(@Param('id', ParseIntPipe) id: number) {
-    const kakaoUser = await this.kakaoAuthService.findKakaoUserByUserId(id);
-    await this.kakaoAuthService.renewToken(kakaoUser);
   }
 }

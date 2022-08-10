@@ -20,7 +20,6 @@ export class KakaoStrategy extends PassportStrategy(Strategy) {
   ) {
     const profileJson = profile['_json'];
     const kakaoId = profileJson.id;
-    console.log('kakao.strategy.profileJson ', profileJson);
     try {
       const user: {
         accessToken;
@@ -33,7 +32,6 @@ export class KakaoStrategy extends PassportStrategy(Strategy) {
       };
       done(null, user);
     } catch (error) {
-      console.log('kakao.strategy.error', error);
       done(error);
     }
   }

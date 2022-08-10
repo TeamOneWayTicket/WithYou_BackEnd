@@ -3,7 +3,6 @@ import { DataSource, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { KakaoUser } from '../../user/kakao.user.entity';
 import { User } from '../../user/user.entity';
-import axios from 'axios';
 import { ApiConfigService } from '../../shared/services/api-config.service';
 import { KakaoStrategy } from './kakao.strategy';
 
@@ -82,36 +81,5 @@ export class KakaoAuthService {
 
     await this.kakaoUserRepository.update(targetUser.id, updatedUser);
     return updatedUser;
-  }
-
-  async login(user: KakaoUser): Promise<KakaoUser> {
-    const existUser: KakaoUser = await this.findKakaoUser(user.kakaoId);
-
-    if (!existUser) {
-      return this.register(user.kakaoId, user.accessToken);
-    } else {
-      return this.updateUser(user);
-    }
-  }
-
-  async renewToken(kakaoUser: KakaoUser) {
-    try {
-      const _hostName = 'https://kauth.kakao.com/oauth/token';
-      const res = await axios({
-        method: 'get',
-        url: _hostName,
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
-        },
-        data: {
-          grant_type: 'refresh_token',
-          client_id: this.configService.kakaoConfig.restApiKey,
-          refresh_token: kakaoUser.refreshToken,
-        },
-      });
-      console.log('kakao.auth.service', res);
-    } catch (error) {
-      console.error(error);
-    }
   }
 }
