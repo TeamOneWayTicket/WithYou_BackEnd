@@ -11,6 +11,7 @@ import { ApiTags } from '@nestjs/swagger';
 import JwtAuthGuard from './jwt/jwt.auth.guard';
 import { AuthService } from './auth.service';
 import { JwtTokenPayload } from './jwt/jwt.token.payload';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('auth')
 @ApiTags('인증 API')
@@ -23,7 +24,7 @@ export class AuthController {
   }
 
   @Post('/test-signin')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(AuthGuard('jwt'))
   signin(@Req() req) {
     return req.user;
   }
