@@ -23,6 +23,8 @@ import { JwtTokenPayload } from '../jwt/jwt.token.payload';
 import { JwtAccessTokenResponse } from '../auth.DTO/jwtAccessTokenResponse';
 import { JwtService } from '@nestjs/jwt';
 import { JwtTokenDTO } from '../auth.DTO/jwtTokenDTO';
+import { JwtTokenResponse } from '../auth.DTO/jwtTokenResponse';
+import { JwtTokenValidationDTO } from '../auth.DTO/jwtTokenValidationDTO';
 
 @Controller('auth/kakao')
 @ApiTags('카카오 인증 API')
@@ -62,11 +64,21 @@ export class KakaoAuthController {
   @Post('validate')
   @ApiOperation({
     summary: 'token 검증 ',
-    description: 'token 유효성 검증',
+    description: 'token 유효성 검사 및 유저 최소 정보가 입력되었는지 알려줌',
   })
-  async validateToken(@Body() token: JwtTokenDTO) {
-    const result = await this.jwtService.verify(token.jwtToken);
-    console.log(result);
+  async validateToken(
+    @Body() token: JwtTokenDTO,
+  ): Promise<JwtTokenValidationDTO | string> {
+    console.log(token);
+    try {
+      const result = await this.jwtService.verify(token.jwtToken);
+      console.log(result);
+      return {
+        isNew: await this.authService.validateUserInfo(result.user),
+      };
+    } catch (e) {
+      return 'invalid jwtToken';
+    }
   }
 
   @Post('callback')
@@ -105,7 +117,7 @@ export class KakaoAuthController {
       jwtToken = this.jwtService.sign(payload);
       return {
         accessToken: jwtToken,
-        isNew: false,
+        isNew: true,
       };
     } else {
       // just login
@@ -119,7 +131,7 @@ export class KakaoAuthController {
       console.log(jwtToken);
       return {
         accessToken: jwtToken,
-        isNew: true,
+        isNew: false,
       };
     }
   }

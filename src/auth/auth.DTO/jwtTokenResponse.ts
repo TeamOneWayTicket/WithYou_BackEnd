@@ -7,6 +7,12 @@ export class JwtTokenResponse {
   @ApiProperty({ description: '유저 id' })
   userId: number;
 
+  @ApiProperty({ description: '유저 이름' })
+  userName: string;
+
+  @ApiProperty({ description: '유저 프로필 사진' })
+  userProfile: number;
+
   @ApiProperty({ description: '토큰 발급 시각' })
   iat: string;
 

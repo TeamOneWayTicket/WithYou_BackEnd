@@ -19,11 +19,11 @@ export class AuthService {
     return await this.userService.findOne(user.userId);
   }
 
-  getJwtToken(payload: JwtTokenPayload): string {
+  async getJwtToken(payload: JwtTokenPayload): Promise<string> {
     return this.jwtService.sign(payload);
   }
 
-  async validateJwtToken(jwtToken: JwtAccessTokenResponse) {
-    return await this.jwtService.verify(jwtToken.accessToken);
+  async validateUserInfo(id: number): Promise<boolean> {
+    return !(await this.userService.hasMinimumInfo(id));
   }
 }
