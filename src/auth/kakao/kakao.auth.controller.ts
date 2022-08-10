@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Get,
@@ -10,8 +11,8 @@ import {
   Res,
   UseGuards,
   UsePipes,
-  ValidationPipe,
-} from '@nestjs/common';
+  ValidationPipe
+} from "@nestjs/common";
 import { AuthGuard } from '@nestjs/passport';
 import { KakaoAuthService } from './kakao.auth.service';
 import { ApiConfigService } from '../../shared/services/api-config.service';
@@ -19,7 +20,7 @@ import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { AuthService } from '../auth.service';
 import axios from 'axios';
 import { KakaoTokenDto } from '../authDto/kakao-token.dto';
-import { JwtTokenPayload } from '../jwt/jwt.token.payload';
+import { JwtPayload } from '../jwt/jwt.payload';
 import { JwtAccessTokenResponseDto } from '../authDto/jwt-access-token-response.dto';
 import { JwtService } from '@nestjs/jwt';
 import { JwtTokenDto } from '../authDto/jwt-token.dto';
@@ -69,14 +70,14 @@ export class KakaoAuthController {
   })
   async validateToken(
     @Body() token: JwtTokenDto,
-  ): Promise<JwtTokenValidationDto | string> {
+  ): Promise<JwtTokenValidationDto> {
     try {
       const result = await this.jwtService.verify(token.jwtToken);
       return {
         isNew: !(await this.userService.hasMinimumInfo(result.userId)),
       };
     } catch (e) {
-      return 'invalid jwtToken';
+      throw new BadRequestException('유효하지 않은 토큰입니다');
     }
   }
 
@@ -105,12 +106,12 @@ export class KakaoAuthController {
         kakaoId,
         token.accessToken,
       );
-      const payload = {
+      const payload: JwtPayload = {
         userType: 'kakao',
         userId: newKakaoUser.userId,
         userName: kakaoName,
         userProfile: kakaoProfileImage,
-      } as JwtTokenPayload;
+      };
       const jwtToken = this.jwtService.sign(payload);
       return {
         accessToken: jwtToken,
@@ -118,7 +119,7 @@ export class KakaoAuthController {
       };
     } else {
       // just login
-      const payload: JwtTokenPayload = {
+      const payload: JwtPayload = {
         userType: 'kakao',
         userId: kakaoUser.userId,
         userName: kakaoName,

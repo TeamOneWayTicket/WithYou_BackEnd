@@ -10,7 +10,7 @@ import {
 import { ApiTags } from '@nestjs/swagger';
 import JwtAuthGuard from './jwt/jwt.auth.guard';
 import { AuthService } from './auth.service';
-import { JwtTokenPayload } from './jwt/jwt.token.payload';
+import { JwtPayload } from './jwt/jwt.payload';
 import { AuthGuard } from '@nestjs/passport';
 
 @Controller('auth')
@@ -19,7 +19,7 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Get('/get-jwt-token')
-  async login(@Query() query: JwtTokenPayload): Promise<string> {
+  async login(@Query() query: JwtPayload): Promise<string> {
     return await this.authService.getJwtToken(query);
   }
 

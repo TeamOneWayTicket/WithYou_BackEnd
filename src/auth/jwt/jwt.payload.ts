@@ -1,4 +1,4 @@
-export class JwtTokenPayload {
+export class JwtPayload {
   userType: string;
   userId: number;
   userName: string;
