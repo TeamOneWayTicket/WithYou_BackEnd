@@ -149,10 +149,8 @@ export class KakaoAuthController {
           Authorization: `Bearer ${kakaoUser.accessToken}`,
         },
       });
-      //res.redirect(logout.request.res);
     } catch (error) {
-      console.error(error);
-      //res.json(error);
+      throw new BadRequestException(error);
     }
   }
 
@@ -193,8 +191,7 @@ export class KakaoAuthController {
         },
       });
     } catch (error) {
-      console.error(error);
-      res.json(error);
+      throw new BadRequestException(error);
     }
     res.redirect('/auth/kakao/menu');
   }
