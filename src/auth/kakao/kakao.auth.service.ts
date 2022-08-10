@@ -10,11 +10,11 @@ import { KakaoStrategy } from './kakao.strategy';
 export class KakaoAuthService {
   constructor(
     @InjectRepository(KakaoUser)
-    private kakaoUserRepository: Repository<KakaoUser>,
+    private readonly kakaoUserRepository: Repository<KakaoUser>,
     @InjectRepository(User)
-    private userRepository: Repository<User>,
-    private myDataSource: DataSource,
-    private configService: ApiConfigService,
+    private readonly userRepository: Repository<User>,
+    private readonly myDataSource: DataSource,
+    private readonly configService: ApiConfigService,
   ) {}
 
   async findKakaoUser(kakaoId: string): Promise<KakaoUser> {
