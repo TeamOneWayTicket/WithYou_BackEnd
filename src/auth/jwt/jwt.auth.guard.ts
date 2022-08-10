@@ -9,6 +9,7 @@ import { JwtService } from '@nestjs/jwt';
 import { ApiConfigService } from '../../shared/services/api-config.service';
 import { JwtTokenResponseDto } from '../authDto/jwt-token-response.dto';
 import { AuthService } from '../auth.service';
+import { UserService } from '../../user/user.service';
 
 @Injectable()
 export default class JwtAuthGuard extends AuthGuard('jwt') {
@@ -16,6 +17,7 @@ export default class JwtAuthGuard extends AuthGuard('jwt') {
     private readonly jwtService: JwtService,
     private readonly configService: ApiConfigService,
     private readonly authService: AuthService,
+    private readonly userService: UserService,
   ) {
     super();
   }
@@ -32,7 +34,7 @@ export default class JwtAuthGuard extends AuthGuard('jwt') {
 
     const token = authorization.replace('Bearer ', '');
     const jwtToken = this.validateToken(token);
-    const user = await this.authService.findUser(jwtToken);
+    const user = await this.userService.findOne(jwtToken.userId);
     if (!user) {
       throw new HttpException('유효하지 않은 유저입니다.', 401);
     }
