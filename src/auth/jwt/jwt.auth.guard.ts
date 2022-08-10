@@ -31,9 +31,8 @@ export default class JwtAuthGuard extends AuthGuard('jwt') {
     }
 
     const token = authorization.replace('Bearer ', '');
-    request.user = this.validateToken(token);
-
-    const user = await this.authService.findUser(request.user);
+    const jwtToken = this.validateToken(token);
+    const user = await this.authService.findUser(jwtToken);
     if (!user) {
       throw new HttpException('유효하지 않은 유저입니다.', 401);
     }
