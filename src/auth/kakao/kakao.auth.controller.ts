@@ -11,8 +11,8 @@ import {
   Res,
   UseGuards,
   UsePipes,
-  ValidationPipe
-} from "@nestjs/common";
+  ValidationPipe,
+} from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { KakaoAuthService } from './kakao.auth.service';
 import { ApiConfigService } from '../../shared/services/api-config.service';
@@ -20,7 +20,7 @@ import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { AuthService } from '../auth.service';
 import axios from 'axios';
 import { KakaoTokenDto } from '../authDto/kakao-token.dto';
-import { JwtPayload } from '../jwt/jwt.payload';
+import { JwtPayload } from '../jwt/jwt.payload.interface';
 import { JwtAccessTokenResponseDto } from '../authDto/jwt-access-token-response.dto';
 import { JwtService } from '@nestjs/jwt';
 import { JwtTokenDto } from '../authDto/jwt-token.dto';

@@ -10,7 +10,7 @@ import {
 import { ApiTags } from '@nestjs/swagger';
 import JwtAuthGuard from './jwt/jwt.auth.guard';
 import { AuthService } from './auth.service';
-import { JwtPayload } from './jwt/jwt.payload';
+import { JwtPayload } from './jwt/jwt.payload.interface';
 import { AuthGuard } from '@nestjs/passport';
 
 @Controller('auth')
