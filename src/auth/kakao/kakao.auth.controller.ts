@@ -16,7 +16,7 @@ import {
 import { AuthGuard } from '@nestjs/passport';
 import { KakaoAuthService } from './kakao.auth.service';
 import { ApiConfigService } from '../../shared/services/api-config.service';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiOkResponse, ApiOperation, ApiTags } from "@nestjs/swagger";
 import { AuthService } from '../auth.service';
 import axios from 'axios';
 import { KakaoTokenDto } from '../dto/kakao-token.dto';
@@ -26,6 +26,7 @@ import { JwtService } from '@nestjs/jwt';
 import { JwtTokenDto } from '../dto/jwt-token.dto';
 import { JwtTokenValidationDto } from '../dto/jwt-token-validation.dto';
 import { UserService } from '../../user/user.service';
+import { BaseUserResponse } from "../../user/userDto/baseUserResponse";
 
 @Controller('auth/kakao')
 @ApiTags('카카오 인증 API')
@@ -64,6 +65,7 @@ export class KakaoAuthController {
   }
 
   @Post('validate')
+  @ApiOkResponse({ description: '성공', type: JwtTokenValidationDto })
   @ApiOperation({
     summary: 'token 검증 ',
     description: 'token 유효성 검사 및 유저 최소 정보가 입력되었는지 알려줌',

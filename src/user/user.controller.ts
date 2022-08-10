@@ -7,7 +7,6 @@ import {
   ParseIntPipe,
   Patch,
   Post,
-  Req,
   Res,
   UseGuards,
 } from '@nestjs/common';
@@ -16,7 +15,6 @@ import { User } from './user.entity';
 import { UpdateUserDto } from './userDto/updateUserDto';
 import { CreateUserDto } from './userDto/createUserDto';
 import {
-  ApiCreatedResponse,
   ApiOkResponse,
   ApiOperation,
   ApiTags,
