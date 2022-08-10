@@ -16,7 +16,7 @@ import {
 import { AuthGuard } from '@nestjs/passport';
 import { KakaoAuthService } from './kakao.auth.service';
 import { ApiConfigService } from '../../shared/services/api-config.service';
-import { ApiOkResponse, ApiOperation, ApiTags } from "@nestjs/swagger";
+import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { AuthService } from '../auth.service';
 import axios from 'axios';
 import { KakaoTokenDto } from '../dto/kakao-token.dto';
@@ -26,7 +26,7 @@ import { JwtService } from '@nestjs/jwt';
 import { JwtTokenDto } from '../dto/jwt-token.dto';
 import { JwtTokenValidationDto } from '../dto/jwt-token-validation.dto';
 import { UserService } from '../../user/user.service';
-import { BaseUserResponse } from "../../user/userDto/baseUserResponse";
+import { BaseUserResponse } from '../../user/userDto/baseUserResponse';
 
 @Controller('auth/kakao')
 @ApiTags('카카오 인증 API')
@@ -108,26 +108,24 @@ export class KakaoAuthController {
         kakaoId,
         dto.accessToken,
       );
-      const payload: JwtPayload = {
+      const jwtToken = this.jwtService.sign({
         userType: 'kakao',
         userId: newKakaoUser.userId,
         userName: kakaoName,
         userProfile: kakaoProfileImage,
-      };
-      const jwtToken = this.jwtService.sign(payload);
+      });
       return {
         accessToken: jwtToken,
         isNew: true,
       };
     } else {
       // just login
-      const payload: JwtPayload = {
+      const jwtToken = this.jwtService.sign({
         userType: 'kakao',
         userId: kakaoUser.userId,
         userName: kakaoName,
         userProfile: kakaoProfileImage,
-      };
-      const jwtToken = this.jwtService.sign(payload);
+      });
       return {
         accessToken: jwtToken,
         isNew: false,
