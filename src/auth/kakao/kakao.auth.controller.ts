@@ -89,25 +89,21 @@ export class KakaoAuthController {
     const _kakaoProfile = await this.kakaoAuthService.getKakaoProfile(
       tokens.accessToken,
     );
-    console.log(_kakaoProfile);
+
     const _kakaoInfo = _kakaoProfile._json;
     const kakaoId = _kakaoInfo.id;
     const kakaoName = _kakaoInfo.properties.nickname;
     const kakaoProfileImage = _kakaoInfo.properties.profile_image;
 
-    console.log(kakaoId);
-    console.log(kakaoName);
-    console.log(kakaoProfileImage);
-
     let jwtToken;
     const kakaoUser = await this.kakaoAuthService.findKakaoUser(kakaoId);
-    // need to register
+
     if (!kakaoUser) {
+      // need to register
       const newKakaoUser = await this.kakaoAuthService.register(
         kakaoId,
         tokens.accessToken,
       );
-
       const payload = {
         userType: 'kakao',
         userId: newKakaoUser.userId,
