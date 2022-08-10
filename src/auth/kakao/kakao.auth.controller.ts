@@ -87,25 +87,23 @@ export class KakaoAuthController {
     description: '카카오 access 토큰 받아 jwt 토큰 발급',
   })
   async kakaoLoginCallback(
-    @Body() tokens: KakaoTokenDto,
+    @Body() token: KakaoTokenDto,
   ): Promise<JwtAccessTokenResponseDto> {
     const _kakaoProfile = await this.kakaoAuthService.getKakaoProfile(
-      tokens.accessToken,
+      token.accessToken,
     );
 
     const _kakaoInfo = _kakaoProfile._json;
     const kakaoId = _kakaoInfo.id;
     const kakaoName = _kakaoInfo.properties.nickname;
     const kakaoProfileImage = _kakaoInfo.properties.profile_image;
-
-    let jwtToken;
     const kakaoUser = await this.kakaoAuthService.findKakaoUser(kakaoId);
 
     if (!kakaoUser) {
       // need to register
       const newKakaoUser = await this.kakaoAuthService.register(
         kakaoId,
-        tokens.accessToken,
+        token.accessToken,
       );
       const payload = {
         userType: 'kakao',
@@ -113,7 +111,7 @@ export class KakaoAuthController {
         userName: kakaoName,
         userProfile: kakaoProfileImage,
       } as JwtTokenPayload;
-      jwtToken = this.jwtService.sign(payload);
+      const jwtToken = this.jwtService.sign(payload);
       return {
         accessToken: jwtToken,
         isNew: true,
@@ -126,7 +124,7 @@ export class KakaoAuthController {
         userName: kakaoName,
         userProfile: kakaoProfileImage,
       } as JwtTokenPayload;
-      jwtToken = this.jwtService.sign(payload);
+      const jwtToken = this.jwtService.sign(payload);
       return {
         accessToken: jwtToken,
         isNew: false,
