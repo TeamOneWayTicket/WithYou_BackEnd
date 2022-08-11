@@ -161,7 +161,7 @@ export class KakaoAuthController {
     summary: 'kakao 로그인 redirect',
     description: 'kakao 로그인 redirect',
   })
-  kakaoLogoutLogicRedirect(@Req() req, @Res() res) {
+  kakaoLogoutLogicRedirect(@Res() res) {
     return res.send(`
           <div>
             <h2>축하합니다!</h2>
