@@ -108,6 +108,7 @@ export class ApiConfigService {
     return {
       privateKey: this.getString('JWT_PRIVATE_KEY'),
       publicKey: this.getString('JWT_PUBLIC_KEY'),
+      secretkey: this.getString('JWT_SECRET_KEY'),
       jwtExpirationTime: this.getNumber('JWT_EXPIRATION_TIME'),
     };
   }
@@ -123,7 +124,8 @@ export class ApiConfigService {
   get kakaoConfig() {
     return {
       restApiKey: this.getString('KAKAO_REST_API_KEY'),
-      callBackUrl: this.getString('KAKAO_CALLBACK_URL'),
+      loginRedirectUrl: this.getString('KAKAO_LOGIN_REDIRECT_URL'),
+      logoutRedirectUrl: this.getString('KAKAO_LOGOUT_REDIRECT_URL'),
     };
   }
 

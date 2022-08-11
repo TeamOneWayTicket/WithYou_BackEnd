@@ -5,7 +5,7 @@ import { Strategy, Profile } from 'passport-google-oauth20';
 
 @Injectable()
 export class GoogleStrategy extends PassportStrategy(Strategy) {
-  constructor(private configService: ApiConfigService) {
+  constructor(private readonly configService: ApiConfigService) {
     super({
       clientID: configService.googleConfig.restApiKey,
       clientSecret: configService.googleConfig.restApiPassword,
@@ -21,6 +21,8 @@ export class GoogleStrategy extends PassportStrategy(Strategy) {
       googleId: id,
       nickname: name.givenName,
       email: emails[0].value,
+      accessToken: accessToken,
+      refreshToken: refreshToken,
     };
   }
 }

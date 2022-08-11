@@ -39,6 +39,12 @@ export class User {
   @ApiModelProperty({ description: '성별' })
   gender: string;
 
+  @Column({
+    nullable: true,
+  })
+  @ApiModelProperty({ description: '역할' })
+  role: string;
+
   @OneToOne(() => LocalUser, (localUser) => localUser.user)
   localUser: LocalUser;
 

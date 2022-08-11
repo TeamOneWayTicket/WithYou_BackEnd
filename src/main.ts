@@ -12,16 +12,19 @@ async function bootstrap() {
     'https://withyou-be.mayleaf.dev',
     'http://localhost:3030',
     'https://with-you-front-end.vercel.app',
+    'https://accounts.kakao.com',
+    'https://localhost:3030',
   ];
   app.enableCors({
     //origin: '*',
     origin: function (origin, callback) {
-      if (!origin || whitelist.indexOf(origin)! == -1) {
+      if (!origin || whitelist.indexOf(origin) !== -1) {
         callback(null, true);
       } else {
         callback(new Error('Not allowed by CORS'));
       }
     },
+    credentials: true,
   });
   app.use(
     rateLimit({

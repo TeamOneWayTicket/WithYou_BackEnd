@@ -5,10 +5,10 @@ import { Strategy } from 'passport-kakao';
 
 @Injectable()
 export class KakaoStrategy extends PassportStrategy(Strategy) {
-  constructor(private configService: ApiConfigService) {
+  constructor(private readonly configService: ApiConfigService) {
     super({
       clientID: configService.kakaoConfig.restApiKey,
-      callbackURL: configService.kakaoConfig.callBackUrl,
+      callbackURL: configService.kakaoConfig.loginRedirectUrl,
     });
   }
 
@@ -32,7 +32,6 @@ export class KakaoStrategy extends PassportStrategy(Strategy) {
       };
       done(null, user);
     } catch (error) {
-      console.log(error);
       done(error);
     }
   }

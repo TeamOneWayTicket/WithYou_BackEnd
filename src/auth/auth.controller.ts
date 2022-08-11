@@ -1,14 +1,9 @@
-import { Controller, Post, Req } from '@nestjs/common';
-import { ApiConfigService } from '../shared/services/api-config.service';
+import { Controller, Get, Post, Query, Req, UseGuards } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
+import { AuthService } from './auth.service';
 
 @Controller('auth')
 @ApiTags('인증 API')
 export class AuthController {
-  constructor(private configService: ApiConfigService) {}
-
-  @Post('local')
-  async login(@Req() req) {
-    return req.user;
-  }
+  constructor(private readonly authService: AuthService) {}
 }

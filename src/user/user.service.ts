@@ -16,19 +16,24 @@ export class UserService {
   ) {}
 
   //유저 리스트 조회
-  findAll(): Promise<User[]> {
-    return this.userRepository.find();
+  async findAll(): Promise<User[]> {
+    return await this.userRepository.find();
   }
   /**
    * 특정 유저 조회
    * @param id
    */
-  findOne(id: number): Promise<User> {
-    return this.userRepository.findOne({ where: { id } });
+  async findOne(id: number): Promise<User> {
+    return await this.userRepository.findOne({ where: { id } });
   }
 
-  findOneByEmail(nickname: string): Promise<User> {
-    return this.userRepository.findOne({ where: { nickname } });
+  async hasMinimumInfo(id: number): Promise<boolean> {
+    const user = await this.findOne(id);
+    if (!user.familyId || !user.role) {
+      return false;
+    } else {
+      return true;
+    }
   }
 
   /**

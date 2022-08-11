@@ -7,8 +7,7 @@ import {
   Patch,
   Post,
   Query,
-  UsePipes,
-  ValidationPipe,
+  UseGuards,
 } from '@nestjs/common';
 import { DiaryService } from './diary.service';
 import { Diary } from './diary.entity';
@@ -22,9 +21,11 @@ import { CreateMediumsResponse } from './diaryDto/createMediumsResponse';
 import { PutSignedUrlsResponse } from './diaryDto/putSignedUrlsResponse';
 import { GetSignedUrlsResponse } from './diaryDto/getSignedUrlsResponse';
 import { PutSignedUrlsDto } from './diaryDto/putSignedUrlsDto';
+import JwtAuthGuard from '../auth/jwt/jwt.auth.guard';
 
 @Controller('diary')
 @ApiTags('일기장 API')
+@UseGuards(JwtAuthGuard)
 export class DiaryController {
   constructor(
     private readonly diaryService: DiaryService,
@@ -127,10 +128,5 @@ export class DiaryController {
     const savedDiary = await this.diaryService.createDiary(diary);
 
     return await this.diaryService.findOne(savedDiary.id);
-  }
-
-  @Get('/test')
-  async getSignedUrlForProductImage2() {
-    console.log('hello');
   }
 }

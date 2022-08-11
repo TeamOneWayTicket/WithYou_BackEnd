@@ -17,7 +17,7 @@ export class KakaoUser {
   @ApiModelProperty({ description: 'id' })
   id: number;
 
-  @Column({ type: 'bigint' })
+  @Column()
   @Index()
   @ApiModelProperty({ description: 'kakaoId' })
   kakaoId: string;

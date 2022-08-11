@@ -18,7 +18,7 @@ export class GoogleAuthController {
     summary: 'google 로그인 테스트용 메뉴',
     description: 'google 로그인 테스트용 메뉴',
   })
-  googleLoginPage(): string {
+  async googleLoginPage(): Promise<string> {
     return `
       <div>
         <h1>구글 로그인</h1>
@@ -42,7 +42,7 @@ export class GoogleAuthController {
   @Get('/loginRedirect')
   @UseGuards(AuthGuard('google'))
   async googleAuthCallback(@Req() req, @Res() res): Promise<void> {
-    this.googleAuthService.login(req.user);
+    await this.googleAuthService.login(req.user);
     return res.send(`
           <div>
             <h2>축하합니다!</h2>
