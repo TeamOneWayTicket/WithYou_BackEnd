@@ -4,7 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { KakaoUser } from '../../user/kakao.user.entity';
 import { User } from '../../user/user.entity';
 import { ApiConfigService } from '../../shared/services/api-config.service';
-import { KakaoStrategy } from './kakao.strategy';
+import { KakaoStrategy } from '../strategy/kakao.strategy';
 
 @Injectable()
 export class KakaoAuthService {
