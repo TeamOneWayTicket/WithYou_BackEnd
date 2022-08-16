@@ -39,7 +39,8 @@ export class DiaryService {
     return this.diaryRepository.findOne({ where: { id } });
   }
 
-  async createDiary(diary: CreateDiaryDto): Promise<Diary> {
+  async createDiary(userId: number, diary: CreateDiaryDto): Promise<Diary> {
+    // userId로 familyId 찾아 넣고 일기 생성 (family table 만들고 수정 필요)
     return await this.diaryRepository.save(diary);
   }
 
