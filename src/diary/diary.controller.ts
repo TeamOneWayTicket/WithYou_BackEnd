@@ -81,52 +81,53 @@ export class DiaryController {
     return await this.diaryService.createDiaryMediums(diaryId, fileNamesInS3);
   }
 
-  @Get('userDiarys/:id')
+  @Get('userDiarys/:userId')
   @ApiOkResponse({ description: '성공', type: BaseDiarysResponse })
   @ApiOperation({
-    summary: '특정 유저의 전체 일기 리스트 API',
+    summary: 'getAllDiaryByUserId',
     description: '특정 id 유저의 전체 일기 리스트 받아온다.',
   })
   async findUserDiarys(
-    @Param('id', ParseIntPipe) id: number,
+    @Param('userId', ParseIntPipe) userId: number,
   ): Promise<Diary[]> {
-    return await this.diaryService.findAllByAuthorId(id);
+    return await this.diaryService.findAllByAuthorId(userId);
   }
 
-  @Get(':id')
+  @Get(':diaryId')
   @ApiOkResponse({ description: '성공', type: BaseDiaryResponse })
   @ApiOperation({
-    summary: '특정 일기 가지고 오는 API',
+    summary: 'getDiaryByDiaryId',
     description: '특정 id로 일기 받아온다.',
   })
-  async findOne(@Param('id', ParseIntPipe) id: number): Promise<Diary> {
-    return await this.diaryService.findOne(id);
+  async findOne(@Param('diaryId', ParseIntPipe) diaryId: number): Promise<Diary> {
+    return await this.diaryService.findOne(diaryId);
   }
 
   @Patch(':id')
   @ApiBody({ type: UpdateDiaryDto })
   @ApiOkResponse({ description: '성공', type: BaseDiaryResponse })
   @ApiOperation({
-    summary: '특정 일기 내용 수정 API',
+    summary: 'editDiaryByDiaryId',
     description: '특정 id 일기 내용 입력한 내용으로 수정한다.',
   })
   async updateDiary(
-    @Param('id', ParseIntPipe) id: number,
+    @Param('diaryId', ParseIntPipe) diaryId: number,
     @Body() diary: UpdateDiaryDto,
   ): Promise<Diary> {
-    return await this.diaryService.updateDiary(id, diary);
+    return await this.diaryService.updateDiary(diaryId, diary);
   }
 
-  @Post(':id')
+  @Post(':userId')
   @ApiBody({ type: CreateDiaryDto })
   @ApiOkResponse({ description: '성공', type: BaseDiaryResponse })
   @ApiOperation({
-    summary: '특정 id 유저의 일기 생성 API',
+    summary: 'createDiaryByUserId',
     description: '특정 id 유저에 일기를 생성한다.',
   })
-  async createDiary(@Body() diary: CreateDiaryDto): Promise<Diary> {
-    const savedDiary = await this.diaryService.createDiary(diary);
-
-    return await this.diaryService.findOne(savedDiary.id);
+  async createDiary(
+    @Param('userId', ParseIntPipe) userId: number,
+    @Body() diary: CreateDiaryDto,
+  ): Promise<Diary> {
+    return await this.diaryService.createDiary(userId, diary);
   }
 }

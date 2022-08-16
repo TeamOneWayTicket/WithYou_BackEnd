@@ -15,7 +15,7 @@ export class GoogleAuthController {
   @Get('menu')
   @Header('Content-Type', 'text/html')
   @ApiOperation({
-    summary: 'google 로그인 테스트용 메뉴',
+    summary: 'google login menu',
     description: 'google 로그인 테스트용 메뉴',
   })
   async googleLoginPage(): Promise<string> {
@@ -32,8 +32,7 @@ export class GoogleAuthController {
   @Get('/login')
   @UseGuards(AuthGuard('google'))
   @ApiOperation({
-    summary: 'google 로그인 ',
-    description: 'google 로그인',
+    summary: 'google login',
   })
   async googleLoginLogic(): Promise<void> {
     //redirect google login page
@@ -41,6 +40,9 @@ export class GoogleAuthController {
 
   @Get('/loginRedirect')
   @UseGuards(AuthGuard('google'))
+  @ApiOperation({
+    summary: 'google callback',
+  })
   async googleAuthCallback(@Req() req, @Res() res): Promise<void> {
     await this.googleAuthService.login(req.user);
     return res.send(`
