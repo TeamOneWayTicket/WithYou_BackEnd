@@ -84,7 +84,7 @@ export class DiaryController {
   @Get('userDiarys/:id')
   @ApiOkResponse({ description: '성공', type: BaseDiarysResponse })
   @ApiOperation({
-    summary: '특정 유저의 전체 일기 리스트 API',
+    summary: 'getAllDiaryByUserId',
     description: '특정 id 유저의 전체 일기 리스트 받아온다.',
   })
   async findUserDiarys(
@@ -96,7 +96,7 @@ export class DiaryController {
   @Get(':id')
   @ApiOkResponse({ description: '성공', type: BaseDiaryResponse })
   @ApiOperation({
-    summary: '특정 일기 가지고 오는 API',
+    summary: 'getDiaryByDiaryId',
     description: '특정 id로 일기 받아온다.',
   })
   async findOne(@Param('id', ParseIntPipe) id: number): Promise<Diary> {
@@ -107,7 +107,7 @@ export class DiaryController {
   @ApiBody({ type: UpdateDiaryDto })
   @ApiOkResponse({ description: '성공', type: BaseDiaryResponse })
   @ApiOperation({
-    summary: '특정 일기 내용 수정 API',
+    summary: 'editDiaryByDiaryId',
     description: '특정 id 일기 내용 입력한 내용으로 수정한다.',
   })
   async updateDiary(
@@ -121,7 +121,7 @@ export class DiaryController {
   @ApiBody({ type: CreateDiaryDto })
   @ApiOkResponse({ description: '성공', type: BaseDiaryResponse })
   @ApiOperation({
-    summary: '특정 id 유저의 일기 생성 API',
+    summary: 'createDiaryByUserId',
     description: '특정 id 유저에 일기를 생성한다.',
   })
   async createDiary(@Body() diary: CreateDiaryDto): Promise<Diary> {
