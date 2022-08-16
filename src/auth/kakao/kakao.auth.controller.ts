@@ -64,25 +64,6 @@ export class KakaoAuthController {
     `;
   }
 
-  @Post('validate')
-  @ApiOkResponse({ description: '성공', type: JwtTokenValidationDto })
-  @ApiOperation({
-    summary: 'token 검증 ',
-    description: 'token 유효성 검사 및 유저 최소 정보가 입력되었는지 알려줌',
-  })
-  async validateToken(
-    @Body() token: JwtTokenDto,
-  ): Promise<JwtTokenValidationDto> {
-    try {
-      const result = await this.jwtService.verify(token.jwtToken);
-      return {
-        isNew: !(await this.userService.hasMinimumInfo(result.userId)),
-      };
-    } catch (e) {
-      throw new BadRequestException('유효하지 않은 토큰입니다');
-    }
-  }
-
   @Post('callback')
   @UsePipes(ValidationPipe)
   @ApiOperation({
