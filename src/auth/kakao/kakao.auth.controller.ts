@@ -20,13 +20,9 @@ import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { AuthService } from '../auth.service';
 import axios from 'axios';
 import { KakaoTokenDto } from '../dto/kakao-token.dto';
-import { JwtPayload } from '../jwt/jwt.payload.interface';
 import { JwtAccessTokenResponseDto } from '../dto/jwt-access-token-response.dto';
 import { JwtService } from '@nestjs/jwt';
-import { JwtTokenDto } from '../dto/jwt-token.dto';
-import { JwtTokenValidationDto } from '../dto/jwt-token-validation.dto';
 import { UserService } from '../../user/user.service';
-import { BaseUserResponse } from '../../user/userDto/baseUserResponse';
 
 @Controller('auth/kakao')
 @ApiTags('카카오 인증 API')
@@ -42,7 +38,7 @@ export class KakaoAuthController {
   @Get('menu')
   @Header('Content-Type', 'text/html')
   @ApiOperation({
-    summary: 'kakao 로그인 테스트용 메뉴',
+    summary: 'kakao login menu',
     description: 'kakao 로그인 테스트용 메뉴',
   })
   async getKakaoLoginPage(): Promise<string> {
@@ -67,7 +63,7 @@ export class KakaoAuthController {
   @Post('callback')
   @UsePipes(ValidationPipe)
   @ApiOperation({
-    summary: '카카오 로그인 콜백',
+    summary: 'kakao login callback',
     description: '카카오 access 토큰 받아 jwt 토큰 발급',
   })
   async kakaoLoginCallback(
@@ -116,7 +112,7 @@ export class KakaoAuthController {
 
   @Get('/:id/logout')
   @ApiOperation({
-    summary: 'kakao 로그인 상태 logout',
+    summary: 'kakao logout',
     description: 'kakao accessToken, redirectToken 만료시킴 ',
   })
   async kakakoLogout(@Param('id', ParseIntPipe) id: number): Promise<void> {
@@ -139,8 +135,7 @@ export class KakaoAuthController {
   @Header('Content-Type', 'text/html')
   @UseGuards(AuthGuard('kakao'))
   @ApiOperation({
-    summary: 'kakao 로그인 redirect',
-    description: 'kakao 로그인 redirect',
+    summary: 'kakao logout redirect',
   })
   kakaoLogoutLogicRedirect(@Res() res) {
     return res.send(`
@@ -154,8 +149,7 @@ export class KakaoAuthController {
 
   @Get('/:id/unlink')
   @ApiOperation({
-    summary: 'kakao 로그인 상태 unlink',
-    description: 'kakao accessToken ',
+    summary: 'kakao unlink',
   })
   async kakakoUnlink(
     @Param('id', ParseIntPipe) id: number,
