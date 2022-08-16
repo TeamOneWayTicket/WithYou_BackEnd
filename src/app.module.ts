@@ -11,6 +11,7 @@ import { AuthModule } from './auth/auth.module';
 import { DiaryModule } from './diary/diary.module';
 import { RedisModule } from '@liaoliaots/nestjs-redis';
 import { FirebaseCloudMessageModule } from './module/firebase-cloud-message/firebase-cloud-message.module';
+import { FamilyModule } from './family/family.module';
 
 @Module({
   imports: [
@@ -34,6 +35,7 @@ import { FirebaseCloudMessageModule } from './module/firebase-cloud-message/fire
     AuthModule,
     DiaryModule,
     FirebaseCloudMessageModule,
+    FamilyModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -9,7 +9,6 @@ import { UserPushToken } from './entity/user-push-token.entity';
 
 @Injectable()
 export class UserService {
-  //생성자
   constructor(
     @InjectRepository(User) private userRepository: Repository<User>,
     @InjectRepository(LocalUser)
@@ -18,14 +17,10 @@ export class UserService {
     private readonly pushTokenRepository: Repository<UserPushToken>,
   ) {}
 
-  //유저 리스트 조회
   async findAll(): Promise<User[]> {
     return await this.userRepository.find();
   }
-  /**
-   * 특정 유저 조회
-   * @param id
-   */
+
   async findOne(id: number): Promise<User> {
     return await this.userRepository.findOne({ where: { id } });
   }
@@ -49,10 +44,6 @@ export class UserService {
     return this.pushTokenRepository.save(newToken);
   }
 
-  /**
-   * 유저 수정
-   * @param user
-   */
   async updateUser(id: number, user: UpdateUserDto): Promise<User> {
     await this.userRepository.update(id, user);
     return await this.findOne(id);
@@ -69,9 +60,6 @@ export class UserService {
     });
   }
 
-  /**
-   * 유저 삭제
-   */
   async deleteUser(id: number): Promise<void> {
     await this.userRepository.delete({ id: id });
   }

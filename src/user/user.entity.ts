@@ -5,6 +5,7 @@ import {
   OneToOne,
   Index,
   OneToMany,
+  ManyToOne,
 } from 'typeorm';
 import { LocalUser } from './local.user.entity';
 import { KakaoUser } from './kakao.user.entity';
@@ -13,6 +14,7 @@ import { ApiExtraModels } from '@nestjs/swagger';
 import { GoogleUser } from './google.user.entity';
 import { ApiModelProperty } from '@nestjs/swagger/dist/decorators/api-model-property.decorator';
 import { Role } from '../common/enum/role.enum';
+import { Family } from '../family/family.entity';
 
 @Entity()
 @ApiExtraModels()
@@ -59,4 +61,9 @@ export class User {
 
   @OneToMany(() => Diary, (diary) => diary.author)
   diarys: Diary[];
+
+  @ManyToOne(() => Family, (family) => family.users, {
+    createForeignKeyConstraints: false,
+  })
+  family: Family;
 }
