@@ -1,4 +1,11 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  OneToMany,
+  CreateDateColumn,
+  Index,
+} from 'typeorm';
 import { ApiExtraModels } from '@nestjs/swagger';
 import { ApiModelProperty } from '@nestjs/swagger/dist/decorators/api-model-property.decorator';
 import { User } from '../user/user.entity';
@@ -16,4 +23,9 @@ export class Family {
 
   @OneToMany(() => User, (user) => user.family)
   users: User[];
+
+  @CreateDateColumn()
+  @Index()
+  @ApiModelProperty({ description: 'family 생성 시점' })
+  createdAt: Date;
 }

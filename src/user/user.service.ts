@@ -21,6 +21,10 @@ export class UserService {
     return await this.userRepository.find();
   }
 
+  async findByFamilyId(familyId: number): Promise<User[]> {
+    return await this.userRepository.find({ where: { familyId } });
+  }
+
   async findOne(id: number): Promise<User> {
     return await this.userRepository.findOne({ where: { id } });
   }
