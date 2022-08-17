@@ -9,7 +9,6 @@ import {
   Post,
 } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation } from '@nestjs/swagger';
-import { UserResponseDto } from '../user/userDto/user-response.dto';
 import { User } from '../user/user.entity';
 import { UserService } from '../user/user.service';
 import { FamilyService } from './family.service';
@@ -18,6 +17,8 @@ import { Family } from './family.entity';
 import { UpdateFamilyDto } from './familyDto/update-family.dto';
 import { DeleteUserResponseDto } from '../user/userDto/delete-user-response.dto';
 import { DeleteFamilyResponseDto } from './familyDto/delete-family-response.dto';
+import { UsersResponseDto } from '../user/userDto/users-response.dto';
+import { FamilyResponseDto } from './familyDto/family-response.dto';
 
 @Controller('family')
 export class FamilyController {
@@ -27,7 +28,7 @@ export class FamilyController {
   ) {}
 
   @Get(':familyId')
-  @ApiOkResponse({ description: '성공', type: UserResponseDto })
+  @ApiOkResponse({ description: '성공', type: UsersResponseDto })
   @ApiOperation({
     summary: 'get FamilyMembers By FamilyId',
     description: 'familyId 로 해당 가족에 속한 유저들 가지고 온다.',
@@ -39,6 +40,7 @@ export class FamilyController {
   }
 
   @Post(':familyId')
+  @ApiOkResponse({ description: '성공', type: FamilyResponseDto })
   @ApiOperation({
     summary: 'create family ',
     description: '가족 이름으로 가족 만든다',
@@ -48,6 +50,7 @@ export class FamilyController {
   }
 
   @Patch(':familyId')
+  @ApiOkResponse({ description: '성공', type: FamilyResponseDto })
   @ApiOperation({
     summary: 'update family',
     description: '가족 이름 변경',
@@ -63,6 +66,7 @@ export class FamilyController {
   }
 
   @Delete(':familyId')
+  @ApiOkResponse({ description: '성공', type: DeleteFamilyResponseDto })
   @ApiOperation({
     summary: 'delete family',
     description: '유저 삭제한다.',

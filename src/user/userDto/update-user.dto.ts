@@ -1,5 +1,4 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Family } from '../../family/family.entity';
 
 export class UpdateUserDto {
   @ApiProperty({ description: '가족 id' })

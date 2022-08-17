@@ -14,11 +14,6 @@ export class FamilyService {
   async findOne(familyId: number): Promise<Family> {
     return await this.familyRepository.findOne({ where: { id: familyId } });
   }
-  // async subFamilyMember();
-
-  // async addFamilyMember(familyId: number, user: User): Promise<Family> {
-  //   return await this.familyRepository.findOne({ where: { id: familyId } });
-  // }
 
   async createFamily(familyDto: CreateFamilyDto): Promise<Family> {
     return await this.familyRepository.save(familyDto);

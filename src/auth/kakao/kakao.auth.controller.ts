@@ -77,7 +77,6 @@ export class KakaoAuthController {
     const kakaoName = _kakaoInfo.properties.nickname;
     const kakaoProfileImage = _kakaoInfo.properties.profile_image;
     const kakaoUser = await this.kakaoAuthService.findKakaoUser(kakaoId);
-    console.log(kakaoUser);
     if (!kakaoUser) {
       // need to register
       const newKakaoUser = await this.kakaoAuthService.register(
