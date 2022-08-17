@@ -4,6 +4,7 @@ import type { TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { isNil } from 'lodash';
 
 import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
+import { RedisModuleOptions } from '@liaoliaots/nestjs-redis';
 
 @Injectable()
 export class ApiConfigService {
@@ -53,6 +54,15 @@ export class ApiConfigService {
 
   get fallbackLanguage(): string {
     return this.getString('FALLBACK_LANGUAGE');
+  }
+
+  get redisConfig(): RedisModuleOptions {
+    return {
+      config: {
+        host: this.getString('REDIS_HOST'),
+        port: this.getNumber('REDIS_PORT'),
+      },
+    };
   }
 
   get postgresConfig(): TypeOrmModuleOptions {
