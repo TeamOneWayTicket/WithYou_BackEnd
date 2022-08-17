@@ -7,7 +7,6 @@ import {
   Param,
   ParseIntPipe,
   Post,
-  Req,
   Res,
   UseGuards,
   UsePipes,
@@ -20,7 +19,7 @@ import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { AuthService } from '../auth.service';
 import axios from 'axios';
 import { KakaoTokenDto } from '../dto/kakao-token.dto';
-import { JwtAccessTokenResponseDto } from '../dto/jwt-access-token-response.dto';
+import { JwtResponseDto } from '../dto/jwt-response.dto';
 import { JwtService } from '@nestjs/jwt';
 import { UserService } from '../../user/user.service';
 
@@ -68,7 +67,7 @@ export class KakaoAuthController {
   })
   async kakaoLoginCallback(
     @Body() dto: KakaoTokenDto,
-  ): Promise<JwtAccessTokenResponseDto> {
+  ): Promise<JwtResponseDto> {
     const _kakaoProfile = await this.kakaoAuthService.getKakaoProfile(
       dto.accessToken,
     );
@@ -92,6 +91,10 @@ export class KakaoAuthController {
         userProfile: kakaoProfileImage,
       });
       return {
+        userId: kakaoId,
+        userName: kakaoName,
+        userProfile: kakaoProfileImage,
+        userType: 'kakao',
         accessToken: jwtToken,
         isNew: true,
       };
@@ -104,6 +107,10 @@ export class KakaoAuthController {
         userProfile: kakaoProfileImage,
       });
       return {
+        userId: kakaoId,
+        userName: kakaoName,
+        userProfile: kakaoProfileImage,
+        userType: 'kakao',
         accessToken: jwtToken,
         isNew: false,
       };

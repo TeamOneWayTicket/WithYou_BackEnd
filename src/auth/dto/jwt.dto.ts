@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsString } from 'class-validator';
 
-export class JwtTokenDto {
+export class JwtDto {
   @ApiProperty({ description: 'jwt token' })
   @IsString()
   jwtToken: string;
