@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-export class PutSignedUrlsDto {
+export class PutPresignedUrlsDto {
   @ApiProperty({ description: 'diaryId', example: 1 })
   diaryId: number;
 

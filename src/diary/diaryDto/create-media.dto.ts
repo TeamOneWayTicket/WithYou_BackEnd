@@ -1,7 +1,7 @@
 import { Diary } from '../diary.entity';
 import { ApiProperty } from '@nestjs/swagger';
 
-export class CreateMediumDto {
+export class CreateMediaDto {
   @ApiProperty({ description: '일기장 id' })
   diaryId: number;
 

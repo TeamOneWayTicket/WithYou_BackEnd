@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-export class GetSignedUrlsResponse {
+export class GetPresignedUrlsResponseDto {
   @ApiProperty({
     description: 'presigned url',
     example:

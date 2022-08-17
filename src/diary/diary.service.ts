@@ -2,18 +2,18 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Diary } from './diary.entity';
 import { Repository } from 'typeorm';
-import { UpdateDiaryDto } from './diaryDto/updateDiaryDto';
-import { CreateDiaryDto } from './diaryDto/createDiaryDto';
+import { UpdateDiaryDto } from './diaryDto/update-diary.dto';
+import { CreateDiaryDto } from './diaryDto/create-diary.dto';
 import { ApiConfigService } from '../shared/services/api-config.service';
 import { DiaryMedium } from './diary.medium.entity';
-import { CreateMediumDto } from './diaryDto/createMediumDto';
-import { CreateMediumsResponse } from './diaryDto/createMediumsResponse';
+import { CreateMediaDto } from './diaryDto/create-media.dto';
+import { CreateMediumResponseDto } from './diaryDto/create-medium-response.dto';
 import AWS from 'aws-sdk';
 import { v4 as uuid } from 'uuid';
-import { PutSignedUrlsDto } from './diaryDto/putSignedUrlsDto';
-import { PutSignedUrlResponse } from './diaryDto/putSignedUrlResponse';
+import { PutPresignedUrlsDto } from './diaryDto/put-presigned-urls.dto';
+import { PutPresignedUrlResponseDto } from './diaryDto/put-presigned-url-response.dto';
 import { PutSignedUrlsResponse } from './diaryDto/putSignedUrlsResponse';
-import { GetSignedUrlsResponse } from './diaryDto/getSignedUrlsResponse';
+import { GetPresignedUrlsResponseDto } from './diaryDto/get-presigned-urls-response.dto';
 
 @Injectable()
 export class DiaryService {
@@ -61,31 +61,31 @@ export class DiaryService {
     return await this.findOne(targetId);
   }
 
-  async createDiaryMedium(diaryMedium: CreateMediumDto): Promise<DiaryMedium> {
+  async createDiaryMedia(diaryMedium: CreateMediaDto): Promise<DiaryMedium> {
     return await this.diaryMediumRepository.save(diaryMedium);
   }
 
-  async createDiaryMediums(
+  async createDiaryMedium(
     diaryId: number,
     fileNamesInS3: string[],
-  ): Promise<CreateMediumsResponse> {
+  ): Promise<CreateMediumResponseDto> {
     const diary = await this.findOne(diaryId);
     const diaryMediums: DiaryMedium[] = [];
     for (let i = 0; i < fileNamesInS3.length; i++) {
-      const medium: CreateMediumDto = {
+      const medium: CreateMediaDto = {
         fileNameInS3: fileNamesInS3[i],
         diary,
         diaryId,
         order: i,
       };
-      diaryMediums.push(await this.createDiaryMedium(medium));
+      diaryMediums.push(await this.createDiaryMedia(medium));
     }
-    return { diaryMediums } as CreateMediumsResponse;
+    return { diaryMediums } as CreateMediumResponseDto;
   }
 
   async getDiaryMediumsSignedUrl(
     diaryId: number,
-  ): Promise<GetSignedUrlsResponse> {
+  ): Promise<GetPresignedUrlsResponseDto> {
     const s3 = new AWS.S3({ useAccelerateEndpoint: true });
 
     const mediums = await this.diaryMediumRepository.findBy({
@@ -101,12 +101,12 @@ export class DiaryService {
 
       s3Urls.push(s3Url);
     }
-    return { s3Urls } as GetSignedUrlsResponse;
+    return { s3Urls } as GetPresignedUrlsResponseDto;
   }
 
   async getSignedUrlsForGetObject(
     fileNamesInS3: string[],
-  ): Promise<GetSignedUrlsResponse> {
+  ): Promise<GetPresignedUrlsResponseDto> {
     const s3 = new AWS.S3({ useAccelerateEndpoint: true });
     const s3Urls: string[] = [];
     for (let i = 0; i < fileNamesInS3.length; i++) {
@@ -118,15 +118,15 @@ export class DiaryService {
       s3Urls.push(s3Url);
     }
 
-    return { s3Urls } as GetSignedUrlsResponse;
+    return { s3Urls } as GetPresignedUrlsResponseDto;
   }
 
   async getSignedUrlsForPutObject(
-    query: PutSignedUrlsDto,
+    query: PutPresignedUrlsDto,
   ): Promise<PutSignedUrlsResponse> {
     const fileType: string = query.contentType.split('/')[1];
     const s3 = new AWS.S3({ useAccelerateEndpoint: true });
-    const signedUrls: PutSignedUrlResponse[] = [];
+    const signedUrls: PutPresignedUrlResponseDto[] = [];
 
     for (let i = 0; i < query.quantity; i++) {
       const fileName = `diary/${query.diaryId}/${uuid()}.${fileType}`;
@@ -139,7 +139,7 @@ export class DiaryService {
       const info = {
         fileName,
         s3Url,
-      } as PutSignedUrlResponse;
+      } as PutPresignedUrlResponseDto;
 
       signedUrls.push(info);
     }
