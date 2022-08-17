@@ -8,6 +8,7 @@ import { KakaoUser } from './kakao.user.entity';
 import { GoogleUser } from './google.user.entity';
 import { UserPushToken } from './entity/user-push-token.entity';
 import { UserPushTokenService } from './user-push-token.service';
+import { Family } from '../family/family.entity';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { UserPushTokenService } from './user-push-token.service';
       KakaoUser,
       GoogleUser,
       UserPushToken,
+      Family,
     ]),
   ],
   controllers: [UserController],

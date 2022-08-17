@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { User } from '../user/user.entity';
 import { Repository } from 'typeorm';
 import { Family } from './family.entity';
 import { CreateFamilyDto } from './familyDto/create-family.dto';
@@ -8,8 +7,6 @@ import { CreateFamilyDto } from './familyDto/create-family.dto';
 @Injectable()
 export class FamilyService {
   constructor(
-    @InjectRepository(User)
-    private userRepository: Repository<User>,
     @InjectRepository(Family)
     private familyRepository: Repository<Family>,
   ) {}
@@ -35,6 +32,6 @@ export class FamilyService {
   }
 
   async deleteFamily(familyId: number): Promise<void> {
-    await this.userRepository.delete({ id: familyId });
+    await this.familyRepository.delete({ id: familyId });
   }
 }

@@ -6,16 +6,19 @@ import { LocalUser } from './local.user.entity';
 import { UserPushToken } from './entity/user-push-token.entity';
 import { UpdateUserDto } from './userDto/update-user.dto';
 import { CreateUserDto } from './userDto/create-user.dto';
-
+import { Family } from '../family/family.entity';
 
 @Injectable()
 export class UserService {
   constructor(
-    @InjectRepository(User) private userRepository: Repository<User>,
+    @InjectRepository(User)
+    private userRepository: Repository<User>,
     @InjectRepository(LocalUser)
     private localUserRepository: Repository<LocalUser>,
     @InjectRepository(UserPushToken)
     private readonly pushTokenRepository: Repository<UserPushToken>,
+    @InjectRepository(Family)
+    private familyRepository: Repository<Family>,
   ) {}
 
   async findAll(): Promise<User[]> {
@@ -50,7 +53,14 @@ export class UserService {
   }
 
   async updateUser(id: number, user: UpdateUserDto): Promise<User> {
-    await this.userRepository.update(id, user);
+    const family = await this.familyRepository.findOne({
+      where: { id: user.familyId },
+    });
+    const updateInfo = {
+      family,
+      ...user,
+    };
+    await this.userRepository.update(id, updateInfo);
     return await this.findOne(id);
   }
 
