@@ -88,7 +88,7 @@ export class DiaryController {
     return await this.diaryService.createDiaryMedium(diaryId, fileNamesInS3);
   }
 
-  @Get('userDiarys/:userId')
+  @Get('user-diarys/:userId')
   @ApiOkResponse({ description: '성공', type: DiarysResponseDto })
   @ApiOperation({
     summary: 'getAllDiaryByUserId',
@@ -98,6 +98,18 @@ export class DiaryController {
     @Param('userId', ParseIntPipe) userId: number,
   ): Promise<Diary[]> {
     return await this.diaryService.findAllByAuthorId(userId);
+  }
+
+  @Get('family-diarys/:userId')
+  @ApiOkResponse({ description: '성공', type: DiarysResponseDto })
+  @ApiOperation({
+    summary: 'get family Diary By UserId',
+    description: '유저를 포함한 유저 가족의 일기들을 받아온다.',
+  })
+  async findFamilyDiarys(
+    @Param('userId', ParseIntPipe) userId: number,
+  ): Promise<Diary[]> {
+    return await this.diaryService.findAllByFamilyId(userId);
   }
 
   @Get(':diaryId')

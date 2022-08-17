@@ -32,11 +32,15 @@ export class DiaryService {
   }
 
   async findAllByAuthorId(authorId: number): Promise<Diary[]> {
-    return this.diaryRepository.find({ where: { authorId } });
+    return await this.diaryRepository.find({ where: { authorId } });
+  }
+
+  async findAllByFamilyId(familyId: number): Promise<Diary[]> {
+    return await this.diaryRepository.find({ where: { familyId } });
   }
 
   async findOne(id: number): Promise<Diary> {
-    return this.diaryRepository.findOne({ where: { id } });
+    return await this.diaryRepository.findOne({ where: { id } });
   }
 
   async createDiary(userId: number, diary: CreateDiaryDto): Promise<Diary> {
