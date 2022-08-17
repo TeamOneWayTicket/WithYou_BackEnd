@@ -50,5 +50,5 @@ export class Diary {
   author: User;
 
   @OneToMany(() => DiaryMedium, (diaryMedium) => diaryMedium.diary)
-  mediums: DiaryMedium[];
+  medium: DiaryMedium[];
 }

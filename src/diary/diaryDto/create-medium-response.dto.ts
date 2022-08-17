@@ -3,5 +3,5 @@ import { DiaryMedium } from '../diary.medium.entity';
 
 export class CreateMediumResponseDto {
   @ApiProperty({ description: '일기' })
-  diaryMediums: DiaryMedium[];
+  diaryMedium: DiaryMedium[];
 }

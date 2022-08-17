@@ -25,7 +25,6 @@ import JwtAuthGuard from '../guard/jwt.auth.guard';
 =======
 import { DiaryResponseDto } from './diaryDto/diary-response.dto';
 import { DiarysResponseDto } from './diaryDto/diarys-response.dto';
-import { ApiConfigService } from '../shared/services/api-config.service';
 import { CreateMediumResponseDto } from './diaryDto/create-medium-response.dto';
 import { PutSignedUrlsResponse } from './diaryDto/putSignedUrlsResponse';
 import { GetPresignedUrlsResponseDto } from './diaryDto/get-presigned-urls-response.dto';
@@ -60,6 +59,7 @@ export class DiaryController {
   async getSignedUrlsForGetObject(
     @Query('fileNamesInS3') fileNamesInS3: string[],
   ): Promise<GetPresignedUrlsResponseDto> {
+    console.log(fileNamesInS3);
     return await this.diaryService.getSignedUrlsForGetObject(fileNamesInS3);
   }
 
@@ -112,21 +112,33 @@ export class DiaryController {
     return await this.diaryService.findAllByFamilyId(userId);
   }
 
+  // @Get(':diaryId')
+  // @ApiOkResponse({ description: '성공', type: Diary })
+  // @ApiOperation({
+  //   summary: 'get diary by diaryId',
+  //   description: '특정 id로 일기 받아온다.',
+  // })
+  // async findOne(
+  //   @Param('diaryId', ParseIntPipe) diaryId: number,
+  // ): Promise<Diary> {
+  //   return await this.diaryService.findOne(diaryId);
+  // }
+
   @Get(':diaryId')
   @ApiOkResponse({ description: '성공', type: DiaryResponseDto })
   @ApiOperation({
-    summary: 'getDiaryByDiaryId',
+    summary: 'get diary and urls by diaryId',
     description: '특정 id로 일기 받아온다.',
   })
-  async findOne(
+  async findOneWithMediumUrl(
     @Param('diaryId', ParseIntPipe) diaryId: number,
-  ): Promise<Diary> {
-    return await this.diaryService.findOne(diaryId);
+  ): Promise<DiaryResponseDto> {
+    return await this.diaryService.findOneWithUrls(diaryId);
   }
 
   @Patch(':id')
   @ApiBody({ type: UpdateDiaryDto })
-  @ApiOkResponse({ description: '성공', type: DiaryResponseDto })
+  @ApiOkResponse({ description: '성공', type: Diary })
   @ApiOperation({
     summary: 'editDiaryByDiaryId',
     description: '특정 id 일기 내용 입력한 내용으로 수정한다.',
@@ -140,7 +152,7 @@ export class DiaryController {
 
   @Post(':userId')
   @ApiBody({ type: CreateDiaryDto })
-  @ApiOkResponse({ description: '성공', type: DiaryResponseDto })
+  @ApiOkResponse({ description: '성공', type: Diary })
   @ApiOperation({
     summary: 'createDiaryByUserId',
     description: '특정 id 유저에 일기를 생성한다.',
