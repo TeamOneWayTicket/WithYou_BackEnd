@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-export class DeleteUserResponse {
+export class DeleteUserResponseDto {
   @ApiProperty({ description: 'code' })
   statusCode: number;
 

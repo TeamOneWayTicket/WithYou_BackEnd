@@ -3,9 +3,10 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './user.entity';
 import { LocalUser } from './local.user.entity';
-import { UpdateUserDto } from './userDto/updateUserDto';
-import { CreateUserDto } from './userDto/createUserDto';
 import { UserPushToken } from './entity/user-push-token.entity';
+import { UpdateUserDto } from './userDto/update-user.dto';
+import { CreateUserDto } from './userDto/create-user.dto';
+
 
 @Injectable()
 export class UserService {

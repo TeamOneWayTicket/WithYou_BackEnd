@@ -11,12 +11,12 @@ import {
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { User } from './user.entity';
-import { UpdateUserDto } from './userDto/updateUserDto';
-import { CreateUserDto } from './userDto/createUserDto';
+import { UpdateUserDto } from './userDto/update-user.dto';
+import { CreateUserDto } from './userDto/create-user.dto';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { BaseUsersResponse } from './userDto/baseUsersResponse';
-import { BaseUserResponse } from './userDto/baseUserResponse';
-import { DeleteUserResponse } from './userDto/deleteUserResponse';
+import { UsersResponseDto } from './userDto/users-response.dto';
+import { UserResponseDto } from './userDto/user-response.dto';
+import { DeleteUserResponseDto } from './userDto/delete-user-response.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { Auth } from '../decorator/http.decorator';
 import { Role } from '../common/enum/role.enum';
@@ -31,7 +31,7 @@ export class UserController {
   }
 
   @Get('list')
-  @ApiOkResponse({ description: '성공', type: BaseUsersResponse })
+  @ApiOkResponse({ description: '성공', type: UsersResponseDto })
   @ApiOperation({
     summary: 'getAllUserList',
     description: '전체 유저 리스트 받아온다.',
@@ -51,7 +51,7 @@ export class UserController {
   }
   @UseGuards(AuthGuard('jwt'))
   @Get('/login/:id')
-  @ApiOkResponse({ description: '성공', type: BaseUserResponse })
+  @ApiOkResponse({ description: '성공', type: UserResponseDto })
   @ApiOperation({
     summary: 'getUserById through jwt',
     description: '특정 id 유저 가지고 온다.',
@@ -61,7 +61,7 @@ export class UserController {
   }
 
   @Get(':id')
-  @ApiOkResponse({ description: '성공', type: BaseUserResponse })
+  @ApiOkResponse({ description: '성공', type: UserResponseDto })
   @ApiOperation({
     summary: 'getUserById',
     description: '특정 id 유저 가지고 온다.',
@@ -71,7 +71,7 @@ export class UserController {
   }
 
   @Get('localuser/:id')
-  @ApiOkResponse({ description: '성공', type: BaseUserResponse })
+  @ApiOkResponse({ description: '성공', type: UserResponseDto })
   @ApiOperation({
     summary: 'getLocalUserById (Test 용도)',
   })
@@ -80,7 +80,7 @@ export class UserController {
   }
 
   @Patch(':id')
-  @ApiOkResponse({ description: '성공', type: BaseUserResponse })
+  @ApiOkResponse({ description: '성공', type: UserResponseDto })
   @ApiOperation({
     summary: 'updateUser',
     description: '특정 id 유저 정보를 수정한다.',
@@ -93,7 +93,7 @@ export class UserController {
   }
 
   @Post()
-  @ApiOkResponse({ description: '성공', type: BaseUserResponse })
+  @ApiOkResponse({ description: '성공', type: UserResponseDto })
   @ApiOperation({
     summary: 'createUser',
     description: '유저 생성한다.',
@@ -107,10 +107,10 @@ export class UserController {
     summary: 'deleteUser',
     description: '유저 삭제한다.',
   })
-  @ApiOkResponse({ description: '성공', type: DeleteUserResponse })
+  @ApiOkResponse({ description: '성공', type: DeleteUserResponseDto })
   async deleteUser(
     @Param('id', ParseIntPipe) id: number,
-  ): Promise<DeleteUserResponse> {
+  ): Promise<DeleteUserResponseDto> {
     await this.userService.deleteUser(id);
     return Object.assign({
       id: id,

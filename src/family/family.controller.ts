@@ -7,7 +7,7 @@ import {
   Post,
 } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation } from '@nestjs/swagger';
-import { BaseUserResponse } from '../user/userDto/baseUserResponse';
+import { UserResponseDto } from '../user/userDto/user-response.dto';
 import { User } from '../user/user.entity';
 import { UserService } from '../user/user.service';
 import { FamilyService } from './family.service';
@@ -22,7 +22,7 @@ export class FamilyController {
   ) {}
 
   @Get(':familyId')
-  @ApiOkResponse({ description: '성공', type: BaseUserResponse })
+  @ApiOkResponse({ description: '성공', type: UserResponseDto })
   @ApiOperation({
     summary: 'get FamilyMembers By FamilyId',
     description: 'familyId 로 해당 가족에 속한 유저들 가지고 온다.',
