@@ -16,21 +16,17 @@ import { CreateDiaryDto } from './diaryDto/createDiaryDto';
 import { ApiBody, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { BaseDiaryResponse } from './diaryDto/baseDiaryResponse';
 import { BaseDiarysResponse } from './diaryDto/baseDiarysResponse';
-import { ApiConfigService } from '../shared/services/api-config.service';
 import { CreateMediumsResponse } from './diaryDto/createMediumsResponse';
 import { PutSignedUrlsResponse } from './diaryDto/putSignedUrlsResponse';
 import { GetSignedUrlsResponse } from './diaryDto/getSignedUrlsResponse';
 import { PutSignedUrlsDto } from './diaryDto/putSignedUrlsDto';
-import JwtAuthGuard from '../auth/jwt/jwt.auth.guard';
+import JwtAuthGuard from '../guard/jwt.auth.guard';
 
 @Controller('diary')
 @ApiTags('일기장 API')
 @UseGuards(JwtAuthGuard)
 export class DiaryController {
-  constructor(
-    private readonly diaryService: DiaryService,
-    private readonly configService: ApiConfigService,
-  ) {}
+  constructor(private readonly diaryService: DiaryService) {}
 
   @Get('/presigned-put')
   @ApiOkResponse({ description: '성공', type: PutSignedUrlsResponse })
@@ -99,7 +95,9 @@ export class DiaryController {
     summary: 'getDiaryByDiaryId',
     description: '특정 id로 일기 받아온다.',
   })
-  async findOne(@Param('diaryId', ParseIntPipe) diaryId: number): Promise<Diary> {
+  async findOne(
+    @Param('diaryId', ParseIntPipe) diaryId: number,
+  ): Promise<Diary> {
     return await this.diaryService.findOne(diaryId);
   }
 
