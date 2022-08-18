@@ -6,11 +6,21 @@ import { UserController } from './user.controller';
 import { LocalUser } from './local.user.entity';
 import { KakaoUser } from './kakao.user.entity';
 import { GoogleUser } from './google.user.entity';
+import { UserPushToken } from './entity/user-push-token.entity';
+import { UserPushTokenService } from './user-push-token.service';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User, LocalUser, KakaoUser, GoogleUser])],
+  imports: [
+    TypeOrmModule.forFeature([
+      User,
+      LocalUser,
+      KakaoUser,
+      GoogleUser,
+      UserPushToken,
+    ]),
+  ],
   controllers: [UserController],
-  providers: [UserService],
-  exports: [UserService],
+  providers: [UserService, UserPushTokenService],
+  exports: [UserService, UserPushTokenService],
 })
 export class UserModule {}

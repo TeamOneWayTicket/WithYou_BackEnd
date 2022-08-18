@@ -1,10 +1,11 @@
-import { Injectable, Param } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './user.entity';
 import { LocalUser } from './local.user.entity';
 import { UpdateUserDto } from './userDto/updateUserDto';
 import { CreateUserDto } from './userDto/createUserDto';
+import { UserPushToken } from './entity/user-push-token.entity';
 
 @Injectable()
 export class UserService {
@@ -13,6 +14,8 @@ export class UserService {
     @InjectRepository(User) private userRepository: Repository<User>,
     @InjectRepository(LocalUser)
     private localUserRepository: Repository<LocalUser>,
+    @InjectRepository(UserPushToken)
+    private readonly pushTokenRepository: Repository<UserPushToken>,
   ) {}
 
   //유저 리스트 조회
@@ -34,6 +37,16 @@ export class UserService {
     } else {
       return true;
     }
+  }
+
+  async saveUserPushToken(userId: number, userPushToken: string) {
+    const newToken =
+      (await this.pushTokenRepository.findOne({
+        where: { userId },
+      })) ?? this.pushTokenRepository.create({ userId });
+    newToken.firebaseToken = userPushToken;
+
+    return this.pushTokenRepository.save(newToken);
   }
 
   /**

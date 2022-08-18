@@ -10,12 +10,13 @@ import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { DiaryModule } from './diary/diary.module';
 import { RedisModule } from '@liaoliaots/nestjs-redis';
+import { FirebaseCloudMessageModule } from './module/firebase-cloud-message/firebase-cloud-message.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: '.env',
+      envFilePath: ['.env.development.local', '.env.development', '.env'],
     }),
     TypeOrmModule.forRootAsync({
       imports: [SharedModule],
@@ -32,6 +33,7 @@ import { RedisModule } from '@liaoliaots/nestjs-redis';
     UserModule,
     AuthModule,
     DiaryModule,
+    FirebaseCloudMessageModule,
   ],
   controllers: [AppController],
   providers: [AppService],

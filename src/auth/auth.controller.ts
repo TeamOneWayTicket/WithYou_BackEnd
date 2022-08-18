@@ -11,7 +11,7 @@ import { AuthService } from './auth.service';
 import { JwtTokenValidationDto } from './dto/jwt-token-validation.dto';
 
 import { UserService } from '../user/user.service';
-import JwtAuthGuard from './jwt/jwt.auth.guard';
+import JwtAuthGuard from '../guard/jwt.auth.guard';
 import { JwtPayload } from './jwt/jwt.payload.interface';
 
 @Controller('auth')

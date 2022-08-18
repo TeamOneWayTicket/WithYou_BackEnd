@@ -12,10 +12,13 @@ import { Diary } from '../diary/diary.entity';
 import { ApiExtraModels } from '@nestjs/swagger';
 import { GoogleUser } from './google.user.entity';
 import { ApiModelProperty } from '@nestjs/swagger/dist/decorators/api-model-property.decorator';
+import { Role } from '../common/enum/role.enum';
 
 @Entity()
 @ApiExtraModels()
 export class User {
+  public roles = [Role.User];
+
   @PrimaryGeneratedColumn()
   @ApiModelProperty({ description: 'id' })
   id: number;

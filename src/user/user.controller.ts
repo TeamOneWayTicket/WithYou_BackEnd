@@ -7,7 +7,6 @@ import {
   ParseIntPipe,
   Patch,
   Post,
-  Res,
   UseGuards,
 } from '@nestjs/common';
 import { UserService } from './user.service';
@@ -19,6 +18,10 @@ import { BaseUsersResponse } from './userDto/baseUsersResponse';
 import { BaseUserResponse } from './userDto/baseUserResponse';
 import { DeleteUserResponse } from './userDto/deleteUserResponse';
 import { AuthGuard } from '@nestjs/passport';
+import { Auth } from '../decorator/http.decorator';
+import { Role } from '../common/enum/role.enum';
+import { UserParam } from '../decorator/user.decorator';
+import { UserPushTokenDto } from './dto/user-push-token.dto';
 
 @Controller('user')
 @ApiTags('유저 API')
@@ -37,6 +40,15 @@ export class UserController {
     return await this.userService.findAll();
   }
 
+  @Post('push-token')
+  @Auth(Role.User)
+  @ApiOperation({ description: '사용자의 FCM 푸시토큰을 저장하는 API' })
+  async saveUserPushToken(
+    @UserParam() user: User,
+    @Body() dto: UserPushTokenDto,
+  ) {
+    return await this.userService.saveUserPushToken(user.id, dto.token);
+  }
   @UseGuards(AuthGuard('jwt'))
   @Get('/login/:id')
   @ApiOkResponse({ description: '성공', type: BaseUserResponse })
