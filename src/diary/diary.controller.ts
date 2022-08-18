@@ -54,7 +54,6 @@ export class DiaryController {
   async getSignedUrlsForGetObject(
     @Query('fileNamesInS3') fileNamesInS3: string[],
   ): Promise<GetPresignedUrlsResponseDto> {
-    console.log(fileNamesInS3);
     return await this.diaryService.getSignedUrlsForGetObject(fileNamesInS3);
   }
 
