@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Get,
@@ -12,31 +13,25 @@ import {
 import { DiaryService } from './diary.service';
 import { Diary } from './diary.entity';
 import { UpdateDiaryDto } from './diaryDto/update-diary.dto';
-import { CreateDiaryDto } from './diaryDto/create-diary.dto';
+import { DiaryContentDto } from './diaryDto/diary-content.dto';
 import { ApiBody, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
-<<<<<<< HEAD
-import { BaseDiaryResponse } from './diaryDto/baseDiaryResponse';
-import { BaseDiarysResponse } from './diaryDto/baseDiarysResponse';
-import { CreateMediumsResponse } from './diaryDto/createMediumsResponse';
-import { PutSignedUrlsResponse } from './diaryDto/putSignedUrlsResponse';
-import { GetSignedUrlsResponse } from './diaryDto/getSignedUrlsResponse';
-import { PutSignedUrlsDto } from './diaryDto/putSignedUrlsDto';
-import JwtAuthGuard from '../guard/jwt.auth.guard';
-=======
 import { DiaryResponseDto } from './diaryDto/diary-response.dto';
-import { DiarysResponseDto } from './diaryDto/diarys-response.dto';
+import { DiariesResponseDto } from './diaryDto/diaries-response.dto';
 import { CreateMediumResponseDto } from './diaryDto/create-medium-response.dto';
 import { PutSignedUrlsResponse } from './diaryDto/putSignedUrlsResponse';
 import { GetPresignedUrlsResponseDto } from './diaryDto/get-presigned-urls-response.dto';
 import { PutPresignedUrlsDto } from './diaryDto/put-presigned-urls.dto';
-import JwtAuthGuard from '../auth/jwt/jwt.auth.guard';
->>>>>>> b4ff67b ([#22]fix: diary dto 이름 수정, jsdoc 부분 제거)
+import { UserService } from '../user/user.service';
+import JwtAuthGuard from '../guard/jwt.auth.guard';
 
 @Controller('diary')
 @ApiTags('일기장 API')
 @UseGuards(JwtAuthGuard)
 export class DiaryController {
-  constructor(private readonly diaryService: DiaryService) {}
+  constructor(
+    private readonly diaryService: DiaryService,
+    private readonly userService: UserService,
+  ) {}
 
   @Get('/presigned-put')
   @ApiOkResponse({ description: '성공', type: PutSignedUrlsResponse })
@@ -88,41 +83,29 @@ export class DiaryController {
     return await this.diaryService.createDiaryMedium(diaryId, fileNamesInS3);
   }
 
-  @Get('user-diarys/:userId')
-  @ApiOkResponse({ description: '성공', type: DiarysResponseDto })
+  @Get('user-diaries/:userId')
+  @ApiOkResponse({ description: '성공', type: DiariesResponseDto })
   @ApiOperation({
     summary: 'getAllDiaryByUserId',
     description: '특정 id 유저의 전체 일기 리스트 받아온다.',
   })
   async findUserDiarys(
     @Param('userId', ParseIntPipe) userId: number,
-  ): Promise<Diary[]> {
+  ): Promise<DiaryResponseDto[]> {
     return await this.diaryService.findAllByAuthorId(userId);
   }
 
   @Get('family-diarys/:userId')
-  @ApiOkResponse({ description: '성공', type: DiarysResponseDto })
+  @ApiOkResponse({ description: '성공', type: DiariesResponseDto })
   @ApiOperation({
     summary: 'get family Diary By UserId',
     description: '유저를 포함한 유저 가족의 일기들을 받아온다.',
   })
   async findFamilyDiarys(
     @Param('userId', ParseIntPipe) userId: number,
-  ): Promise<Diary[]> {
+  ): Promise<DiaryResponseDto[]> {
     return await this.diaryService.findAllByFamilyId(userId);
   }
-
-  // @Get(':diaryId')
-  // @ApiOkResponse({ description: '성공', type: Diary })
-  // @ApiOperation({
-  //   summary: 'get diary by diaryId',
-  //   description: '특정 id로 일기 받아온다.',
-  // })
-  // async findOne(
-  //   @Param('diaryId', ParseIntPipe) diaryId: number,
-  // ): Promise<Diary> {
-  //   return await this.diaryService.findOne(diaryId);
-  // }
 
   @Get(':diaryId')
   @ApiOkResponse({ description: '성공', type: DiaryResponseDto })
@@ -136,7 +119,7 @@ export class DiaryController {
     return await this.diaryService.findOneWithUrls(diaryId);
   }
 
-  @Patch(':id')
+  @Patch(':diaryId')
   @ApiBody({ type: UpdateDiaryDto })
   @ApiOkResponse({ description: '성공', type: Diary })
   @ApiOperation({
@@ -151,16 +134,20 @@ export class DiaryController {
   }
 
   @Post(':userId')
-  @ApiBody({ type: CreateDiaryDto })
+  @ApiBody({ type: DiaryContentDto })
   @ApiOkResponse({ description: '성공', type: Diary })
   @ApiOperation({
-    summary: 'createDiaryByUserId',
+    summary: 'create Diary By UserId',
     description: '특정 id 유저에 일기를 생성한다.',
   })
   async createDiary(
     @Param('userId', ParseIntPipe) userId: number,
-    @Body() diary: CreateDiaryDto,
+    @Body() diary: DiaryContentDto,
   ): Promise<Diary> {
-    return await this.diaryService.createDiary(userId, diary);
+    if (await this.userService.hasMinimumInfo(userId)) {
+      return await this.diaryService.createDiary(userId, diary);
+    } else {
+      throw new BadRequestException('유효하지 않은 유저입니다');
+    }
   }
 }

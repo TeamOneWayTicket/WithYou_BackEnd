@@ -3,7 +3,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Diary } from './diary.entity';
 import { Repository } from 'typeorm';
 import { UpdateDiaryDto } from './diaryDto/update-diary.dto';
-import { CreateDiaryDto } from './diaryDto/create-diary.dto';
 import { ApiConfigService } from '../shared/services/api-config.service';
 import { DiaryMedium } from './diary.medium.entity';
 import { CreateMediaDto } from './diaryDto/create-media.dto';
@@ -15,6 +14,9 @@ import { PutPresignedUrlResponseDto } from './diaryDto/put-presigned-url-respons
 import { PutSignedUrlsResponse } from './diaryDto/putSignedUrlsResponse';
 import { GetPresignedUrlsResponseDto } from './diaryDto/get-presigned-urls-response.dto';
 import { DiaryResponseDto } from './diaryDto/diary-response.dto';
+import { UserService } from '../user/user.service';
+import { CreateDiaryDto } from './diaryDto/create-diary.dto';
+import { DiaryContentDto } from './diaryDto/diary-content.dto';
 
 @Injectable()
 export class DiaryService {
@@ -24,6 +26,7 @@ export class DiaryService {
     @InjectRepository(DiaryMedium)
     private readonly diaryMediumRepository: Repository<DiaryMedium>,
     private readonly configService: ApiConfigService,
+    private readonly userService: UserService,
   ) {
     AWS.config.update({
       region: this.configService.awsConfig.bucketRegion,
@@ -32,12 +35,30 @@ export class DiaryService {
     });
   }
 
-  async findAllByAuthorId(authorId: number): Promise<Diary[]> {
-    return await this.diaryRepository.find({ where: { authorId } });
+  async findAllByAuthorId(authorId: number): Promise<DiaryResponseDto[]> {
+    const diaries = await this.diaryRepository.find({ where: { authorId } });
+    const diariesWithUrl: DiaryResponseDto[] = [];
+    for (const diary of diaries) {
+      const diaryWithUrl: DiaryResponseDto = {
+        diary: diary,
+        mediumUrls: (await this.getDiaryMediumsSignedUrl(diary.id)).s3Urls,
+      };
+      diariesWithUrl.push(diaryWithUrl);
+    }
+    return diariesWithUrl;
   }
 
-  async findAllByFamilyId(familyId: number): Promise<Diary[]> {
-    return await this.diaryRepository.find({ where: { familyId } });
+  async findAllByFamilyId(familyId: number): Promise<DiaryResponseDto[]> {
+    const diaries = await this.diaryRepository.find({ where: { familyId } });
+    const diariesWithUrl: DiaryResponseDto[] = [];
+    for (const diary of diaries) {
+      const diaryWithUrl: DiaryResponseDto = {
+        diary: diary,
+        mediumUrls: (await this.getDiaryMediumsSignedUrl(diary.id)).s3Urls,
+      };
+      diariesWithUrl.push(diaryWithUrl);
+    }
+    return diariesWithUrl;
   }
 
   async findOne(id: number): Promise<Diary> {
@@ -50,12 +71,20 @@ export class DiaryService {
 
     return {
       diary,
-      getMediumUrls: urls.s3Urls,
+      mediumUrls: urls.s3Urls,
     };
   }
 
-  async createDiary(userId: number, diary: CreateDiaryDto): Promise<Diary> {
-    // userId로 familyId 찾아 넣고 일기 생성 (family table 만들고 수정 필요)
+  async createDiary(
+    authorId: number,
+    content: DiaryContentDto,
+  ): Promise<Diary> {
+    const familyId = (await this.userService.findOne(authorId)).familyId;
+    const diary: CreateDiaryDto = {
+      authorId,
+      content: content.content,
+      familyId,
+    };
     return await this.diaryRepository.save(diary);
   }
 
