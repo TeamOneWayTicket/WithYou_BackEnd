@@ -4,7 +4,7 @@ import { Diary } from './diary.entity';
 import { Repository } from 'typeorm';
 import { UpdateDiaryDto } from './diaryDto/update-diary.dto';
 import { ApiConfigService } from '../shared/services/api-config.service';
-import { DiaryMedium } from './diary.medium.entity';
+import { DiaryMedia } from './diary.media.entity';
 import { CreateMediaDto } from './diaryDto/create-media.dto';
 import { CreateMediumResponseDto } from './diaryDto/create-medium-response.dto';
 import AWS from 'aws-sdk';
@@ -16,15 +16,14 @@ import { GetPresignedUrlsResponseDto } from './diaryDto/get-presigned-urls-respo
 import { DiaryResponseDto } from './diaryDto/diary-response.dto';
 import { UserService } from '../user/user.service';
 import { CreateDiaryDto } from './diaryDto/create-diary.dto';
-import { DiaryContentDto } from './diaryDto/diary-content.dto';
 
 @Injectable()
 export class DiaryService {
   constructor(
     @InjectRepository(Diary)
     private readonly diaryRepository: Repository<Diary>,
-    @InjectRepository(DiaryMedium)
-    private readonly diaryMediumRepository: Repository<DiaryMedium>,
+    @InjectRepository(DiaryMedia)
+    private readonly diaryMediumRepository: Repository<DiaryMedia>,
     private readonly configService: ApiConfigService,
     private readonly userService: UserService,
   ) {
@@ -41,7 +40,7 @@ export class DiaryService {
     for (const diary of diaries) {
       const diaryWithUrl: DiaryResponseDto = {
         diary: diary,
-        mediumUrls: (await this.getDiaryMediumsSignedUrl(diary.id)).s3Urls,
+        mediumUrls: (await this.getDiaryMediumUrls(diary.id)).s3Urls,
       };
       diariesWithUrl.push(diaryWithUrl);
     }
@@ -54,7 +53,7 @@ export class DiaryService {
     for (const diary of diaries) {
       const diaryWithUrl: DiaryResponseDto = {
         diary: diary,
-        mediumUrls: (await this.getDiaryMediumsSignedUrl(diary.id)).s3Urls,
+        mediumUrls: (await this.getDiaryMediumUrls(diary.id)).s3Urls,
       };
       diariesWithUrl.push(diaryWithUrl);
     }
@@ -65,24 +64,20 @@ export class DiaryService {
     return await this.diaryRepository.findOne({ where: { id } });
   }
 
-  async findOneWithUrls(id: number): Promise<DiaryResponseDto> {
+  async findDiaryWithUrls(id: number): Promise<DiaryResponseDto> {
     const diary = await this.diaryRepository.findOne({ where: { id } });
-    const urls = await this.getDiaryMediumsSignedUrl(id);
 
     return {
       diary,
-      mediumUrls: urls.s3Urls,
+      mediumUrls: (await this.getDiaryMediumUrls(id)).s3Urls,
     };
   }
 
-  async createDiary(
-    authorId: number,
-    content: DiaryContentDto,
-  ): Promise<Diary> {
+  async createDiary(authorId: number, content: string): Promise<Diary> {
     const familyId = (await this.userService.findOne(authorId)).familyId;
     const diary: CreateDiaryDto = {
       authorId,
-      content: content.content,
+      content,
       familyId,
     };
     return await this.diaryRepository.save(diary);
@@ -105,7 +100,7 @@ export class DiaryService {
     return await this.findOne(targetId);
   }
 
-  async createDiaryMedia(diaryMedia: CreateMediaDto): Promise<DiaryMedium> {
+  async createDiaryMedia(diaryMedia: CreateMediaDto): Promise<DiaryMedia> {
     return await this.diaryMediumRepository.save(diaryMedia);
   }
 
@@ -114,7 +109,7 @@ export class DiaryService {
     fileNamesInS3: string[],
   ): Promise<CreateMediumResponseDto> {
     const diary = await this.findOne(diaryId);
-    const diaryMedium: DiaryMedium[] = [];
+    const diaryMedium: DiaryMedia[] = [];
     for (let i = 0; i < fileNamesInS3.length; i++) {
       const medium: CreateMediaDto = {
         fileNameInS3: fileNamesInS3[i],
@@ -127,7 +122,7 @@ export class DiaryService {
     return { diaryMedium } as CreateMediumResponseDto;
   }
 
-  async getDiaryMediumsSignedUrl(
+  async getDiaryMediumUrls(
     diaryId: number,
   ): Promise<GetPresignedUrlsResponseDto> {
     const s3 = new AWS.S3({ useAccelerateEndpoint: true });

@@ -4,15 +4,16 @@ import {
   Index,
   JoinColumn,
   ManyToOne,
-  PrimaryGeneratedColumn, Relation
-} from "typeorm";
+  PrimaryGeneratedColumn,
+  Relation,
+} from 'typeorm';
 import { ApiExtraModels } from '@nestjs/swagger';
 import { ApiModelProperty } from '@nestjs/swagger/dist/decorators/api-model-property.decorator';
 import { Diary } from './diary.entity';
 
 @Entity()
 @ApiExtraModels()
-export class DiaryMedium {
+export class DiaryMedia {
   @PrimaryGeneratedColumn()
   @ApiModelProperty({ description: 'id' })
   id: number;

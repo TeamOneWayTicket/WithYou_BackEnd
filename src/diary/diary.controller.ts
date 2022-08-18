@@ -66,7 +66,7 @@ export class DiaryController {
   async getDiarySignedUrls(
     @Param('diaryId', ParseIntPipe) diaryId: number,
   ): Promise<GetPresignedUrlsResponseDto> {
-    return await this.diaryService.getDiaryMediumsSignedUrl(diaryId);
+    return await this.diaryService.getDiaryMediumUrls(diaryId);
   }
 
   @Post('/:diaryId/upload-mediums')
@@ -112,10 +112,10 @@ export class DiaryController {
     summary: 'get diary and urls by diaryId',
     description: '특정 id로 일기 받아온다.',
   })
-  async findOneWithMediumUrl(
+  async findDiaryWithMediumUrls(
     @Param('diaryId', ParseIntPipe) diaryId: number,
   ): Promise<DiaryResponseDto> {
-    return await this.diaryService.findOneWithUrls(diaryId);
+    return await this.diaryService.findDiaryWithUrls(diaryId);
   }
 
   @Patch(':diaryId')
@@ -144,7 +144,7 @@ export class DiaryController {
     @Body() diary: DiaryContentDto,
   ): Promise<Diary> {
     if (await this.userService.hasMinimumInfo(userId)) {
-      return await this.diaryService.createDiary(userId, diary);
+      return await this.diaryService.createDiary(userId, diary.content);
     } else {
       throw new BadRequestException('유효하지 않은 유저입니다');
     }

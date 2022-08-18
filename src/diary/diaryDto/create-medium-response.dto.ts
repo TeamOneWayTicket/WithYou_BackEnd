@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { DiaryMedium } from '../diary.medium.entity';
+import { DiaryMedia } from '../diary.media.entity';
 
 export class CreateMediumResponseDto {
   @ApiProperty({ description: '일기' })
-  diaryMedium: DiaryMedium[];
+  diaryMedium: DiaryMedia[];
 }

@@ -77,7 +77,7 @@ export class FamilyController {
   ): Promise<DeleteFamilyResponseDto> {
     await this.familyService.deleteFamily(familyId);
     return Object.assign({
-      familyId: familyId,
+      familyId,
       statusCode: 200,
       statusMsg: `deleted successfully`,
     });
