@@ -5,7 +5,6 @@ import {
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
-  Relation,
 } from 'typeorm';
 import { ApiExtraModels } from '@nestjs/swagger';
 import { ApiModelProperty } from '@nestjs/swagger/dist/decorators/api-model-property.decorator';
@@ -37,5 +36,5 @@ export class DiaryMedium {
     createForeignKeyConstraints: false,
   })
   @JoinColumn({ name: 'diary_id' })
-  diary: Relation<Diary>;
+  diary: Diary;
 }
