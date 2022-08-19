@@ -1,6 +1,6 @@
 export interface JwtPayload {
-  userType: string;
-  userId: number;
-  userName: string;
-  userProfile: string;
+  vender: string;
+  id: number;
+  nickname: string;
+  thumbnail: string;
 }
