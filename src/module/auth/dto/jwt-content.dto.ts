@@ -14,7 +14,7 @@ export class JwtResponseDto {
   nickname: string;
 
   @ApiProperty({ description: '유저 프로필 사진' })
-  thumbnail: number;
+  thumbnail: string;
 
   @ApiProperty({ description: '토큰 발급 시각' })
   iat: string;
