@@ -35,11 +35,7 @@ export class UserService {
 
   async hasMinimumInfo(id: number): Promise<boolean> {
     const user = await this.findOne(id);
-    if (!user.familyId || !user.role) {
-      return false;
-    } else {
-      return true;
-    }
+    return !(!user.familyId || !user.role);
   }
 
   async saveUserPushToken(userId: number, userPushToken: string) {
