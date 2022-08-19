@@ -6,7 +6,7 @@ import {
   Index,
   JoinColumn,
 } from 'typeorm';
-import { User } from '../entity/user.entity';
+import { User } from './user.entity';
 import { ApiExtraModels } from '@nestjs/swagger';
 import { ApiModelProperty } from '@nestjs/swagger/dist/decorators/api-model-property.decorator';
 
