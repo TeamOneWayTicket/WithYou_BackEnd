@@ -1,6 +1,6 @@
 import { Controller, Get, Header, Req, Res, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { ApiConfigService } from '../../shared/services/api-config.service';
+import { ApiConfigService } from '../../../shared/services/api-config.service';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { GoogleAuthService } from './google.auth.service';
 

@@ -11,8 +11,7 @@ import {
 import { User } from '../user/user.entity';
 import { ApiExtraModels } from '@nestjs/swagger';
 import { ApiModelProperty } from '@nestjs/swagger/dist/decorators/api-model-property.decorator';
-import { DiaryMedium } from "./diary.medium.entity";
-
+import { DiaryMedium } from './diary.medium.entity';
 
 @Entity()
 @ApiExtraModels()

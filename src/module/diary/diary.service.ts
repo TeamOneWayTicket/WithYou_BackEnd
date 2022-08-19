@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Diary } from './diary.entity';
 import { Repository } from 'typeorm';
 import { UpdateDiaryDto } from './diaryDto/update-diary.dto';
-import { ApiConfigService } from '../shared/services/api-config.service';
+import { ApiConfigService } from '../../shared/services/api-config.service';
 import AWS from 'aws-sdk';
 import { v4 as uuid } from 'uuid';
 import { PutPresignedUrlsDto } from './diaryDto/put-presigned-urls.dto';
@@ -72,7 +72,6 @@ export class DiaryService {
       mediaUrls: (await this.getDiaryMediaUrls(id)).s3Urls,
     };
   }
-
 
   async createDiary(authorId: number, content: string): Promise<Diary> {
     const familyId = (await this.userService.findOne(authorId)).familyId;

@@ -16,7 +16,7 @@ import { KakaoUser } from '../user/kakao.user.entity';
 import { GoogleUser } from '../user/google.user.entity';
 import { JwtStrategy } from './strategy/jwt.strategy';
 import { JwtModule } from '@nestjs/jwt';
-import { ApiConfigService } from '../shared/services/api-config.service';
+import { ApiConfigService } from '../../shared/services/api-config.service';
 
 @Module({
   imports: [

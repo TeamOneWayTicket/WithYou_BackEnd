@@ -18,9 +18,9 @@ import { UsersResponseDto } from './userDto/users-response.dto';
 import { UserResponseDto } from './userDto/user-response.dto';
 import { DeleteUserResponseDto } from './userDto/delete-user-response.dto';
 import { AuthGuard } from '@nestjs/passport';
-import { Auth } from '../decorator/http.decorator';
-import { Role } from '../common/enum/role.enum';
-import { UserParam } from '../decorator/user.decorator';
+import { Auth } from '../../decorator/http.decorator';
+import { Role } from '../../common/enum/role.enum';
+import { UserParam } from '../../decorator/user.decorator';
 import { UserPushTokenDto } from './dto/user-push-token.dto';
 
 @Controller('user')

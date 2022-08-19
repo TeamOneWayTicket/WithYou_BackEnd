@@ -3,7 +3,7 @@ import { DataSource, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { KakaoUser } from '../../user/kakao.user.entity';
 import { User } from '../../user/user.entity';
-import { ApiConfigService } from '../../shared/services/api-config.service';
+import { ApiConfigService } from '../../../shared/services/api-config.service';
 import { KakaoStrategy } from '../strategy/kakao.strategy';
 import { UserService } from '../../user/user.service';
 import { UpdateUserDto } from '../../user/userDto/update-user.dto';
@@ -70,7 +70,6 @@ export class KakaoAuthService {
   }
 
   async putUserInfo(userId: number, userInfo: UpdateUserDto): Promise<User> {
-
     return await this.userService.findOne(userId);
   }
 

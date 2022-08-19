@@ -14,7 +14,7 @@ import {
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { KakaoAuthService } from './kakao.auth.service';
-import { ApiConfigService } from '../../shared/services/api-config.service';
+import { ApiConfigService } from '../../../shared/services/api-config.service';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { AuthService } from '../auth.service';
 import axios from 'axios';

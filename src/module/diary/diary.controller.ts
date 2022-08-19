@@ -21,7 +21,7 @@ import { PutSignedUrlsResponse } from './diaryDto/putSignedUrlsResponse';
 import { GetPresignedUrlsResponseDto } from './diaryDto/get-presigned-urls-response.dto';
 import { PutPresignedUrlsDto } from './diaryDto/put-presigned-urls.dto';
 import { UserService } from '../user/user.service';
-import JwtAuthGuard from '../guard/jwt.auth.guard';
+import JwtAuthGuard from '../../guard/jwt.auth.guard';
 import { CreateMediaResponseDto } from './diaryDto/create-media-response.dto';
 
 @Controller('diary')

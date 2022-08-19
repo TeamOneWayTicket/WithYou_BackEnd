@@ -1,5 +1,5 @@
 import { PassportStrategy } from '@nestjs/passport';
-import { ApiConfigService } from '../../shared/services/api-config.service';
+import { ApiConfigService } from '../../../shared/services/api-config.service';
 import { Injectable } from '@nestjs/common';
 import { Strategy } from 'passport-kakao';
 

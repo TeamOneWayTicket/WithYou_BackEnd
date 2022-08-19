@@ -13,7 +13,7 @@ import { Diary } from '../diary/diary.entity';
 import { ApiExtraModels } from '@nestjs/swagger';
 import { GoogleUser } from './google.user.entity';
 import { ApiModelProperty } from '@nestjs/swagger/dist/decorators/api-model-property.decorator';
-import { Role } from '../common/enum/role.enum';
+import { Role } from '../../common/enum/role.enum';
 import { Family } from '../family/family.entity';
 
 @Entity()
