@@ -30,10 +30,9 @@ export class GoogleAuthService {
     const queryRunner = this.myDataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
-    const user = {} as User;
     let googleUser: GoogleUser;
     try {
-      await this.userRepository.save(user);
+      const user = await this.userRepository.save({});
       googleUser = await this.googleUserRepository.save({
         userId: user.id,
         googleId,
