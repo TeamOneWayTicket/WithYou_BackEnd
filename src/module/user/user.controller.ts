@@ -11,12 +11,12 @@ import {
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { User } from './user.entity';
-import { UpdateUserDto } from './userDto/update-user.dto';
-import { CreateUserDto } from './userDto/create-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
+import { CreateUserDto } from './dto/create-user.dto';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { UsersResponseDto } from './userDto/users-response.dto';
-import { UserResponseDto } from './userDto/user-response.dto';
-import { DeleteUserResponseDto } from './userDto/delete-user-response.dto';
+import { UsersResponseDto } from './dto/users-response.dto';
+import { UserResponseDto } from './dto/user-response.dto';
+import { DeleteUserResponseDto } from './dto/delete-user-response.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { Auth } from '../../decorator/http.decorator';
 import { Role } from '../../common/enum/role.enum';

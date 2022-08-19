@@ -6,7 +6,7 @@ import { User } from '../../user/user.entity';
 import { ApiConfigService } from '../../../shared/services/api-config.service';
 import { KakaoStrategy } from '../strategy/kakao.strategy';
 import { UserService } from '../../user/user.service';
-import { UpdateUserDto } from '../../user/userDto/update-user.dto';
+import { UpdateUserDto } from '../../user/dto/update-user.dto';
 
 @Injectable()
 export class KakaoAuthService {

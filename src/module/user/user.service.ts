@@ -4,8 +4,8 @@ import { Repository } from 'typeorm';
 import { User } from './user.entity';
 import { LocalUser } from './local.user.entity';
 import { UserPushToken } from './entity/user-push-token.entity';
-import { UpdateUserDto } from './userDto/update-user.dto';
-import { CreateUserDto } from './userDto/create-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
+import { CreateUserDto } from './dto/create-user.dto';
 import { Family } from '../family/family.entity';
 
 @Injectable()

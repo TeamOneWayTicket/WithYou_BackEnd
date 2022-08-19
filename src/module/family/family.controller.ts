@@ -15,9 +15,9 @@ import { FamilyService } from './family.service';
 import { CreateFamilyDto } from './familyDto/create-family.dto';
 import { Family } from './family.entity';
 import { UpdateFamilyDto } from './familyDto/update-family.dto';
-import { DeleteUserResponseDto } from '../user/userDto/delete-user-response.dto';
+import { DeleteUserResponseDto } from '../user/dto/delete-user-response.dto';
 import { DeleteFamilyResponseDto } from './familyDto/delete-family-response.dto';
-import { UsersResponseDto } from '../user/userDto/users-response.dto';
+import { UsersResponseDto } from '../user/dto/users-response.dto';
 import { FamilyResponseDto } from './familyDto/family-response.dto';
 
 @Controller('family')
