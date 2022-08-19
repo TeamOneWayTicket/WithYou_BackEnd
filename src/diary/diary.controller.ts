@@ -17,12 +17,12 @@ import { DiaryContentDto } from './diaryDto/diary-content.dto';
 import { ApiBody, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { DiaryResponseDto } from './diaryDto/diary-response.dto';
 import { DiariesResponseDto } from './diaryDto/diaries-response.dto';
-import { CreateMediumResponseDto } from './diaryDto/create-medium-response.dto';
 import { PutSignedUrlsResponse } from './diaryDto/putSignedUrlsResponse';
 import { GetPresignedUrlsResponseDto } from './diaryDto/get-presigned-urls-response.dto';
 import { PutPresignedUrlsDto } from './diaryDto/put-presigned-urls.dto';
 import { UserService } from '../user/user.service';
 import JwtAuthGuard from '../guard/jwt.auth.guard';
+import { CreateMediaResponseDto } from './diaryDto/create-media-response.dto';
 
 @Controller('diary')
 @ApiTags('일기장 API')
@@ -66,11 +66,11 @@ export class DiaryController {
   async getDiarySignedUrls(
     @Param('diaryId', ParseIntPipe) diaryId: number,
   ): Promise<GetPresignedUrlsResponseDto> {
-    return await this.diaryService.getDiaryMediumUrls(diaryId);
+    return await this.diaryService.getDiaryMediaUrls(diaryId);
   }
 
   @Post('/:diaryId/upload-mediums')
-  @ApiOkResponse({ description: '성공', type: CreateMediumResponseDto })
+  @ApiOkResponse({ description: '성공', type: CreateMediaResponseDto })
   @ApiOperation({
     summary: '클라이언트 측의 업로드 완료 request 처리',
     description: '업로드한 medium 객체 생성 및 저장 api.',
@@ -78,8 +78,8 @@ export class DiaryController {
   async createMedium(
     @Param('diaryId', ParseIntPipe) diaryId: number,
     @Query('fileNamesInS3') fileNamesInS3: string[],
-  ): Promise<CreateMediumResponseDto> {
-    return await this.diaryService.createDiaryMedium(diaryId, fileNamesInS3);
+  ): Promise<CreateMediaResponseDto> {
+    return await this.diaryService.createDiaryMedia(diaryId, fileNamesInS3);
   }
 
   @Get('user-diaries/:userId')

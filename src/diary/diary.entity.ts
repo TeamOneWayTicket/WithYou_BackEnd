@@ -11,7 +11,8 @@ import {
 import { User } from '../user/user.entity';
 import { ApiExtraModels } from '@nestjs/swagger';
 import { ApiModelProperty } from '@nestjs/swagger/dist/decorators/api-model-property.decorator';
-import { DiaryMedia } from './diary.media.entity';
+import { DiaryMedium } from "./diary.medium.entity";
+
 
 @Entity()
 @ApiExtraModels()
@@ -49,6 +50,6 @@ export class Diary {
   @JoinColumn({ name: 'author_id' })
   author: User;
 
-  @OneToMany(() => DiaryMedia, (diaryMedium) => diaryMedium.diary)
-  medium: DiaryMedia[];
+  @OneToMany(() => DiaryMedium, (diaryMedium) => diaryMedium.diary)
+  media: DiaryMedium[];
 }

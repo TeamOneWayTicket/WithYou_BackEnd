@@ -13,7 +13,7 @@ import { Diary } from './diary.entity';
 
 @Entity()
 @ApiExtraModels()
-export class DiaryMedia {
+export class DiaryMedium {
   @PrimaryGeneratedColumn()
   @ApiModelProperty({ description: 'id' })
   id: number;
@@ -33,7 +33,7 @@ export class DiaryMedia {
   @ApiModelProperty({ description: 's3에 저장된 파일명' })
   fileNameInS3: string;
 
-  @ManyToOne(() => Diary, (diary) => diary.medium, {
+  @ManyToOne(() => Diary, (diary) => diary.media, {
     createForeignKeyConstraints: false,
   })
   @JoinColumn({ name: 'diary_id' })

@@ -6,5 +6,5 @@ export class DiaryResponseDto {
   diary: Diary;
 
   @ApiProperty({ description: 'presigned url' })
-  mediumUrls: string[];
+  mediaUrls: string[];
 }
