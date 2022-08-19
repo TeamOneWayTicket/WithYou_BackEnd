@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString } from 'class-validator';
+import { IsBoolean } from 'class-validator';
 
 export class JwtValidationDto {
   @ApiProperty({ description: '유저 타입' })
@@ -15,6 +15,6 @@ export class JwtValidationDto {
   thumbnail: string;
 
   @ApiProperty({ description: '새로운 유저인지 판별하는 값' })
-  @IsString()
+  @IsBoolean()
   isNew: boolean;
 }
