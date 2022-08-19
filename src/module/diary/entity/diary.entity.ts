@@ -43,7 +43,7 @@ export class Diary {
   @ApiModelProperty({ description: '일기장 작성 시점' })
   createdAt: Date;
 
-  @ManyToOne(() => User, (user) => user.diarys, {
+  @ManyToOne(() => User, (user) => user.diaries, {
     createForeignKeyConstraints: false,
   })
   @JoinColumn({ name: 'author_id' })

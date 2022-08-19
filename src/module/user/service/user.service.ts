@@ -48,30 +48,15 @@ export class UserService {
     return this.pushTokenRepository.save(newToken);
   }
 
-  async updateUser(id: number, user: UpdateUserDto): Promise<User> {
-    const family = await this.familyRepository.findOne({
-      where: { id: user.familyId },
-    });
-    const updateInfo = {
-      family,
-      ...user,
-    };
-    await this.userRepository.update(id, updateInfo);
-    return await this.findOne(id);
+  async updateUser(id: number, dto: UpdateUserDto): Promise<User> {
+    return await this.userRepository.save({ id, ...dto });
   }
 
-  async createUser(user: CreateUserDto): Promise<User> {
-    return await this.userRepository.save(user);
+  async createUser(dto: CreateUserDto): Promise<User> {
+    return await this.userRepository.save(dto);
   }
 
-  async findLocalUser(userId: number): Promise<User> {
-    return await this.userRepository.findOne({
-      where: { id: userId },
-      relations: ['local_user'],
-    });
-  }
-
-  async deleteUser(id: number): Promise<void> {
-    await this.userRepository.delete({ id: id });
+  async deleteUser(id: number): Promise<number | undefined> {
+    return (await this.userRepository.delete({ id })).affected;
   }
 }
