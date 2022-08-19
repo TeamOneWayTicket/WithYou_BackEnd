@@ -21,7 +21,7 @@ import axios from 'axios';
 import { KakaoTokenDto } from '../dto/kakao-token.dto';
 import { JwtResponseDto } from '../dto/jwt-response.dto';
 import { JwtService } from '@nestjs/jwt';
-import { UserService } from '../../user/user.service';
+import { UserService } from '../../user/service/user.service';
 
 @Controller('auth/kakao')
 @ApiTags('카카오 인증 API')

@@ -2,10 +2,10 @@ import { Injectable } from '@nestjs/common';
 import { DataSource, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { KakaoUser } from '../../user/entity/kakao.user.entity';
-import { User } from '../../user/user.entity';
+import { User } from '../../user/entity/user.entity';
 import { ApiConfigService } from '../../../shared/services/api-config.service';
 import { KakaoStrategy } from '../strategy/kakao.strategy';
-import { UserService } from '../../user/user.service';
+import { UserService } from '../../user/service/user.service';
 import { UpdateUserDto } from '../../user/dto/update-user.dto';
 
 @Injectable()

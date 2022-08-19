@@ -2,20 +2,20 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Diary } from './entity/diary.entity';
 import { Repository } from 'typeorm';
-import { UpdateDiaryDto } from './diaryDto/update-diary.dto';
+import { UpdateDiaryDto } from './dto/update-diary.dto';
 import { ApiConfigService } from '../../shared/services/api-config.service';
 import AWS from 'aws-sdk';
 import { v4 as uuid } from 'uuid';
-import { PutPresignedUrlsDto } from './diaryDto/put-presigned-urls.dto';
-import { PutPresignedUrlResponseDto } from './diaryDto/put-presigned-url-response.dto';
-import { PutSignedUrlsResponse } from './diaryDto/putSignedUrlsResponse';
-import { GetPresignedUrlsResponseDto } from './diaryDto/get-presigned-urls-response.dto';
-import { DiaryResponseDto } from './diaryDto/diary-response.dto';
-import { UserService } from '../user/user.service';
-import { CreateDiaryDto } from './diaryDto/create-diary.dto';
+import { PutPresignedUrlsDto } from './dto/put-presigned-urls.dto';
+import { PutPresignedUrlResponseDto } from './dto/put-presigned-url-response.dto';
+import { PutSignedUrlsResponseDto } from './dto/put-signed-urls-response.dto';
+import { GetPresignedUrlsResponseDto } from './dto/get-presigned-urls-response.dto';
+import { DiaryResponseDto } from './dto/diary-response.dto';
+import { UserService } from '../user/service/user.service';
+import { CreateDiaryDto } from './dto/create-diary.dto';
 import { DiaryMedium } from './entity/diary.medium.entity';
-import { CreateMediumDto } from './diaryDto/create-medium.dto';
-import { CreateMediaResponseDto } from './diaryDto/create-media-response.dto';
+import { CreateMediumDto } from './dto/create-medium.dto';
+import { CreateMediaResponseDto } from './dto/create-media-response.dto';
 
 @Injectable()
 export class DiaryService {
@@ -163,7 +163,7 @@ export class DiaryService {
 
   async getSignedUrlsForPutObject(
     query: PutPresignedUrlsDto,
-  ): Promise<PutSignedUrlsResponse> {
+  ): Promise<PutSignedUrlsResponseDto> {
     const fileType: string = query.contentType.split('/')[1];
     const s3 = new AWS.S3({ useAccelerateEndpoint: true });
     const signedUrls: PutPresignedUrlResponseDto[] = [];
@@ -184,6 +184,6 @@ export class DiaryService {
       signedUrls.push(info);
     }
 
-    return { signedUrls } as PutSignedUrlsResponse;
+    return { signedUrls } as PutSignedUrlsResponseDto;
   }
 }

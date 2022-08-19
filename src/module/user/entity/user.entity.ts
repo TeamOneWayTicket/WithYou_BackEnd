@@ -7,14 +7,14 @@ import {
   OneToMany,
   ManyToOne,
 } from 'typeorm';
-import { LocalUser } from './entity/local.user.entity';
-import { KakaoUser } from './entity/kakao.user.entity';
-import { Diary } from '../diary/entity/diary.entity';
+import { LocalUser } from './local.user.entity';
+import { KakaoUser } from './kakao.user.entity';
+import { Diary } from '../../diary/entity/diary.entity';
 import { ApiExtraModels } from '@nestjs/swagger';
-import { GoogleUser } from './entity/google.user.entity';
+import { GoogleUser } from './google.user.entity';
 import { ApiModelProperty } from '@nestjs/swagger/dist/decorators/api-model-property.decorator';
-import { Role } from '../../common/enum/role.enum';
-import { Family } from '../family/entity/family.entity';
+import { Role } from '../../../common/enum/role.enum';
+import { Family } from '../../family/entity/family.entity';
 
 @Entity()
 @ApiExtraModels()

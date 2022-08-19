@@ -10,7 +10,7 @@ import { GoogleAuthController } from './controller/google.auth.controller';
 import { GoogleAuthService } from './service/google.auth.service';
 import { GoogleStrategy } from './strategy/google.strategy';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { User } from '../user/user.entity';
+import { User } from '../user/entity/user.entity';
 import { LocalUser } from '../user/entity/local.user.entity';
 import { KakaoUser } from '../user/entity/kakao.user.entity';
 import { GoogleUser } from '../user/entity/google.user.entity';

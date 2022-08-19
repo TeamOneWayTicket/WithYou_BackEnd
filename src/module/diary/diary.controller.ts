@@ -12,17 +12,17 @@ import {
 } from '@nestjs/common';
 import { DiaryService } from './diary.service';
 import { Diary } from './entity/diary.entity';
-import { UpdateDiaryDto } from './diaryDto/update-diary.dto';
-import { DiaryContentDto } from './diaryDto/diary-content.dto';
+import { UpdateDiaryDto } from './dto/update-diary.dto';
+import { DiaryContentDto } from './dto/diary-content.dto';
 import { ApiBody, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { DiaryResponseDto } from './diaryDto/diary-response.dto';
-import { DiariesResponseDto } from './diaryDto/diaries-response.dto';
-import { PutSignedUrlsResponse } from './diaryDto/putSignedUrlsResponse';
-import { GetPresignedUrlsResponseDto } from './diaryDto/get-presigned-urls-response.dto';
-import { PutPresignedUrlsDto } from './diaryDto/put-presigned-urls.dto';
-import { UserService } from '../user/user.service';
+import { DiaryResponseDto } from './dto/diary-response.dto';
+import { DiariesResponseDto } from './dto/diaries-response.dto';
+import { PutSignedUrlsResponseDto } from './dto/put-signed-urls-response.dto';
+import { GetPresignedUrlsResponseDto } from './dto/get-presigned-urls-response.dto';
+import { PutPresignedUrlsDto } from './dto/put-presigned-urls.dto';
+import { UserService } from '../user/service/user.service';
 import JwtAuthGuard from '../../guard/jwt.auth.guard';
-import { CreateMediaResponseDto } from './diaryDto/create-media-response.dto';
+import { CreateMediaResponseDto } from './dto/create-media-response.dto';
 
 @Controller('diary')
 @ApiTags('일기장 API')
@@ -34,14 +34,14 @@ export class DiaryController {
   ) {}
 
   @Get('/presigned-put')
-  @ApiOkResponse({ description: '성공', type: PutSignedUrlsResponse })
+  @ApiOkResponse({ description: '성공', type: PutSignedUrlsResponseDto })
   @ApiOperation({
     summary: 's3 업로드용 preSigned URL 발급 api',
     description: 's3에 medium Put할 수 있는 preSigned URL들 발급 api.',
   })
   async getSignedUrlsForPutObject(
     @Query() query: PutPresignedUrlsDto,
-  ): Promise<PutSignedUrlsResponse> {
+  ): Promise<PutSignedUrlsResponseDto> {
     return await this.diaryService.getSignedUrlsForPutObject(query);
   }
 

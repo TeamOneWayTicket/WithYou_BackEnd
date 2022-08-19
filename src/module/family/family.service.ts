@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Family } from './entity/family.entity';
-import { CreateFamilyDto } from './familyDto/create-family.dto';
+import { CreateFamilyDto } from './dto/create-family.dto';
 
 @Injectable()
 export class FamilyService {
@@ -15,8 +15,8 @@ export class FamilyService {
     return await this.familyRepository.findOne({ where: { id: familyId } });
   }
 
-  async createFamily(familyDto: CreateFamilyDto): Promise<Family> {
-    return await this.familyRepository.save(familyDto);
+  async createFamily(dto: CreateFamilyDto): Promise<Family> {
+    return await this.familyRepository.save(dto);
   }
 
   async updateFamily(familyId: number, familyName: string): Promise<Family> {
