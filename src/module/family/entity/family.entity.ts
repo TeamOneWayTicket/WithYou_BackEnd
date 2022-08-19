@@ -19,7 +19,7 @@ export class Family {
 
   @Column()
   @ApiModelProperty({ description: 'family name' })
-  familyName: string;
+  name: string;
 
   @OneToMany(() => User, (user) => user.family)
   users: User[];

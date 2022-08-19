@@ -11,22 +11,15 @@ export class FamilyService {
     private familyRepository: Repository<Family>,
   ) {}
 
-  async findOne(familyId: number): Promise<Family> {
-    return await this.familyRepository.findOne({ where: { id: familyId } });
-  }
-
   async createFamily(dto: CreateFamilyDto): Promise<Family> {
     return await this.familyRepository.save(dto);
   }
 
-  async updateFamily(familyId: number, familyName: string): Promise<Family> {
-    const family: Family = await this.findOne(familyId);
-    family.familyName = familyName;
-    await this.familyRepository.update(familyId, family);
-    return await this.findOne(familyId);
+  async updateFamily(id: number, name: string): Promise<Family> {
+    return await this.familyRepository.save({ id, name });
   }
 
-  async deleteFamily(familyId: number): Promise<void> {
-    await this.familyRepository.delete({ id: familyId });
+  async deleteFamily(id: number): Promise<void> {
+    await this.familyRepository.delete({ id });
   }
 }

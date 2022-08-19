@@ -6,6 +6,7 @@ import {
   Index,
   OneToMany,
   ManyToOne,
+  JoinColumn,
 } from 'typeorm';
 import { LocalUser } from './local.user.entity';
 import { KakaoUser } from './kakao.user.entity';
@@ -71,10 +72,11 @@ export class User {
   googleUser: GoogleUser;
 
   @OneToMany(() => Diary, (diary) => diary.author)
-  diarys: Diary[];
+  diaries: Diary[];
 
   @ManyToOne(() => Family, (family) => family.users, {
     createForeignKeyConstraints: false,
   })
+  @JoinColumn({ name: 'family_id' })
   family: Family;
 }

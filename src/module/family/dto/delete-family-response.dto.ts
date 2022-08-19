@@ -8,5 +8,5 @@ export class DeleteFamilyResponseDto {
   statusMsg: string;
 
   @ApiProperty({ description: '삭제 가족 id' })
-  familyId: number;
+  id: number;
 }
