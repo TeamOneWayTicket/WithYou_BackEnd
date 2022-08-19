@@ -35,6 +35,7 @@ export class DiaryController {
   ) {}
 
   @Get('/presigned-put')
+  @Auth(Role.User)
   @ApiOkResponse({ description: '성공', type: PutSignedUrlsResponseDto })
   @ApiOperation({
     summary: 's3 업로드용 preSigned URL 발급 api',
@@ -47,6 +48,7 @@ export class DiaryController {
   }
 
   @Get('/presigned-get')
+  @Auth(Role.User)
   @ApiOkResponse({ description: '성공', type: GetPresignedUrlsResponseDto })
   @ApiOperation({
     summary: 's3 다운로드용 preSigned URL 발급 api',
@@ -59,6 +61,7 @@ export class DiaryController {
   }
 
   @Get('/:diaryId/presigned-put')
+  @Auth(Role.User)
   @ApiOkResponse({ description: '성공', type: GetPresignedUrlsResponseDto })
   @ApiOperation({
     summary: '특정 일기 medium 의 다운로드용 preSigned URL 들 가져오는 api',
@@ -71,6 +74,7 @@ export class DiaryController {
   }
 
   @Post('/:diaryId/upload-mediums')
+  @Auth(Role.User)
   @ApiOkResponse({ description: '성공', type: CreateMediaResponseDto })
   @ApiOperation({
     summary: '클라이언트 측의 업로드 완료 request 처리',
@@ -84,6 +88,7 @@ export class DiaryController {
   }
 
   @Get('user-diaries/:userId')
+  @Auth(Role.User)
   @ApiOkResponse({ description: '성공', type: DiariesResponseDto })
   @ApiOperation({
     summary: 'getAllDiaryByUserId',
@@ -109,6 +114,7 @@ export class DiaryController {
   }
 
   @Get(':diaryId')
+  @Auth(Role.User)
   @ApiOkResponse({ description: '성공', type: DiaryResponseDto })
   @ApiOperation({
     summary: 'get diary and urls by diaryId',
@@ -121,6 +127,7 @@ export class DiaryController {
   }
 
   @Patch(':diaryId')
+  @Auth(Role.User)
   @ApiBody({ type: UpdateDiaryDto })
   @ApiOkResponse({ description: '성공', type: Diary })
   @ApiOperation({
