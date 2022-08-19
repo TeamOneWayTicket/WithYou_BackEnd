@@ -10,7 +10,7 @@ import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { AuthService } from '../service/auth.service';
 import { JwtValidationDto } from '../dto/jwt-validation.dto';
 
-import { UserService } from '../../user/user.service';
+import { UserService } from '../../user/service/user.service';
 import JwtAuthGuard from '../../../guard/jwt.auth.guard';
 import { JwtPayload } from '../interface/jwt.payload.interface';
 

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
-import { UserPushToken } from './entity/user-push-token.entity';
+import { UserPushToken } from '../entity/user-push-token.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()

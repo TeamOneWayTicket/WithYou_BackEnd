@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { messaging } from 'firebase-admin';
-import { UserPushTokenService } from '../user/user-push-token.service';
+import { UserPushTokenService } from '../user/service/user-push-token.service';
 import TokenMessage = messaging.TokenMessage;
 import { InjectRedis } from '@liaoliaots/nestjs-redis';
 import Redis from 'ioredis';
