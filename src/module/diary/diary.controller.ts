@@ -134,7 +134,8 @@ export class DiaryController {
     return await this.diaryService.updateDiary(diaryId, diary);
   }
 
-  @Post(':userId')
+  @Post()
+  @Auth(Role.User)
   @ApiBody({ type: DiaryContentDto })
   @ApiOkResponse({ description: '성공', type: Diary })
   @ApiOperation({
@@ -142,13 +143,12 @@ export class DiaryController {
     description: '특정 id 유저에 일기를 생성한다.',
   })
   async createDiary(
-    @Param('userId', ParseIntPipe) userId: number,
+    @UserParam() user: User,
     @Body() diary: DiaryContentDto,
   ): Promise<Diary> {
-    if (await this.userService.hasMinimumInfo(userId)) {
-      return await this.diaryService.createDiary(userId, diary.content);
-    } else {
+    if (!(await this.userService.hasMinimumInfo(user.id))) {
       throw new BadRequestException('유효하지 않은 유저입니다');
     }
+    return await this.diaryService.createDiary(user.id, diary.content);
   }
 }
