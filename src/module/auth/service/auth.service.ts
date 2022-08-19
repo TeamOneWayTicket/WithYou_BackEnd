@@ -15,8 +15,4 @@ export class AuthService {
   async getJwtToken(payload: JwtPayload): Promise<string> {
     return this.jwtService.sign(payload);
   }
-
-  async validateUserInfo(id: number): Promise<boolean> {
-    return !(await this.userService.hasMinimumInfo(id));
-  }
 }
