@@ -8,7 +8,6 @@ import {
   Patch,
   Post,
   Query,
-  UseGuards,
 } from '@nestjs/common';
 import { DiaryService } from './diary.service';
 import { Diary } from './entity/diary.entity';
@@ -21,12 +20,10 @@ import { PutSignedUrlsResponseDto } from './dto/put-signed-urls-response.dto';
 import { GetPresignedUrlsResponseDto } from './dto/get-presigned-urls-response.dto';
 import { PutPresignedUrlsDto } from './dto/put-presigned-urls.dto';
 import { UserService } from '../user/service/user.service';
-import JwtAuthGuard from '../../guard/jwt.auth.guard';
 import { CreateMediaResponseDto } from './dto/create-media-response.dto';
 
 @Controller('diary')
 @ApiTags('일기장 API')
-@UseGuards(JwtAuthGuard)
 export class DiaryController {
   constructor(
     private readonly diaryService: DiaryService,
