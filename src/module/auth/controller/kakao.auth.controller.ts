@@ -7,7 +7,7 @@ import {
   Param,
   ParseIntPipe,
   Post,
-  Res,
+  Redirect,
   UseGuards,
   UsePipes,
   ValidationPipe,
@@ -142,24 +142,22 @@ export class KakaoAuthController {
   @ApiOperation({
     summary: 'kakao logout redirect',
   })
-  kakaoLogoutLogicRedirect(@Res() res) {
-    return res.send(`
+  async kakaoLogoutLogicRedirect(): Promise<string> {
+    return `
           <div>
             <h2>축하합니다!</h2>
             <p>카카오 로그아웃 성공하였습니다!</p>
             <a href="/auth/kakao/menu">메인으로</a>
           </div>
-        `);
+        `;
   }
 
   @Get('/:id/unlink')
+  @Redirect('/auth/kakao/menu')
   @ApiOperation({
     summary: 'kakao unlink',
   })
-  async kakakoUnlink(
-    @Param('id', ParseIntPipe) id: number,
-    @Res() res,
-  ): Promise<void> {
+  async kakakoUnlink(@Param('id', ParseIntPipe) id: number): Promise<void> {
     const kakaoUser = await this.kakaoAuthService.findKakaoUserByUserId(id);
 
     try {
@@ -173,6 +171,5 @@ export class KakaoAuthController {
     } catch (error) {
       throw new BadRequestException(error);
     }
-    res.redirect('/auth/kakao/menu');
   }
 }
