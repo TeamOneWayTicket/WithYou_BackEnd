@@ -8,7 +8,7 @@ import {
 } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
-import { JwtTokenValidationDto } from './dto/jwt-token-validation.dto';
+import { JwtValidationDto } from './dto/jwt-validation.dto';
 
 import { UserService } from '../user/user.service';
 import JwtAuthGuard from '../guard/jwt.auth.guard';
@@ -23,7 +23,7 @@ export class AuthController {
   ) {}
 
   @Get('/get-jwt-token')
-  @ApiOkResponse({ description: '성공', type: JwtTokenValidationDto })
+  @ApiOkResponse({ description: '성공', type: JwtValidationDto })
   @ApiOperation({
     summary: 'getJwt',
     description: 'token 유효성 검사 및 유저 최소 정보가 입력되었는지 알려줌',
@@ -34,14 +34,18 @@ export class AuthController {
 
   @Get('validate')
   @UseGuards(JwtAuthGuard)
-  @ApiOkResponse({ description: '성공', type: JwtTokenValidationDto })
+  @ApiOkResponse({ description: '성공', type: JwtValidationDto })
   @ApiOperation({
     summary: 'validate jwt',
     description: 'token 유효성 검사 및 유저 최소 정보가 입력되었는지 알려줌',
   })
-  async validateToken(@Req() req): Promise<JwtTokenValidationDto> {
+  async validateToken(@Req() req): Promise<JwtValidationDto> {
     try {
       return {
+        userId: req.user.userId,
+        userName: req.user.userName,
+        userProfile: req.user.userProfile,
+        userType: 'kakao',
         isNew: !(await this.userService.hasMinimumInfo(req.user.userId)),
       };
     } catch (e) {

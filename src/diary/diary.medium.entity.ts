@@ -5,6 +5,7 @@ import {
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
+  Relation,
 } from 'typeorm';
 import { ApiExtraModels } from '@nestjs/swagger';
 import { ApiModelProperty } from '@nestjs/swagger/dist/decorators/api-model-property.decorator';
@@ -32,9 +33,9 @@ export class DiaryMedium {
   @ApiModelProperty({ description: 's3에 저장된 파일명' })
   fileNameInS3: string;
 
-  @ManyToOne(() => Diary, (diary) => diary.mediums, {
+  @ManyToOne(() => Diary, (diary) => diary.media, {
     createForeignKeyConstraints: false,
   })
   @JoinColumn({ name: 'diary_id' })
-  diary: Diary;
+  diary: Relation<Diary>;
 }

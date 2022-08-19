@@ -3,29 +3,32 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './user.entity';
 import { LocalUser } from './local.user.entity';
-import { UpdateUserDto } from './userDto/updateUserDto';
-import { CreateUserDto } from './userDto/createUserDto';
 import { UserPushToken } from './entity/user-push-token.entity';
+import { UpdateUserDto } from './userDto/update-user.dto';
+import { CreateUserDto } from './userDto/create-user.dto';
+import { Family } from '../family/family.entity';
 
 @Injectable()
 export class UserService {
-  //생성자
   constructor(
-    @InjectRepository(User) private userRepository: Repository<User>,
+    @InjectRepository(User)
+    private userRepository: Repository<User>,
     @InjectRepository(LocalUser)
     private localUserRepository: Repository<LocalUser>,
     @InjectRepository(UserPushToken)
     private readonly pushTokenRepository: Repository<UserPushToken>,
+    @InjectRepository(Family)
+    private familyRepository: Repository<Family>,
   ) {}
 
-  //유저 리스트 조회
   async findAll(): Promise<User[]> {
     return await this.userRepository.find();
   }
-  /**
-   * 특정 유저 조회
-   * @param id
-   */
+
+  async findByFamilyId(familyId: number): Promise<User[]> {
+    return await this.userRepository.find({ where: { familyId } });
+  }
+
   async findOne(id: number): Promise<User> {
     return await this.userRepository.findOne({ where: { id } });
   }
@@ -49,12 +52,15 @@ export class UserService {
     return this.pushTokenRepository.save(newToken);
   }
 
-  /**
-   * 유저 수정
-   * @param user
-   */
   async updateUser(id: number, user: UpdateUserDto): Promise<User> {
-    await this.userRepository.update(id, user);
+    const family = await this.familyRepository.findOne({
+      where: { id: user.familyId },
+    });
+    const updateInfo = {
+      family,
+      ...user,
+    };
+    await this.userRepository.update(id, updateInfo);
     return await this.findOne(id);
   }
 
@@ -69,9 +75,6 @@ export class UserService {
     });
   }
 
-  /**
-   * 유저 삭제
-   */
   async deleteUser(id: number): Promise<void> {
     await this.userRepository.delete({ id: id });
   }

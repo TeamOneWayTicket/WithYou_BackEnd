@@ -7,7 +7,6 @@ import {
   Param,
   ParseIntPipe,
   Post,
-  Req,
   Res,
   UseGuards,
   UsePipes,
@@ -20,7 +19,7 @@ import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { AuthService } from '../auth.service';
 import axios from 'axios';
 import { KakaoTokenDto } from '../dto/kakao-token.dto';
-import { JwtAccessTokenResponseDto } from '../dto/jwt-access-token-response.dto';
+import { JwtResponseDto } from '../dto/jwt-response.dto';
 import { JwtService } from '@nestjs/jwt';
 import { UserService } from '../../user/user.service';
 
@@ -68,7 +67,7 @@ export class KakaoAuthController {
   })
   async kakaoLoginCallback(
     @Body() dto: KakaoTokenDto,
-  ): Promise<JwtAccessTokenResponseDto> {
+  ): Promise<JwtResponseDto> {
     const _kakaoProfile = await this.kakaoAuthService.getKakaoProfile(
       dto.accessToken,
     );
@@ -78,7 +77,6 @@ export class KakaoAuthController {
     const kakaoName = _kakaoInfo.properties.nickname;
     const kakaoProfileImage = _kakaoInfo.properties.profile_image;
     const kakaoUser = await this.kakaoAuthService.findKakaoUser(kakaoId);
-
     if (!kakaoUser) {
       // need to register
       const newKakaoUser = await this.kakaoAuthService.register(
@@ -86,24 +84,32 @@ export class KakaoAuthController {
         dto.accessToken,
       );
       const jwtToken = this.jwtService.sign({
-        userType: 'kakao',
         userId: newKakaoUser.userId,
+        userType: 'kakao',
         userName: kakaoName,
         userProfile: kakaoProfileImage,
       });
       return {
+        userId: newKakaoUser.userId,
+        userType: 'kakao',
+        userName: kakaoName,
+        userProfile: kakaoProfileImage,
         accessToken: jwtToken,
         isNew: true,
       };
     } else {
       // just login
       const jwtToken = this.jwtService.sign({
-        userType: 'kakao',
         userId: kakaoUser.userId,
+        userType: 'kakao',
         userName: kakaoName,
         userProfile: kakaoProfileImage,
       });
       return {
+        userId: kakaoUser.userId,
+        userType: 'kakao',
+        userName: kakaoName,
+        userProfile: kakaoProfileImage,
         accessToken: jwtToken,
         isNew: false,
       };

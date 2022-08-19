@@ -2,18 +2,20 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Diary } from './diary.entity';
 import { Repository } from 'typeorm';
-import { UpdateDiaryDto } from './diaryDto/updateDiaryDto';
-import { CreateDiaryDto } from './diaryDto/createDiaryDto';
+import { UpdateDiaryDto } from './diaryDto/update-diary.dto';
 import { ApiConfigService } from '../shared/services/api-config.service';
-import { DiaryMedium } from './diary.medium.entity';
-import { CreateMediumDto } from './diaryDto/createMediumDto';
-import { CreateMediumsResponse } from './diaryDto/createMediumsResponse';
 import AWS from 'aws-sdk';
 import { v4 as uuid } from 'uuid';
-import { PutSignedUrlsDto } from './diaryDto/putSignedUrlsDto';
-import { PutSignedUrlResponse } from './diaryDto/putSignedUrlResponse';
+import { PutPresignedUrlsDto } from './diaryDto/put-presigned-urls.dto';
+import { PutPresignedUrlResponseDto } from './diaryDto/put-presigned-url-response.dto';
 import { PutSignedUrlsResponse } from './diaryDto/putSignedUrlsResponse';
-import { GetSignedUrlsResponse } from './diaryDto/getSignedUrlsResponse';
+import { GetPresignedUrlsResponseDto } from './diaryDto/get-presigned-urls-response.dto';
+import { DiaryResponseDto } from './diaryDto/diary-response.dto';
+import { UserService } from '../user/user.service';
+import { CreateDiaryDto } from './diaryDto/create-diary.dto';
+import { DiaryMedium } from './diary.medium.entity';
+import { CreateMediumDto } from './diaryDto/create-medium.dto';
+import { CreateMediaResponseDto } from './diaryDto/create-media-response.dto';
 
 @Injectable()
 export class DiaryService {
@@ -23,6 +25,7 @@ export class DiaryService {
     @InjectRepository(DiaryMedium)
     private readonly diaryMediumRepository: Repository<DiaryMedium>,
     private readonly configService: ApiConfigService,
+    private readonly userService: UserService,
   ) {
     AWS.config.update({
       region: this.configService.awsConfig.bucketRegion,
@@ -31,22 +34,59 @@ export class DiaryService {
     });
   }
 
-  async findAllByAuthorId(authorId: number): Promise<Diary[]> {
-    return this.diaryRepository.find({ where: { authorId } });
+  async findAllByAuthorId(authorId: number): Promise<DiaryResponseDto[]> {
+    const diaries = await this.diaryRepository.find({ where: { authorId } });
+    const diariesWithUrl: DiaryResponseDto[] = [];
+    for (const diary of diaries) {
+      const diaryWithUrl: DiaryResponseDto = {
+        diary: diary,
+        mediaUrls: (await this.getDiaryMediaUrls(diary.id)).s3Urls,
+      };
+      diariesWithUrl.push(diaryWithUrl);
+    }
+    return diariesWithUrl;
+  }
+
+  async findAllByFamilyId(familyId: number): Promise<DiaryResponseDto[]> {
+    const diaries = await this.diaryRepository.find({ where: { familyId } });
+    const diariesWithUrl: DiaryResponseDto[] = [];
+    for (const diary of diaries) {
+      const diaryWithUrl: DiaryResponseDto = {
+        diary: diary,
+        mediaUrls: (await this.getDiaryMediaUrls(diary.id)).s3Urls,
+      };
+      diariesWithUrl.push(diaryWithUrl);
+    }
+    return diariesWithUrl;
   }
 
   async findOne(id: number): Promise<Diary> {
-    return this.diaryRepository.findOne({ where: { id } });
+    return await this.diaryRepository.findOne({ where: { id } });
   }
 
-  async createDiary(userId: number, diary: CreateDiaryDto): Promise<Diary> {
-    // userId로 familyId 찾아 넣고 일기 생성 (family table 만들고 수정 필요)
+  async findDiaryWithUrls(id: number): Promise<DiaryResponseDto> {
+    const diary = await this.diaryRepository.findOne({ where: { id } });
+
+    return {
+      diary,
+      mediaUrls: (await this.getDiaryMediaUrls(id)).s3Urls,
+    };
+  }
+
+
+  async createDiary(authorId: number, content: string): Promise<Diary> {
+    const familyId = (await this.userService.findOne(authorId)).familyId;
+    const diary: CreateDiaryDto = {
+      authorId,
+      content,
+      familyId,
+    };
     return await this.diaryRepository.save(diary);
   }
 
   async updateDiary(targetId: number, diary: UpdateDiaryDto): Promise<Diary> {
     const targetDiary: Diary = await this.findOne(targetId);
-    const { id, familyId, authorId, createdAt, author, mediums } = targetDiary;
+    const { id, familyId, authorId, createdAt, author, media } = targetDiary;
     const { content } = diary;
     const updatedDiary: Diary = {
       id,
@@ -55,7 +95,7 @@ export class DiaryService {
       createdAt,
       author,
       content,
-      mediums,
+      media,
     };
     await this.diaryRepository.update(targetId, updatedDiary);
     return await this.findOne(targetId);
@@ -65,12 +105,12 @@ export class DiaryService {
     return await this.diaryMediumRepository.save(diaryMedium);
   }
 
-  async createDiaryMediums(
+  async createDiaryMedia(
     diaryId: number,
     fileNamesInS3: string[],
-  ): Promise<CreateMediumsResponse> {
+  ): Promise<CreateMediaResponseDto> {
     const diary = await this.findOne(diaryId);
-    const diaryMediums: DiaryMedium[] = [];
+    const diaryMedia: DiaryMedium[] = [];
     for (let i = 0; i < fileNamesInS3.length; i++) {
       const medium: CreateMediumDto = {
         fileNameInS3: fileNamesInS3[i],
@@ -78,35 +118,36 @@ export class DiaryService {
         diaryId,
         order: i,
       };
-      diaryMediums.push(await this.createDiaryMedium(medium));
+      diaryMedia.push(await this.createDiaryMedium(medium));
     }
-    return { diaryMediums } as CreateMediumsResponse;
+    return { diaryMedia } as CreateMediaResponseDto;
   }
 
-  async getDiaryMediumsSignedUrl(
+  async getDiaryMediaUrls(
     diaryId: number,
-  ): Promise<GetSignedUrlsResponse> {
+  ): Promise<GetPresignedUrlsResponseDto> {
     const s3 = new AWS.S3({ useAccelerateEndpoint: true });
 
-    const mediums = await this.diaryMediumRepository.findBy({
+    const media = await this.diaryMediumRepository.findBy({
       diaryId: diaryId,
     });
+
     const s3Urls: string[] = [];
-    for (const media of mediums) {
+    for (const medium of media) {
       const s3Url = await s3.getSignedUrlPromise('getObject', {
         Bucket: this.configService.awsConfig.bucketName,
-        Key: media.fileNameInS3,
+        Key: medium.fileNameInS3,
         Expires: 3600,
       });
 
       s3Urls.push(s3Url);
     }
-    return { s3Urls } as GetSignedUrlsResponse;
+    return { s3Urls } as GetPresignedUrlsResponseDto;
   }
 
   async getSignedUrlsForGetObject(
     fileNamesInS3: string[],
-  ): Promise<GetSignedUrlsResponse> {
+  ): Promise<GetPresignedUrlsResponseDto> {
     const s3 = new AWS.S3({ useAccelerateEndpoint: true });
     const s3Urls: string[] = [];
     for (let i = 0; i < fileNamesInS3.length; i++) {
@@ -118,15 +159,15 @@ export class DiaryService {
       s3Urls.push(s3Url);
     }
 
-    return { s3Urls } as GetSignedUrlsResponse;
+    return { s3Urls } as GetPresignedUrlsResponseDto;
   }
 
   async getSignedUrlsForPutObject(
-    query: PutSignedUrlsDto,
+    query: PutPresignedUrlsDto,
   ): Promise<PutSignedUrlsResponse> {
     const fileType: string = query.contentType.split('/')[1];
     const s3 = new AWS.S3({ useAccelerateEndpoint: true });
-    const signedUrls: PutSignedUrlResponse[] = [];
+    const signedUrls: PutPresignedUrlResponseDto[] = [];
 
     for (let i = 0; i < query.quantity; i++) {
       const fileName = `diary/${query.diaryId}/${uuid()}.${fileType}`;
@@ -139,7 +180,7 @@ export class DiaryService {
       const info = {
         fileName,
         s3Url,
-      } as PutSignedUrlResponse;
+      } as PutPresignedUrlResponseDto;
 
       signedUrls.push(info);
     }

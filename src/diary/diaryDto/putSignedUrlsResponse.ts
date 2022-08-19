@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { PutSignedUrlResponse } from './putSignedUrlResponse';
+import { PutPresignedUrlResponseDto } from './put-presigned-url-response.dto';
 
 export class PutSignedUrlsResponse {
   @ApiProperty({
@@ -20,5 +20,5 @@ export class PutSignedUrlsResponse {
       '        }\n' +
       '    ]',
   })
-  signedUrls: PutSignedUrlResponse[];
+  signedUrls: PutPresignedUrlResponseDto[];
 }

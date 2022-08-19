@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-export class PutSignedUrlResponse {
+export class PutPresignedUrlResponseDto {
   @ApiProperty({
     description: 's3에 저장되는 uuid로 생성된 파일명',
     example: 'diary/1/87f8fbb7-ca6a-4950-be3c-14884ec87c9e.png',
