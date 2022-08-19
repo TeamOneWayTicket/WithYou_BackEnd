@@ -10,14 +10,17 @@ import { RedisModuleOptions } from '@liaoliaots/nestjs-redis';
 export class ApiConfigService {
   constructor(private configService: ConfigService) {}
 
+  // noinspection JSUnusedGlobalSymbols
   get isDevelopment(): boolean {
     return this.nodeEnv === 'development';
   }
 
+  // noinspection JSUnusedGlobalSymbols
   get isProduction(): boolean {
     return this.nodeEnv === 'production';
   }
 
+  // noinspection JSUnusedGlobalSymbols
   get isTest(): boolean {
     return this.nodeEnv === 'test';
   }
@@ -52,6 +55,7 @@ export class ApiConfigService {
     return this.getString('NODE_ENV');
   }
 
+  // noinspection JSUnusedGlobalSymbols
   get fallbackLanguage(): string {
     return this.getString('FALLBACK_LANGUAGE');
   }
@@ -99,14 +103,17 @@ export class ApiConfigService {
     };
   }
 
+  // noinspection JSUnusedGlobalSymbols
   get documentationEnabled(): boolean {
     return this.getBoolean('ENABLE_DOCUMENTATION');
   }
 
+  // noinspection JSUnusedGlobalSymbols
   get natsEnabled(): boolean {
     return this.getBoolean('NATS_ENABLED');
   }
 
+  // noinspection JSUnusedGlobalSymbols
   get natsConfig() {
     return {
       host: this.getString('NATS_HOST'),

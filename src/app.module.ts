@@ -1,17 +1,15 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { UserModule } from './user/user.module';
-import { DataSource } from 'typeorm';
+import { UserModule } from './module/user/user.module';
 import { ConfigModule } from '@nestjs/config';
 import { SharedModule } from './shared/shared.module';
 import { ApiConfigService } from './shared/services/api-config.service';
 import { AppController } from './app.controller';
-import { AppService } from './app.service';
-import { AuthModule } from './auth/auth.module';
-import { DiaryModule } from './diary/diary.module';
+import { AuthModule } from './module/auth/auth.module';
+import { DiaryModule } from './module/diary/diary.module';
 import { RedisModule } from '@liaoliaots/nestjs-redis';
 import { FirebaseCloudMessageModule } from './module/firebase-cloud-message/firebase-cloud-message.module';
-import { FamilyModule } from './family/family.module';
+import { FamilyModule } from './module/family/family.module';
 
 @Module({
   imports: [
@@ -38,8 +36,5 @@ import { FamilyModule } from './family/family.module';
     FamilyModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
 })
-export class AppModule {
-  constructor(private readonly dataSource: DataSource) {}
-}
+export class AppModule {}
