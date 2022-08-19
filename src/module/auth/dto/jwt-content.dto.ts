@@ -1,17 +1,20 @@
 import { ApiProperty } from '@nestjs/swagger';
 
 export class JwtResponseDto {
-  @ApiProperty({ description: '유저 타입' })
-  userType: string;
-
   @ApiProperty({ description: '유저 id' })
-  userId: number;
+  id: number;
+
+  @ApiProperty({ description: '사용자 역할' })
+  role: string;
+
+  @ApiProperty({ description: '유저 타입' })
+  vendor: string;
 
   @ApiProperty({ description: '유저 이름' })
-  userName: string;
+  nickname: string;
 
   @ApiProperty({ description: '유저 프로필 사진' })
-  userProfile: number;
+  thumbnail: number;
 
   @ApiProperty({ description: '토큰 발급 시각' })
   iat: string;

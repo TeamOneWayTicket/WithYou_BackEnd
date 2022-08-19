@@ -1,6 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
 
 export class JwtResponseDto {
+  @ApiProperty({ description: '유저 id' })
+  id: number;
+
   @ApiProperty({ description: 'jwtToken' })
   accessToken: string;
 
@@ -8,14 +11,11 @@ export class JwtResponseDto {
   isNew: boolean;
 
   @ApiProperty({ description: '유저 타입' })
-  userType: string;
-
-  @ApiProperty({ description: '유저 id' })
-  userId: number;
+  vendor: string;
 
   @ApiProperty({ description: '유저 이름' })
-  userName: string;
+  nickname: string;
 
   @ApiProperty({ description: '유저 프로필 사진' })
-  userProfile: number;
+  thumbnail: number;
 }

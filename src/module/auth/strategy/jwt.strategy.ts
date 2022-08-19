@@ -4,6 +4,7 @@ import { HttpException, Injectable } from '@nestjs/common';
 import { ApiConfigService } from '../../../shared/services/api-config.service';
 import { JwtResponseDto } from '../dto/jwt-content.dto';
 import { UserService } from '../../user/service/user.service';
+import { User } from '../../user/entity/user.entity';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
@@ -17,11 +18,11 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  async validate(payload: JwtResponseDto) {
-    const user = await this.userService.findOne(payload.userId);
+  async validate(payload: JwtResponseDto): Promise<User> {
+    const user = await this.userService.findOne(payload.id);
     if (!user) {
       throw new HttpException('유효하지 않은 유저입니다.', 401);
     }
-    return payload;
+    return user;
   }
 }

@@ -80,34 +80,35 @@ export class KakaoAuthController {
       const newKakaoUser = await this.kakaoAuthService.register(
         kakaoId,
         dto.accessToken,
+        kakaoProfileImage,
       );
       const jwtToken = this.jwtService.sign({
-        userId: newKakaoUser.userId,
-        userType: 'kakao',
-        userName: kakaoName,
-        userProfile: kakaoProfileImage,
+        id: newKakaoUser.userId,
+        vendor: 'kakao',
+        name: kakaoName,
+        thumbnail: kakaoProfileImage,
       });
       return {
-        userId: newKakaoUser.userId,
-        userType: 'kakao',
-        userName: kakaoName,
-        userProfile: kakaoProfileImage,
+        id: newKakaoUser.userId,
+        vendor: 'kakao',
+        nickname: kakaoName,
+        thumbnail: kakaoProfileImage,
         accessToken: jwtToken,
         isNew: true,
       };
     } else {
       // just login
       const jwtToken = this.jwtService.sign({
-        userId: kakaoUser.userId,
-        userType: 'kakao',
-        userName: kakaoName,
-        userProfile: kakaoProfileImage,
+        id: kakaoUser.userId,
+        vendor: 'kakao',
+        nickname: kakaoName,
+        thumbnail: kakaoProfileImage,
       });
       return {
-        userId: kakaoUser.userId,
-        userType: 'kakao',
-        userName: kakaoName,
-        userProfile: kakaoProfileImage,
+        id: kakaoUser.userId,
+        vendor: 'kakao',
+        nickname: kakaoName,
+        thumbnail: kakaoProfileImage,
         accessToken: jwtToken,
         isNew: false,
       };
