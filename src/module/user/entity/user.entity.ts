@@ -39,6 +39,12 @@ export class User {
   nickname: string;
 
   @Column({
+    default: '',
+  })
+  @ApiModelProperty({ description: '썸네일' })
+  thumbnail: string;
+
+  @Column({
     nullable: true,
   })
   @ApiModelProperty({ description: '성별' })
