@@ -12,7 +12,6 @@ import { PutSignedUrlsResponseDto } from './dto/put-signed-urls-response.dto';
 import { GetPresignedUrlsResponseDto } from './dto/get-presigned-urls-response.dto';
 import { DiaryResponseDto } from './dto/diary-response.dto';
 import { UserService } from '../user/service/user.service';
-import { CreateDiaryDto } from './dto/create-diary.dto';
 import { DiaryMedium } from './entity/diary.medium.entity';
 import { CreateMediumDto } from './dto/create-medium.dto';
 import { CreateMediaResponseDto } from './dto/create-media-response.dto';
@@ -38,11 +37,10 @@ export class DiaryService {
     const diaries = await this.diaryRepository.find({ where: { authorId } });
     const diariesWithUrl: DiaryResponseDto[] = [];
     for (const diary of diaries) {
-      const diaryWithUrl: DiaryResponseDto = {
+      diariesWithUrl.push({
         diary: diary,
         mediaUrls: (await this.getDiaryMediaUrls(diary.id)).s3Urls,
-      };
-      diariesWithUrl.push(diaryWithUrl);
+      });
     }
     return diariesWithUrl;
   }
@@ -75,28 +73,18 @@ export class DiaryService {
 
   async createDiary(authorId: number, content: string): Promise<Diary> {
     const familyId = (await this.userService.findOne(authorId)).familyId;
-    const diary: CreateDiaryDto = {
+    return await this.diaryRepository.save({
       authorId,
       content,
       familyId,
-    };
-    return await this.diaryRepository.save(diary);
+    });
   }
 
   async updateDiary(targetId: number, diary: UpdateDiaryDto): Promise<Diary> {
-    const targetDiary: Diary = await this.findOne(targetId);
-    const { id, familyId, authorId, createdAt, author, media } = targetDiary;
     const { content } = diary;
-    const updatedDiary: Diary = {
-      id,
-      familyId,
-      authorId,
-      createdAt,
-      author,
+    await this.diaryRepository.update(targetId, {
       content,
-      media,
-    };
-    await this.diaryRepository.update(targetId, updatedDiary);
+    });
     return await this.findOne(targetId);
   }
 
@@ -111,15 +99,16 @@ export class DiaryService {
     const diary = await this.findOne(diaryId);
     const diaryMedia: DiaryMedium[] = [];
     for (let i = 0; i < fileNamesInS3.length; i++) {
-      const medium: CreateMediumDto = {
-        fileNameInS3: fileNamesInS3[i],
-        diary,
-        diaryId,
-        order: i,
-      };
-      diaryMedia.push(await this.createDiaryMedium(medium));
+      diaryMedia.push(
+        await this.createDiaryMedium({
+          fileNameInS3: fileNamesInS3[i],
+          diary,
+          diaryId,
+          order: i,
+        }),
+      );
     }
-    return { diaryMedia } as CreateMediaResponseDto;
+    return { diaryMedia };
   }
 
   async getDiaryMediaUrls(
@@ -133,15 +122,15 @@ export class DiaryService {
 
     const s3Urls: string[] = [];
     for (const medium of media) {
-      const s3Url = await s3.getSignedUrlPromise('getObject', {
-        Bucket: this.configService.awsConfig.bucketName,
-        Key: medium.fileNameInS3,
-        Expires: 3600,
-      });
-
-      s3Urls.push(s3Url);
+      s3Urls.push(
+        await s3.getSignedUrlPromise('getObject', {
+          Bucket: this.configService.awsConfig.bucketName,
+          Key: medium.fileNameInS3,
+          Expires: 3600,
+        }),
+      );
     }
-    return { s3Urls } as GetPresignedUrlsResponseDto;
+    return { s3Urls };
   }
 
   async getSignedUrlsForGetObject(
@@ -150,15 +139,15 @@ export class DiaryService {
     const s3 = new AWS.S3({ useAccelerateEndpoint: true });
     const s3Urls: string[] = [];
     for (let i = 0; i < fileNamesInS3.length; i++) {
-      const s3Url = await s3.getSignedUrlPromise('getObject', {
-        Bucket: this.configService.awsConfig.bucketName,
-        Key: fileNamesInS3[i],
-        Expires: 3600,
-      });
-      s3Urls.push(s3Url);
+      s3Urls.push(
+        await s3.getSignedUrlPromise('getObject', {
+          Bucket: this.configService.awsConfig.bucketName,
+          Key: fileNamesInS3[i],
+          Expires: 3600,
+        }),
+      );
     }
-
-    return { s3Urls } as GetPresignedUrlsResponseDto;
+    return { s3Urls };
   }
 
   async getSignedUrlsForPutObject(
@@ -176,14 +165,9 @@ export class DiaryService {
         Expires: 3600,
       });
 
-      const info = {
-        fileName,
-        s3Url,
-      } as PutPresignedUrlResponseDto;
-
-      signedUrls.push(info);
+      signedUrls.push({ fileName, s3Url });
     }
 
-    return { signedUrls } as PutSignedUrlsResponseDto;
+    return { signedUrls };
   }
 }
