@@ -7,12 +7,12 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { AuthService } from './auth.service';
-import { JwtValidationDto } from './dto/jwt-validation.dto';
+import { AuthService } from '../service/auth.service';
+import { JwtValidationDto } from '../dto/jwt-validation.dto';
 
-import { UserService } from '../user/user.service';
-import JwtAuthGuard from '../../guard/jwt.auth.guard';
-import { JwtPayload } from './jwt/jwt.payload.interface';
+import { UserService } from '../../user/user.service';
+import JwtAuthGuard from '../../../guard/jwt.auth.guard';
+import { JwtPayload } from '../interface/jwt.payload.interface';
 
 @Controller('auth')
 @ApiTags('인증 API')

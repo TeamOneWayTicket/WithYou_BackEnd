@@ -13,10 +13,10 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { KakaoAuthService } from './kakao.auth.service';
+import { KakaoAuthService } from '../service/kakao.auth.service';
 import { ApiConfigService } from '../../../shared/services/api-config.service';
-import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { AuthService } from '../auth.service';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { AuthService } from '../service/auth.service';
 import axios from 'axios';
 import { KakaoTokenDto } from '../dto/kakao-token.dto';
 import { JwtResponseDto } from '../dto/jwt-response.dto';

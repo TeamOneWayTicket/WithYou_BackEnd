@@ -2,7 +2,7 @@ import { Controller, Get, Header, Req, Res, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiConfigService } from '../../../shared/services/api-config.service';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
-import { GoogleAuthService } from './google.auth.service';
+import { GoogleAuthService } from '../service/google.auth.service';
 
 @Controller('auth/google')
 @ApiTags('구글 인증 API')
