@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { DataSource, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-import { KakaoUser } from '../../user/kakao.user.entity';
+import { KakaoUser } from '../../user/entity/kakao.user.entity';
 import { User } from '../../user/user.entity';
 import { ApiConfigService } from '../../../shared/services/api-config.service';
 import { KakaoStrategy } from '../strategy/kakao.strategy';

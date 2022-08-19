@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Diary } from './diary.entity';
+import { Diary } from './entity/diary.entity';
 import { Repository } from 'typeorm';
 import { UpdateDiaryDto } from './diaryDto/update-diary.dto';
 import { ApiConfigService } from '../../shared/services/api-config.service';
@@ -13,7 +13,7 @@ import { GetPresignedUrlsResponseDto } from './diaryDto/get-presigned-urls-respo
 import { DiaryResponseDto } from './diaryDto/diary-response.dto';
 import { UserService } from '../user/user.service';
 import { CreateDiaryDto } from './diaryDto/create-diary.dto';
-import { DiaryMedium } from './diary.medium.entity';
+import { DiaryMedium } from './entity/diary.medium.entity';
 import { CreateMediumDto } from './diaryDto/create-medium.dto';
 import { CreateMediaResponseDto } from './diaryDto/create-media-response.dto';
 

@@ -11,7 +11,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { DiaryService } from './diary.service';
-import { Diary } from './diary.entity';
+import { Diary } from './entity/diary.entity';
 import { UpdateDiaryDto } from './diaryDto/update-diary.dto';
 import { DiaryContentDto } from './diaryDto/diary-content.dto';
 import { ApiBody, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';

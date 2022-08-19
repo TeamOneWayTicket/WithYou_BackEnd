@@ -13,7 +13,7 @@ import { User } from '../user/user.entity';
 import { UserService } from '../user/user.service';
 import { FamilyService } from './family.service';
 import { CreateFamilyDto } from './familyDto/create-family.dto';
-import { Family } from './family.entity';
+import { Family } from './entity/family.entity';
 import { UpdateFamilyDto } from './familyDto/update-family.dto';
 import { DeleteUserResponseDto } from '../user/dto/delete-user-response.dto';
 import { DeleteFamilyResponseDto } from './familyDto/delete-family-response.dto';

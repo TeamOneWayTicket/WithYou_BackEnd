@@ -6,48 +6,36 @@ import {
   Index,
   JoinColumn,
 } from 'typeorm';
-import { User } from './user.entity';
+import { User } from '../user.entity';
 import { ApiExtraModels } from '@nestjs/swagger';
 import { ApiModelProperty } from '@nestjs/swagger/dist/decorators/api-model-property.decorator';
 
 @Entity()
 @ApiExtraModels()
-export class GoogleUser {
+export class KakaoUser {
   @PrimaryGeneratedColumn()
   @ApiModelProperty({ description: 'id' })
   id: number;
 
   @Column()
   @Index()
-  @ApiModelProperty({ description: 'google id' })
-  googleId: string;
+  @ApiModelProperty({ description: 'kakaoId' })
+  kakaoId: string;
 
-  @Column()
-  @ApiModelProperty({ description: 'google email' })
-  email: string;
-
-  @Column()
-  @ApiModelProperty({ description: 'google name' })
-  nickname: string;
-
-  @Column({
-    nullable: true,
-  })
-  @ApiModelProperty({ description: 'access Token' })
+  @Column({ nullable: true })
+  @ApiModelProperty({ description: 'accessToken' })
   accessToken: string;
 
-  @Column({
-    nullable: true,
-  })
-  @ApiModelProperty({ description: 'refresh Token' })
+  @Column({ nullable: true })
+  @ApiModelProperty({ description: 'refreshToken' })
   refreshToken: string;
 
   @Column({ nullable: true })
   @Index()
-  @ApiModelProperty({ description: '연결된 유저 id' })
+  @ApiModelProperty({ description: 'userId' })
   userId: number;
 
-  @OneToOne(() => User, (user) => user.googleUser, {
+  @OneToOne(() => User, (user) => user.kakaoUser, {
     createForeignKeyConstraints: false,
   })
   @JoinColumn({ name: 'user_id' })

@@ -1,4 +1,4 @@
-import { Diary } from '../diary.entity';
+import { Diary } from '../entity/diary.entity';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateMediumDto {

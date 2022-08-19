@@ -2,11 +2,11 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './user.entity';
-import { LocalUser } from './local.user.entity';
+import { LocalUser } from './entity/local.user.entity';
 import { UserPushToken } from './entity/user-push-token.entity';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { CreateUserDto } from './dto/create-user.dto';
-import { Family } from '../family/family.entity';
+import { Family } from '../family/entity/family.entity';
 
 @Injectable()
 export class UserService {
