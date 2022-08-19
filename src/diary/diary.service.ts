@@ -73,6 +73,7 @@ export class DiaryService {
     };
   }
 
+
   async createDiary(authorId: number, content: string): Promise<Diary> {
     const familyId = (await this.userService.findOne(authorId)).familyId;
     const diary: CreateDiaryDto = {
