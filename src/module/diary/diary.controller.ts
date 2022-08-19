@@ -21,6 +21,10 @@ import { GetPresignedUrlsResponseDto } from './dto/get-presigned-urls-response.d
 import { PutPresignedUrlsDto } from './dto/put-presigned-urls.dto';
 import { UserService } from '../user/service/user.service';
 import { CreateMediaResponseDto } from './dto/create-media-response.dto';
+import { User } from '../user/entity/user.entity';
+import { UserParam } from '../../decorator/user.decorator';
+import { Auth } from '../../decorator/http.decorator';
+import { Role } from '../../common/enum/role.enum';
 
 @Controller('diary')
 @ApiTags('일기장 API')
@@ -91,16 +95,17 @@ export class DiaryController {
     return await this.diaryService.findAllByAuthorId(userId);
   }
 
-  @Get('family-diaries/:userId')
+  @Get('family-diaries')
+  @Auth(Role.User)
   @ApiOkResponse({ description: '성공', type: DiariesResponseDto })
   @ApiOperation({
     summary: 'get family Diary By UserId',
     description: '유저를 포함한 유저 가족의 일기들을 받아온다.',
   })
   async findFamilyDiaries(
-    @Param('userId', ParseIntPipe) userId: number,
+    @UserParam() user: User,
   ): Promise<DiaryResponseDto[]> {
-    return await this.diaryService.findAllByFamilyId(userId);
+    return await this.diaryService.findAllByFamilyId(user.id);
   }
 
   @Get(':diaryId')
