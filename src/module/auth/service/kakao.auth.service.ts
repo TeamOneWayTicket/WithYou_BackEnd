@@ -6,7 +6,6 @@ import { User } from '../../user/entity/user.entity';
 import { ApiConfigService } from '../../../shared/services/api-config.service';
 import { KakaoStrategy } from '../strategy/kakao.strategy';
 import { UserService } from '../../user/service/user.service';
-import { UpdateUserDto } from '../../user/dto/update-user.dto';
 
 @Injectable()
 export class KakaoAuthService {
@@ -67,26 +66,5 @@ export class KakaoAuthService {
       await queryRunner.release();
     }
     return kakaoUser;
-  }
-
-  async putUserInfo(userId: number, userInfo: UpdateUserDto): Promise<User> {
-    return await this.userService.findOne(userId);
-  }
-
-  async updateUser(_user: KakaoUser): Promise<KakaoUser> {
-    const targetUser: KakaoUser = await this.findKakaoUser(_user.kakaoId);
-    const { id, userId, user } = targetUser;
-    const { accessToken, refreshToken, kakaoId } = _user;
-    const updatedUser: KakaoUser = {
-      id,
-      accessToken,
-      refreshToken,
-      kakaoId,
-      userId,
-      user,
-    };
-
-    await this.kakaoUserRepository.update(targetUser.id, updatedUser);
-    return updatedUser;
   }
 }
