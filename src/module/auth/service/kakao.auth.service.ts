@@ -46,14 +46,17 @@ export class KakaoAuthService {
     });
   }
 
-  async register(kakaoId: string, accessToken: string): Promise<KakaoUser> {
+  async register(
+    kakaoId: string,
+    accessToken: string,
+    thumbnail: string,
+  ): Promise<KakaoUser> {
     const queryRunner = this.myDataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
-    const user = {} as User;
     let kakaoUser: KakaoUser;
     try {
-      await this.userRepository.save(user);
+      const user = await this.userRepository.save({ thumbnail });
       kakaoUser = await this.kakaoUserRepository.save({
         userId: user.id,
         accessToken,
