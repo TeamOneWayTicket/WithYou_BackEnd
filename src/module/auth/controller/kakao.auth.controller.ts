@@ -21,7 +21,6 @@ import axios from 'axios';
 import { KakaoTokenDto } from '../dto/kakao-token.dto';
 import { JwtResponseDto } from '../dto/jwt-response.dto';
 import { JwtService } from '@nestjs/jwt';
-import { UserService } from '../../user/service/user.service';
 
 @Controller('auth/kakao')
 @ApiTags('카카오 인증 API')
@@ -31,7 +30,6 @@ export class KakaoAuthController {
     private readonly configService: ApiConfigService,
     private readonly authService: AuthService,
     private readonly jwtService: JwtService,
-    private readonly userService: UserService,
   ) {}
 
   @Get('menu')
@@ -125,7 +123,7 @@ export class KakaoAuthController {
     const kakaoUser = await this.kakaoAuthService.findKakaoUserByUserId(id);
 
     try {
-      const logout = await axios({
+      await axios({
         method: 'get',
         url: `https://kauth.kakao.com//oauth/logout?client_id=${this.configService.kakaoConfig.restApiKey}&logout_redirect_uri=${this.configService.kakaoConfig.logoutRedirectUrl}`,
         headers: {
@@ -164,7 +162,7 @@ export class KakaoAuthController {
     const kakaoUser = await this.kakaoAuthService.findKakaoUserByUserId(id);
 
     try {
-      const logout = await axios({
+      await axios({
         method: 'post',
         url: 'https://kapi.kakao.com/v1/user/unlink',
         headers: {
