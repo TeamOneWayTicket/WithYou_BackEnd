@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Diary } from './entity/diary.entity';
-import { Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 import { UpdateDiaryDto } from './dto/update-diary.dto';
 import { ApiConfigService } from '../../shared/services/api-config.service';
 import AWS from 'aws-sdk';
@@ -15,6 +15,7 @@ import { UserService } from '../user/service/user.service';
 import { DiaryMedium } from './entity/diary.medium.entity';
 import { CreateMediumDto } from './dto/create-medium.dto';
 import { CreateMediaResponseDto } from './dto/create-media-response.dto';
+import { DiaryContentDto } from './dto/diary-content.dto';
 
 @Injectable()
 export class DiaryService {
@@ -25,6 +26,7 @@ export class DiaryService {
     private readonly diaryMediumRepository: Repository<DiaryMedium>,
     private readonly configService: ApiConfigService,
     private readonly userService: UserService,
+    private myDataSource: DataSource,
   ) {
     AWS.config.update({
       region: this.configService.awsConfig.bucketRegion,
@@ -35,14 +37,15 @@ export class DiaryService {
 
   async findAllByAuthorId(authorId: number): Promise<DiaryResponseDto[]> {
     const diaries = await this.diaryRepository.find({ where: { authorId } });
-    const diariesWithUrl: DiaryResponseDto[] = [];
-    for (const diary of diaries) {
-      diariesWithUrl.push({
-        diary: diary,
-        mediaUrls: (await this.getDiaryMediaUrls(diary.id)).s3Urls,
-      });
-    }
-    return diariesWithUrl;
+    return await Promise.all(
+      diaries.map(
+        async (diary) =>
+          <DiaryResponseDto>{
+            diary,
+            mediaUrls: (await this.getDiaryMediaUrls(diary.id)).s3Urls,
+          },
+      ),
+    );
   }
 
   async findAllByFamilyId(familyId: number): Promise<DiaryResponseDto[]> {
@@ -71,13 +74,29 @@ export class DiaryService {
     };
   }
 
-  async createDiary(authorId: number, content: string): Promise<Diary> {
-    const familyId = (await this.userService.findOne(authorId)).familyId;
-    return await this.diaryRepository.save({
-      authorId,
-      content,
-      familyId,
-    });
+  async createDiary(
+    authorId: number,
+    diarySource: DiaryContentDto,
+  ): Promise<Diary> {
+    const queryRunner = this.myDataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+    let diary: Diary;
+    try {
+      const familyId = (await this.userService.findOne(authorId)).familyId;
+      diary = await this.diaryRepository.save({
+        authorId,
+        content: diarySource.content,
+        familyId,
+      });
+      await this.createDiaryMedia(diary.id, diarySource.fileNamesInS3);
+      await queryRunner.commitTransaction();
+    } catch (err) {
+      await queryRunner.rollbackTransaction();
+    } finally {
+      await queryRunner.release();
+    }
+    return diary;
   }
 
   async updateDiary(targetId: number, diary: UpdateDiaryDto): Promise<Diary> {
@@ -151,21 +170,24 @@ export class DiaryService {
   }
 
   async getSignedUrlsForPutObject(
-    query: PutPresignedUrlsDto,
+    dto: PutPresignedUrlsDto,
   ): Promise<PutSignedUrlsResponseDto> {
-    const fileType: string = query.contentType.split('/')[1];
+    const _infos = dto.mediaInfo;
     const s3 = new AWS.S3({ useAccelerateEndpoint: true });
     const signedUrls: PutPresignedUrlResponseDto[] = [];
 
-    for (let i = 0; i < query.quantity; i++) {
-      const fileName = `diary/${query.diaryId}/${uuid()}.${fileType}`;
-      const s3Url = await s3.getSignedUrlPromise('putObject', {
-        Bucket: this.configService.awsConfig.bucketName,
-        Key: fileName,
-        Expires: 3600,
-      });
+    for (const info of _infos) {
+      const fileType: string = info.contentType.split('/')[1];
+      for (let i = 0; i < info.quantity; i++) {
+        const fileName = `diary/${uuid()}.${fileType}`;
+        const s3Url = await s3.getSignedUrlPromise('putObject', {
+          Bucket: this.configService.awsConfig.bucketName,
+          Key: fileName,
+          Expires: 3600,
+        });
 
-      signedUrls.push({ fileName, s3Url });
+        signedUrls.push({ fileName, s3Url });
+      }
     }
 
     return { signedUrls };

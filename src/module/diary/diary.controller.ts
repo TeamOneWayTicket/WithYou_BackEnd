@@ -18,13 +18,13 @@ import { DiaryResponseDto } from './dto/diary-response.dto';
 import { DiariesResponseDto } from './dto/diaries-response.dto';
 import { PutSignedUrlsResponseDto } from './dto/put-signed-urls-response.dto';
 import { GetPresignedUrlsResponseDto } from './dto/get-presigned-urls-response.dto';
-import { PutPresignedUrlsDto } from './dto/put-presigned-urls.dto';
 import { UserService } from '../user/service/user.service';
 import { CreateMediaResponseDto } from './dto/create-media-response.dto';
 import { User } from '../user/entity/user.entity';
 import { UserParam } from '../../decorator/user.decorator';
 import { Auth } from '../../decorator/http.decorator';
 import { Role } from '../../common/enum/role.enum';
+import { PutPresignedUrlsDto } from './dto/put-presigned-urls.dto';
 
 @Controller('diary')
 @ApiTags('일기장 API')
@@ -34,20 +34,21 @@ export class DiaryController {
     private readonly userService: UserService,
   ) {}
 
-  @Get('/presigned-put')
+  @Post('/presigned-upload')
   @Auth(Role.User)
+  @ApiBody({ type: PutPresignedUrlsDto })
   @ApiOkResponse({ description: '성공', type: PutSignedUrlsResponseDto })
   @ApiOperation({
     summary: 's3 업로드용 preSigned URL 발급 api',
     description: 's3에 medium Put할 수 있는 preSigned URL들 발급 api.',
   })
   async getSignedUrlsForPutObject(
-    @Query() query: PutPresignedUrlsDto,
+    @Body() dto: PutPresignedUrlsDto,
   ): Promise<PutSignedUrlsResponseDto> {
-    return await this.diaryService.getSignedUrlsForPutObject(query);
+    return await this.diaryService.getSignedUrlsForPutObject(dto);
   }
 
-  @Get('/presigned-get')
+  @Get('/presigned-download')
   @Auth(Role.User)
   @ApiOkResponse({ description: '성공', type: GetPresignedUrlsResponseDto })
   @ApiOperation({
@@ -60,7 +61,7 @@ export class DiaryController {
     return await this.diaryService.getSignedUrlsForGetObject(fileNamesInS3);
   }
 
-  @Get('/:diaryId/presigned-put')
+  @Get('/:diaryId/presigned-downlad')
   @Auth(Role.User)
   @ApiOkResponse({ description: '성공', type: GetPresignedUrlsResponseDto })
   @ApiOperation({
@@ -87,30 +88,28 @@ export class DiaryController {
     return await this.diaryService.createDiaryMedia(diaryId, fileNamesInS3);
   }
 
-  @Get('user-diaries/:userId')
+  @Get('user-diaries')
   @Auth(Role.User)
   @ApiOkResponse({ description: '성공', type: DiariesResponseDto })
   @ApiOperation({
-    summary: 'getAllDiaryByUserId',
-    description: '특정 id 유저의 전체 일기 리스트 받아온다.',
+    summary: 'get user Diaries',
+    description: '현재 유저의 전체 일기 리스트 받아온다.',
   })
-  async findUserDiarys(
-    @Param('userId', ParseIntPipe) userId: number,
-  ): Promise<DiaryResponseDto[]> {
-    return await this.diaryService.findAllByAuthorId(userId);
+  async getUserDiaries(@UserParam() user: User): Promise<DiaryResponseDto[]> {
+    return await this.diaryService.findAllByAuthorId(user.id);
   }
 
   @Get('family-diaries')
   @Auth(Role.User)
   @ApiOkResponse({ description: '성공', type: DiariesResponseDto })
   @ApiOperation({
-    summary: 'get family Diary By UserId',
+    summary: 'get user family Diaries',
     description: '유저를 포함한 유저 가족의 일기들을 받아온다.',
   })
   async findFamilyDiaries(
     @UserParam() user: User,
   ): Promise<DiaryResponseDto[]> {
-    return await this.diaryService.findAllByFamilyId(user.id);
+    return await this.diaryService.findAllByFamilyId(user.familyId);
   }
 
   @Get(':diaryId')
@@ -151,11 +150,11 @@ export class DiaryController {
   })
   async createDiary(
     @UserParam() user: User,
-    @Body() diary: DiaryContentDto,
+    @Body() dto: DiaryContentDto,
   ): Promise<Diary> {
     if (!(await this.userService.hasMinimumInfo(user.id))) {
       throw new BadRequestException('유효하지 않은 유저입니다');
     }
-    return await this.diaryService.createDiary(user.id, diary.content);
+    return await this.diaryService.createDiary(user.id, dto);
   }
 }
