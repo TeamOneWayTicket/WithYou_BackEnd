@@ -8,8 +8,6 @@ import {
   Patch,
   Post,
   Query,
-  UsePipes,
-  ValidationPipe,
 } from '@nestjs/common';
 import { DiaryService } from './diary.service';
 import { Diary } from './entity/diary.entity';
@@ -44,7 +42,6 @@ export class DiaryController {
     summary: 's3 업로드용 preSigned URL 발급 api',
     description: 's3에 medium Put할 수 있는 preSigned URL들 발급 api.',
   })
-  @UsePipes(ValidationPipe)
   async getSignedUrlsForPutObject(
     @Body() dto: PutPresignedUrlsDto,
   ): Promise<PutSignedUrlsResponseDto> {
@@ -151,7 +148,6 @@ export class DiaryController {
     summary: 'create Diary By UserId',
     description: '특정 id 유저에 일기를 생성한다.',
   })
-  @UsePipes(ValidationPipe)
   async createDiary(
     @UserParam() user: User,
     @Body() dto: DiaryContentDto,
