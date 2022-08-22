@@ -46,9 +46,9 @@ export class DiaryController {
   })
   @UsePipes(ValidationPipe)
   async getSignedUrlsForPutObject(
-    @Body() body: PutPresignedUrlsDto,
+    @Body() dto: PutPresignedUrlsDto,
   ): Promise<PutSignedUrlsResponseDto> {
-    return await this.diaryService.getSignedUrlsForPutObject(body);
+    return await this.diaryService.getSignedUrlsForPutObject(dto);
   }
 
   @Get('/presigned-get')
