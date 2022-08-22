@@ -109,7 +109,7 @@ export class DiaryController {
   async findFamilyDiaries(
     @UserParam() user: User,
   ): Promise<DiaryResponseDto[]> {
-    return await this.diaryService.findAllByFamilyId(user.id);
+    return await this.diaryService.findAllByFamilyId(user.familyId);
   }
 
   @Get(':diaryId')

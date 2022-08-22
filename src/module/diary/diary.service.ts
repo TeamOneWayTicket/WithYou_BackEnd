@@ -37,14 +37,15 @@ export class DiaryService {
 
   async findAllByAuthorId(authorId: number): Promise<DiaryResponseDto[]> {
     const diaries = await this.diaryRepository.find({ where: { authorId } });
-    const diariesWithUrl: DiaryResponseDto[] = [];
-    for (const diary of diaries) {
-      diariesWithUrl.push({
-        diary: diary,
-        mediaUrls: (await this.getDiaryMediaUrls(diary.id)).s3Urls,
-      });
-    }
-    return diariesWithUrl;
+    return await Promise.all(
+      diaries.map(
+        async (diary) =>
+          <DiaryResponseDto>{
+            diary,
+            mediaUrls: (await this.getDiaryMediaUrls(diary.id)).s3Urls,
+          },
+      ),
+    );
   }
 
   async findAllByFamilyId(familyId: number): Promise<DiaryResponseDto[]> {
