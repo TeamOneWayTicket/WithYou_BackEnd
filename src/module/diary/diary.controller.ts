@@ -24,6 +24,7 @@ import { User } from '../user/entity/user.entity';
 import { UserParam } from '../../decorator/user.decorator';
 import { Auth } from '../../decorator/http.decorator';
 import { Role } from '../../common/enum/role.enum';
+import { PutPresignedUrlsDto } from './dto/put-presigned-urls.dto';
 
 @Controller('diary')
 @ApiTags('일기장 API')
@@ -35,6 +36,7 @@ export class DiaryController {
 
   @Post('/presigned-put')
   @Auth(Role.User)
+  @ApiBody({ type: PutPresignedUrlsDto })
   @ApiOkResponse({ description: '성공', type: PutSignedUrlsResponseDto })
   @ApiOperation({
     summary: 's3 업로드용 preSigned URL 발급 api',
