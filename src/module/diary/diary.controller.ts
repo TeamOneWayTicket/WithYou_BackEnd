@@ -92,8 +92,8 @@ export class DiaryController {
   @Auth(Role.User)
   @ApiOkResponse({ description: '성공', type: DiariesResponseDto })
   @ApiOperation({
-    summary: 'getAllDiaryByUserId',
-    description: '특정 id 유저의 전체 일기 리스트 받아온다.',
+    summary: 'get user Diaries',
+    description: '현재 유저의 전체 일기 리스트 받아온다.',
   })
   async getUserDiaries(@UserParam() user: User): Promise<DiaryResponseDto[]> {
     return await this.diaryService.findAllByAuthorId(user.id);
