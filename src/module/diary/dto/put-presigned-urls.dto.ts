@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { MediumInfoDto } from './medium-info.dto';
 import { ArrayMinSize, IsArray, ValidateNested } from 'class-validator';
+import { Type } from 'class-transformer';
 
 export class PutPresignedUrlsDto {
   @ApiProperty({
@@ -19,6 +20,7 @@ export class PutPresignedUrlsDto {
   })
   @IsArray()
   @ArrayMinSize(1)
+  @Type(() => MediumInfoDto)
   @ValidateNested({ each: true })
   mediaInfo: MediumInfoDto[];
 }

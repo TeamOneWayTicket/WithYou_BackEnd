@@ -170,9 +170,9 @@ export class DiaryService {
   }
 
   async getSignedUrlsForPutObject(
-    body: PutPresignedUrlsDto,
+    dto: PutPresignedUrlsDto,
   ): Promise<PutSignedUrlsResponseDto> {
-    const _infos = body.mediaInfo;
+    const _infos = dto.mediaInfo;
     const s3 = new AWS.S3({ useAccelerateEndpoint: true });
     const signedUrls: PutPresignedUrlResponseDto[] = [];
 
