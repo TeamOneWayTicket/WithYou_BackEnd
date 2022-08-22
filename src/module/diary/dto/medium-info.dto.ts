@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-export class MediumInfosDto {
+export class MediumInfoDto {
   @ApiProperty({ description: 'media type', example: 'image/png' })
   contentType: string;
 

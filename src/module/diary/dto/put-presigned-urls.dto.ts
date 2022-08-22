@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { MediumInfosDto } from './medium-infos.dto';
+import { MediumInfoDto } from './medium-info.dto';
 
 export class PutPresignedUrlsDto {
   @ApiProperty({ description: 'diaryId', example: 1 })
@@ -18,5 +18,5 @@ export class PutPresignedUrlsDto {
       },
     ],
   })
-  mediumInfos: MediumInfosDto[];
+  mediaInfo: MediumInfoDto[];
 }
