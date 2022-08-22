@@ -103,7 +103,7 @@ export class DiaryController {
   @Auth(Role.User)
   @ApiOkResponse({ description: '성공', type: DiariesResponseDto })
   @ApiOperation({
-    summary: 'get family Diary By UserId',
+    summary: 'get user family Diaries',
     description: '유저를 포함한 유저 가족의 일기들을 받아온다.',
   })
   async findFamilyDiaries(
