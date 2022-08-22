@@ -34,7 +34,7 @@ export class DiaryController {
     private readonly userService: UserService,
   ) {}
 
-  @Post('/presigned-put')
+  @Post('/presigned-upload')
   @Auth(Role.User)
   @ApiBody({ type: PutPresignedUrlsDto })
   @ApiOkResponse({ description: '성공', type: PutSignedUrlsResponseDto })
@@ -48,7 +48,7 @@ export class DiaryController {
     return await this.diaryService.getSignedUrlsForPutObject(dto);
   }
 
-  @Get('/presigned-get')
+  @Get('/presigned-download')
   @Auth(Role.User)
   @ApiOkResponse({ description: '성공', type: GetPresignedUrlsResponseDto })
   @ApiOperation({
@@ -61,7 +61,7 @@ export class DiaryController {
     return await this.diaryService.getSignedUrlsForGetObject(fileNamesInS3);
   }
 
-  @Get('/:diaryId/presigned-put')
+  @Get('/:diaryId/presigned-downlad')
   @Auth(Role.User)
   @ApiOkResponse({ description: '성공', type: GetPresignedUrlsResponseDto })
   @ApiOperation({
