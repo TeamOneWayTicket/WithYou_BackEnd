@@ -151,21 +151,24 @@ export class DiaryService {
   }
 
   async getSignedUrlsForPutObject(
-    query: PutPresignedUrlsDto,
+    body: PutPresignedUrlsDto,
   ): Promise<PutSignedUrlsResponseDto> {
-    const fileType: string = query.contentType.split('/')[1];
+    const _infos = body.mediaInfo;
     const s3 = new AWS.S3({ useAccelerateEndpoint: true });
     const signedUrls: PutPresignedUrlResponseDto[] = [];
 
-    for (let i = 0; i < query.quantity; i++) {
-      const fileName = `diary/${query.diaryId}/${uuid()}.${fileType}`;
-      const s3Url = await s3.getSignedUrlPromise('putObject', {
-        Bucket: this.configService.awsConfig.bucketName,
-        Key: fileName,
-        Expires: 3600,
-      });
+    for (const info of _infos) {
+      const fileType: string = info.contentType.split('/')[1];
+      for (let i = 0; i < info.quantity; i++) {
+        const fileName = `diary/${uuid()}.${fileType}`;
+        const s3Url = await s3.getSignedUrlPromise('putObject', {
+          Bucket: this.configService.awsConfig.bucketName,
+          Key: fileName,
+          Expires: 3600,
+        });
 
-      signedUrls.push({ fileName, s3Url });
+        signedUrls.push({ fileName, s3Url });
+      }
     }
 
     return { signedUrls };

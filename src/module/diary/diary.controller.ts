@@ -18,7 +18,6 @@ import { DiaryResponseDto } from './dto/diary-response.dto';
 import { DiariesResponseDto } from './dto/diaries-response.dto';
 import { PutSignedUrlsResponseDto } from './dto/put-signed-urls-response.dto';
 import { GetPresignedUrlsResponseDto } from './dto/get-presigned-urls-response.dto';
-import { PutPresignedUrlsDto } from './dto/put-presigned-urls.dto';
 import { UserService } from '../user/service/user.service';
 import { CreateMediaResponseDto } from './dto/create-media-response.dto';
 import { User } from '../user/entity/user.entity';
@@ -34,7 +33,7 @@ export class DiaryController {
     private readonly userService: UserService,
   ) {}
 
-  @Get('/presigned-put')
+  @Post('/presigned-put')
   @Auth(Role.User)
   @ApiOkResponse({ description: '성공', type: PutSignedUrlsResponseDto })
   @ApiOperation({
@@ -42,9 +41,9 @@ export class DiaryController {
     description: 's3에 medium Put할 수 있는 preSigned URL들 발급 api.',
   })
   async getSignedUrlsForPutObject(
-    @Query() query: PutPresignedUrlsDto,
+    @Body() body: any,
   ): Promise<PutSignedUrlsResponseDto> {
-    return await this.diaryService.getSignedUrlsForPutObject(query);
+    return await this.diaryService.getSignedUrlsForPutObject(body);
   }
 
   @Get('/presigned-get')
