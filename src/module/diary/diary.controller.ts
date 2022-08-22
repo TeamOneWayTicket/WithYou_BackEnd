@@ -148,13 +148,10 @@ export class DiaryController {
     summary: 'create Diary By UserId',
     description: '특정 id 유저에 일기를 생성한다.',
   })
-  async createDiary(
-    @UserParam() user: User,
-    @Body() diary: DiaryContentDto,
-  ): Promise<Diary> {
+  async createDiary(@UserParam() user: User, @Body() dto: any): Promise<Diary> {
     if (!(await this.userService.hasMinimumInfo(user.id))) {
       throw new BadRequestException('유효하지 않은 유저입니다');
     }
-    return await this.diaryService.createDiary(user.id, diary.content);
+    return await this.diaryService.createDiary(user.id, dto);
   }
 }

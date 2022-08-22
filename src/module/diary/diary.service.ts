@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Diary } from './entity/diary.entity';
-import { Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 import { UpdateDiaryDto } from './dto/update-diary.dto';
 import { ApiConfigService } from '../../shared/services/api-config.service';
 import AWS from 'aws-sdk';
@@ -15,6 +15,7 @@ import { UserService } from '../user/service/user.service';
 import { DiaryMedium } from './entity/diary.medium.entity';
 import { CreateMediumDto } from './dto/create-medium.dto';
 import { CreateMediaResponseDto } from './dto/create-media-response.dto';
+import { DiaryContentDto } from './dto/diary-content.dto';
 
 @Injectable()
 export class DiaryService {
@@ -25,6 +26,7 @@ export class DiaryService {
     private readonly diaryMediumRepository: Repository<DiaryMedium>,
     private readonly configService: ApiConfigService,
     private readonly userService: UserService,
+    private myDataSource: DataSource,
   ) {
     AWS.config.update({
       region: this.configService.awsConfig.bucketRegion,
@@ -71,13 +73,29 @@ export class DiaryService {
     };
   }
 
-  async createDiary(authorId: number, content: string): Promise<Diary> {
-    const familyId = (await this.userService.findOne(authorId)).familyId;
-    return await this.diaryRepository.save({
-      authorId,
-      content,
-      familyId,
-    });
+  async createDiary(
+    authorId: number,
+    diarySource: DiaryContentDto,
+  ): Promise<Diary> {
+    const queryRunner = this.myDataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+    let diary: Diary;
+    try {
+      const familyId = (await this.userService.findOne(authorId)).familyId;
+      diary = await this.diaryRepository.save({
+        authorId,
+        content: diarySource.content,
+        familyId,
+      });
+      await this.createDiaryMedia(diary.id, diarySource.fileNamesInS3);
+      await queryRunner.commitTransaction();
+    } catch (err) {
+      await queryRunner.rollbackTransaction();
+    } finally {
+      await queryRunner.release();
+    }
+    return diary;
   }
 
   async updateDiary(targetId: number, diary: UpdateDiaryDto): Promise<Diary> {
