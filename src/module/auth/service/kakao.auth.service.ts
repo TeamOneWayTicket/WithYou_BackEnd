@@ -56,7 +56,10 @@ export class KakaoAuthService {
     await queryRunner.startTransaction();
     let kakaoUser: KakaoUser;
     try {
-      const user = await this.userRepository.save({ thumbnail });
+      const user = await this.userRepository.save({
+        vendor: 'kakao',
+        thumbnail,
+      });
       kakaoUser = await this.kakaoUserRepository.save({
         userId: user.id,
         accessToken,
