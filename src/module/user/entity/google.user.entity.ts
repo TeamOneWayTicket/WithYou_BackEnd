@@ -25,6 +25,7 @@ export class GoogleUser {
   @Column({
     nullable: true,
   })
+  @Index()
   @ApiModelProperty({ description: 'google email' })
   email: string;
 
