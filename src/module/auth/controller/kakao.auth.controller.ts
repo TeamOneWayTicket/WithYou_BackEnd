@@ -66,14 +66,14 @@ export class KakaoAuthController {
   async kakaoLoginCallback(
     @Body() dto: KakaoTokenDto,
   ): Promise<JwtResponseDto> {
-    const _kakaoProfile = await this.kakaoAuthService.getKakaoProfile(
+    const kakaoProfile = await this.kakaoAuthService.getKakaoProfile(
       dto.accessToken,
     );
 
-    const _kakaoInfo = _kakaoProfile._json;
-    const kakaoId = _kakaoInfo.id;
-    const kakaoName = _kakaoInfo.properties.nickname;
-    const kakaoProfileImage = _kakaoInfo.properties.profile_image;
+    const kakaoInfo = kakaoProfile._json;
+    const kakaoId = kakaoInfo.id;
+    const kakaoName = kakaoInfo.properties.nickname;
+    const kakaoProfileImage = kakaoInfo.properties.profile_image;
     const kakaoUser = await this.kakaoAuthService.findKakaoUser(kakaoId);
     if (!kakaoUser) {
       // need to register
@@ -89,12 +89,14 @@ export class KakaoAuthController {
         thumbnail: kakaoProfileImage,
       });
       return {
-        id: newKakaoUser.userId,
-        vendor: 'kakao',
-        nickname: kakaoName,
-        thumbnail: kakaoProfileImage,
-        accessToken: jwtToken,
-        isNew: true,
+        user: {
+          id: newKakaoUser.userId,
+          vendor: 'kakao',
+          nickname: kakaoName,
+          thumbnail: kakaoProfileImage,
+          accessToken: jwtToken,
+          isNew: true,
+        },
       };
     } else {
       // just login
@@ -105,12 +107,14 @@ export class KakaoAuthController {
         thumbnail: kakaoProfileImage,
       });
       return {
-        id: kakaoUser.userId,
-        vendor: 'kakao',
-        nickname: kakaoName,
-        thumbnail: kakaoProfileImage,
-        accessToken: jwtToken,
-        isNew: false,
+        user: {
+          id: kakaoUser.userId,
+          vendor: 'kakao',
+          nickname: kakaoName,
+          thumbnail: kakaoProfileImage,
+          accessToken: jwtToken,
+          isNew: false,
+        },
       };
     }
   }

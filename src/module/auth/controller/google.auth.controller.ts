@@ -47,15 +47,15 @@ export class GoogleAuthController {
   async googleLoginCallback(
     @Body() dto: GoogleTokenDto,
   ): Promise<JwtResponseDto> {
-    const _googleProfile = await this.googleAuthService.getGoogleProfile(
+    const googleProfile = await this.googleAuthService.getGoogleProfile(
       dto.accessToken,
     );
 
-    const _googleInfo = _googleProfile._json;
-    const googleId = _googleInfo.sub;
-    const googleName = _googleInfo.given_name;
-    const googleEmail = _googleInfo.email;
-    const googleProfileImage = _googleInfo.picture;
+    const googleInfo = googleProfile._json;
+    const googleId = googleInfo.sub;
+    const googleName = googleInfo.given_name;
+    const googleEmail = googleInfo.email;
+    const googleProfileImage = googleInfo.picture;
 
     const googleUser = await this.googleAuthService.findGoogleUser(googleId);
     if (!googleUser) {
@@ -74,12 +74,14 @@ export class GoogleAuthController {
         thumbnail: googleProfileImage,
       });
       return {
-        id: newGoogleUser.userId,
-        vendor: 'google',
-        nickname: googleName,
-        thumbnail: googleProfileImage,
-        accessToken: jwtToken,
-        isNew: true,
+        user: {
+          id: newGoogleUser.userId,
+          vendor: 'google',
+          nickname: googleName,
+          thumbnail: googleProfileImage,
+          accessToken: jwtToken,
+          isNew: true,
+        },
       };
     } else {
       // just login
@@ -90,12 +92,14 @@ export class GoogleAuthController {
         thumbnail: googleProfileImage,
       });
       return {
-        id: googleUser.userId,
-        vendor: 'google',
-        nickname: googleName,
-        thumbnail: googleProfileImage,
-        accessToken: jwtToken,
-        isNew: false,
+        user: {
+          id: googleUser.userId,
+          vendor: 'google',
+          nickname: googleName,
+          thumbnail: googleProfileImage,
+          accessToken: jwtToken,
+          isNew: false,
+        },
       };
     }
   }
