@@ -51,29 +51,33 @@ export class GoogleAuthController {
       dto.accessToken,
     );
 
-    const googleId = _googleProfile.id;
-    const googleName = _googleProfile.name.givenName;
-    const googleEmail = _googleProfile.emails[0].value;
+    const _googleInfo = _googleProfile._json;
+    const googleId = _googleInfo.sub;
+    const googleName = _googleInfo.given_name;
+    const googleEmail = _googleInfo.email;
+    const googleProfileImage = _googleInfo.picture;
+
     const googleUser = await this.googleAuthService.findGoogleUser(googleId);
     if (!googleUser) {
       // need to register
-      const newKakaoUser = await this.googleAuthService.register(
+      const newGoogleUser = await this.googleAuthService.register(
         googleId,
         googleEmail,
         googleName,
         dto.accessToken,
+        googleProfileImage,
       );
       const jwtToken = this.jwtService.sign({
-        id: newKakaoUser.userId,
+        id: newGoogleUser.userId,
         vendor: 'google',
         name: googleName,
-        thumbnail: '',
+        thumbnail: googleProfileImage,
       });
       return {
-        id: newKakaoUser.userId,
-        vendor: 'goole',
+        id: newGoogleUser.userId,
+        vendor: 'google',
         nickname: googleName,
-        thumbnail: '',
+        thumbnail: googleProfileImage,
         accessToken: jwtToken,
         isNew: true,
       };
@@ -83,13 +87,13 @@ export class GoogleAuthController {
         id: googleUser.userId,
         vendor: 'google',
         nickname: googleName,
-        thumbnail: '',
+        thumbnail: googleProfileImage,
       });
       return {
         id: googleUser.userId,
         vendor: 'google',
         nickname: googleName,
-        thumbnail: '',
+        thumbnail: googleProfileImage,
         accessToken: jwtToken,
         isNew: false,
       };
