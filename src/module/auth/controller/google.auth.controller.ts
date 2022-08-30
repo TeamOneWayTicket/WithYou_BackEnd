@@ -1,12 +1,18 @@
-import { Controller, Get, Header, Req, Res, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Header, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { GoogleAuthService } from '../service/google.auth.service';
+import { GoogleTokenDto } from '../dto/google-token.dto';
+import { JwtResponseDto } from '../dto/jwt-response.dto';
+import { JwtService } from '@nestjs/jwt';
 
 @Controller('auth/google')
 @ApiTags('구글 인증 API')
 export class GoogleAuthController {
-  constructor(private readonly googleAuthService: GoogleAuthService) {}
+  constructor(
+    private readonly googleAuthService: GoogleAuthService,
+    private readonly jwtService: JwtService,
+  ) {}
 
   @Get('menu')
   @Header('Content-Type', 'text/html')
@@ -34,19 +40,59 @@ export class GoogleAuthController {
     //redirect google login page
   }
 
-  @Get('/loginRedirect')
-  @UseGuards(AuthGuard('google'))
+  @Get('callback')
   @ApiOperation({
-    summary: 'google callback',
+    summary: 'google login callback',
   })
-  async googleAuthCallback(@Req() req, @Res() res): Promise<void> {
-    await this.googleAuthService.login(req.user);
-    return res.send(`
-          <div>
-            <h2>축하합니다!</h2>
-            <p>구글 로그인 성공하였습니다!</p>
-            <a href="/auth/google/menu">메인으로</a>
-          </div>
-        `);
+  async googleLoginCallback(
+    @Body() dto: GoogleTokenDto,
+  ): Promise<JwtResponseDto> {
+    const _googleProfile = await this.googleAuthService.getGoogleProfile(
+      dto.accessToken,
+    );
+
+    const googleId = _googleProfile.id;
+    const googleName = _googleProfile.name.givenName;
+    const googleEmail = _googleProfile.emails[0].value;
+    const googleUser = await this.googleAuthService.findGoogleUser(googleId);
+    if (!googleUser) {
+      // need to register
+      const newKakaoUser = await this.googleAuthService.register(
+        googleId,
+        googleEmail,
+        googleName,
+        dto.accessToken,
+      );
+      const jwtToken = this.jwtService.sign({
+        id: newKakaoUser.userId,
+        vendor: 'google',
+        name: googleName,
+        thumbnail: '',
+      });
+      return {
+        id: newKakaoUser.userId,
+        vendor: 'goole',
+        nickname: googleName,
+        thumbnail: '',
+        accessToken: jwtToken,
+        isNew: true,
+      };
+    } else {
+      // just login
+      const jwtToken = this.jwtService.sign({
+        id: googleUser.userId,
+        vendor: 'google',
+        nickname: googleName,
+        thumbnail: '',
+      });
+      return {
+        id: googleUser.userId,
+        vendor: 'google',
+        nickname: googleName,
+        thumbnail: '',
+        accessToken: jwtToken,
+        isNew: false,
+      };
+    }
   }
 }
