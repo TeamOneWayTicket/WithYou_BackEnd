@@ -17,6 +17,8 @@ import { GoogleUser } from '../user/entity/google.user.entity';
 import { JwtStrategy } from './strategy/jwt.strategy';
 import { JwtModule } from '@nestjs/jwt';
 import { ApiConfigService } from '../../shared/services/api-config.service';
+import { AppleAuthController } from './controller/apple.auth.controller';
+import { AppleAuthService } from './service/apple.auth.service';
 
 @Module({
   imports: [
@@ -35,13 +37,19 @@ import { ApiConfigService } from '../../shared/services/api-config.service';
       inject: [ApiConfigService],
     }),
   ],
-  controllers: [AuthController, KakaoAuthController, GoogleAuthController],
+  controllers: [
+    AuthController,
+    KakaoAuthController,
+    GoogleAuthController,
+    AppleAuthController,
+  ],
   providers: [
     AuthService,
     KakaoAuthService,
     KakaoStrategy,
     GoogleAuthService,
     GoogleStrategy,
+    AppleAuthService,
     JwtStrategy,
   ],
   exports: [JwtStrategy, AuthService],
