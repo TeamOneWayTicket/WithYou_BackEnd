@@ -43,13 +43,17 @@ export class GoogleAuthService {
     email: string,
     nickname: string,
     accessToken: string,
+    thumbnail: string,
   ): Promise<GoogleUser> {
     const queryRunner = this.myDataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
     let googleUser: GoogleUser;
     try {
-      const user = await this.userRepository.save({});
+      const user = await this.userRepository.save({
+        vendor: 'google',
+        thumbnail,
+      });
       googleUser = await this.googleUserRepository.save({
         userId: user.id,
         googleId,
@@ -64,24 +68,5 @@ export class GoogleAuthService {
       await queryRunner.release();
     }
     return googleUser;
-  }
-
-  async login(user: GoogleUser): Promise<GoogleUser> {
-    const existUser: GoogleUser = await this.validateUser(user.googleId);
-
-    if (!existUser) {
-      return this.register(
-        user.googleId,
-        user.nickname,
-        user.email,
-        user.accessToken,
-      );
-    } else {
-      return existUser;
-    }
-  }
-
-  async validateUser(googleId: string): Promise<GoogleUser> {
-    return await this.findGoogleUser(googleId);
   }
 }
