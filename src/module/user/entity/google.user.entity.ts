@@ -22,7 +22,10 @@ export class GoogleUser {
   @ApiModelProperty({ description: 'google id' })
   googleId: string;
 
-  @Column()
+  @Column({
+    nullable: true,
+  })
+  @Index()
   @ApiModelProperty({ description: 'google email' })
   email: string;
 

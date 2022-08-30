@@ -1,12 +1,18 @@
-import { Controller, Get, Header, Req, Res, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Header, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { GoogleAuthService } from '../service/google.auth.service';
+import { GoogleTokenDto } from '../dto/google-token.dto';
+import { JwtResponseDto } from '../dto/jwt-response.dto';
+import { JwtService } from '@nestjs/jwt';
 
 @Controller('auth/google')
 @ApiTags('구글 인증 API')
 export class GoogleAuthController {
-  constructor(private readonly googleAuthService: GoogleAuthService) {}
+  constructor(
+    private readonly googleAuthService: GoogleAuthService,
+    private readonly jwtService: JwtService,
+  ) {}
 
   @Get('menu')
   @Header('Content-Type', 'text/html')
@@ -34,19 +40,67 @@ export class GoogleAuthController {
     //redirect google login page
   }
 
-  @Get('/loginRedirect')
-  @UseGuards(AuthGuard('google'))
+  @Get('callback')
   @ApiOperation({
-    summary: 'google callback',
+    summary: 'google login callback',
   })
-  async googleAuthCallback(@Req() req, @Res() res): Promise<void> {
-    await this.googleAuthService.login(req.user);
-    return res.send(`
-          <div>
-            <h2>축하합니다!</h2>
-            <p>구글 로그인 성공하였습니다!</p>
-            <a href="/auth/google/menu">메인으로</a>
-          </div>
-        `);
+  async googleLoginCallback(
+    @Body() dto: GoogleTokenDto,
+  ): Promise<JwtResponseDto> {
+    const googleProfile = await this.googleAuthService.getGoogleProfile(
+      dto.accessToken,
+    );
+
+    const googleInfo = googleProfile._json;
+    const googleId = googleInfo.sub;
+    const googleName = googleInfo.given_name;
+    const googleEmail = googleInfo.email;
+    const googleProfileImage = googleInfo.picture;
+
+    const googleUser = await this.googleAuthService.findGoogleUser(googleId);
+    if (!googleUser) {
+      // need to register
+      const newGoogleUser = await this.googleAuthService.register(
+        googleId,
+        googleEmail,
+        googleName,
+        dto.accessToken,
+        googleProfileImage,
+      );
+      const jwtToken = this.jwtService.sign({
+        id: newGoogleUser.userId,
+        vendor: 'google',
+        name: googleName,
+        thumbnail: googleProfileImage,
+      });
+      return {
+        user: {
+          id: newGoogleUser.userId,
+          vendor: 'google',
+          nickname: googleName,
+          thumbnail: googleProfileImage,
+          accessToken: jwtToken,
+          isNew: true,
+        },
+      };
+    } else {
+      // just login
+      const jwtToken = this.jwtService.sign({
+        id: googleUser.userId,
+        vendor: 'google',
+        nickname: googleName,
+        thumbnail: googleProfileImage,
+      });
+      return {
+        user: {
+          id: googleUser.userId,
+          vendor: 'google',
+          nickname: googleName,
+          thumbnail: googleProfileImage,
+          accessToken: jwtToken,
+          isNew: false,
+        },
+      };
+    }
   }
 }
