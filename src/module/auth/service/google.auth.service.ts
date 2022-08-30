@@ -3,15 +3,18 @@ import { DataSource, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '../../user/entity/user.entity';
 import { GoogleUser } from '../../user/entity/google.user.entity';
+import { GoogleStrategy } from '../strategy/google.strategy';
+import { ApiConfigService } from '../../../shared/services/api-config.service';
 
 @Injectable()
 export class GoogleAuthService {
   constructor(
     @InjectRepository(GoogleUser)
-    private googleUserRepository: Repository<GoogleUser>,
+    private readonly googleUserRepository: Repository<GoogleUser>,
     @InjectRepository(User)
-    private userRepository: Repository<User>,
-    private myDataSource: DataSource,
+    private readonly userRepository: Repository<User>,
+    private readonly myDataSource: DataSource,
+    private readonly configService: ApiConfigService,
   ) {}
 
   async findGoogleUser(googleId: string): Promise<GoogleUser> {
@@ -20,12 +23,26 @@ export class GoogleAuthService {
     });
   }
 
+  async getGoogleProfile(accessToken: string) {
+    return new Promise<any>((resolve, reject) => {
+      new GoogleStrategy(this.configService).userProfile(
+        accessToken,
+        (error, user) => {
+          if (error) {
+            return reject(error);
+          } else {
+            return resolve(user);
+          }
+        },
+      );
+    });
+  }
+
   async register(
     googleId: string,
     email: string,
     nickname: string,
     accessToken: string,
-    refreshToken: string,
   ): Promise<GoogleUser> {
     const queryRunner = this.myDataSource.createQueryRunner();
     await queryRunner.connect();
@@ -39,7 +56,6 @@ export class GoogleAuthService {
         email,
         nickname,
         accessToken,
-        refreshToken,
       });
       await queryRunner.commitTransaction();
     } catch (err) {
@@ -59,7 +75,6 @@ export class GoogleAuthService {
         user.nickname,
         user.email,
         user.accessToken,
-        user.refreshToken,
       );
     } else {
       return existUser;
