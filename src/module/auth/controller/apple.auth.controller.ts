@@ -24,7 +24,7 @@ export class AppleAuthController {
   })
   async callback(dto: AppleTokenDto): Promise<JwtResponseDto> {
     const jwtClaims = await verifyAppleToken({
-      idToken: dto.idToken,
+      idToken: dto.accessToken,
       clientId: this.configService.appleConfig.clientID,
       nonce: 'nonce', // optional
     });
@@ -38,7 +38,7 @@ export class AppleAuthController {
       // need to register
       const newKakaoUser = await this.appleAuthService.register(
         email,
-        dto.idToken,
+        dto.accessToken,
         '',
       );
       const jwtToken = this.jwtService.sign({
