@@ -19,12 +19,20 @@ import { JwtModule } from '@nestjs/jwt';
 import { ApiConfigService } from '../../shared/services/api-config.service';
 import { AppleAuthController } from './controller/apple.auth.controller';
 import { AppleAuthService } from './service/apple.auth.service';
+import { AppleStrategy } from './strategy/apple.strategy';
+import { AppleUser } from '../user/entity/apple.user.entity';
 
 @Module({
   imports: [
     UserModule,
     PassportModule,
-    TypeOrmModule.forFeature([User, LocalUser, KakaoUser, GoogleUser]),
+    TypeOrmModule.forFeature([
+      User,
+      LocalUser,
+      KakaoUser,
+      GoogleUser,
+      AppleUser,
+    ]),
     JwtModule.registerAsync({
       useFactory: (configService: ApiConfigService) => ({
         secret: configService.authConfig.secretkey,
@@ -50,6 +58,7 @@ import { AppleAuthService } from './service/apple.auth.service';
     GoogleAuthService,
     GoogleStrategy,
     AppleAuthService,
+    AppleStrategy,
     JwtStrategy,
   ],
   exports: [JwtStrategy, AuthService],
