@@ -10,7 +10,8 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   const whitelist = [
-    'https://withyou-be.mayleaf.dev',
+    'https://appleid.apple.com',
+    'https://backend.with-you.io',
     'http://localhost:3030',
     'https://with-you-front-end.vercel.app',
     'https://accounts.kakao.com',
@@ -22,7 +23,7 @@ async function bootstrap() {
       if (!origin || whitelist.indexOf(origin) !== -1) {
         callback(null, true);
       } else {
-        callback(new Error('Not allowed by CORS'));
+        callback(new Error(origin + 'is Not allowed by CORS'));
       }
     },
     credentials: true,
