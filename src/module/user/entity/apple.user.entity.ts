@@ -26,7 +26,7 @@ export class AppleUser {
   @ApiModelProperty({ description: 'accessToken' })
   accessToken: string;
 
-  @Column({ nullable: true })
+  @Column()
   @Index()
   @ApiModelProperty({ description: 'userId' })
   userId: number;
