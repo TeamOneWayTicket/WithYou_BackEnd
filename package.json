@@ -39,6 +39,7 @@
     "@nestjs/typeorm": "^8.1.4",
     "@types/passport-jwt": "^3.0.6",
     "@types/passport-kakao": "^1.0.0",
+    "apple-auth": "^1.0.7",
     "aws-sdk": "^2.1182.0",
     "bcrypt": "^5.0.1",
     "bcryptjs": "^2.4.3",
