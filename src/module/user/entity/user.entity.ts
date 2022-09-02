@@ -16,6 +16,7 @@ import { GoogleUser } from './google.user.entity';
 import { ApiModelProperty } from '@nestjs/swagger/dist/decorators/api-model-property.decorator';
 import { Role } from '../../../common/enum/role.enum';
 import { Family } from '../../family/entity/family.entity';
+import { AppleUser } from './apple.user.entity';
 
 @Entity()
 @ApiExtraModels()
@@ -70,6 +71,9 @@ export class User {
 
   @OneToOne(() => GoogleUser, (googleUser) => googleUser.user)
   googleUser: GoogleUser;
+
+  @OneToOne(() => AppleUser, (appleUser) => appleUser.user)
+  appleUser: AppleUser;
 
   @OneToMany(() => Diary, (diary) => diary.author)
   diaries: Diary[];

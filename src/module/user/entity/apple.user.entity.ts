@@ -31,7 +31,7 @@ export class AppleUser {
   @ApiModelProperty({ description: 'userId' })
   userId: number;
 
-  @OneToOne(() => User, (user) => user.kakaoUser, {
+  @OneToOne(() => User, (user) => user.appleUser, {
     createForeignKeyConstraints: false,
   })
   @JoinColumn({ name: 'user_id' })
