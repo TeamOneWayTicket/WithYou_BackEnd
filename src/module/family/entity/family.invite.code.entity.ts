@@ -4,7 +4,7 @@ import { ApiModelProperty } from '@nestjs/swagger/dist/decorators/api-model-prop
 
 @Entity()
 @ApiExtraModels()
-export class Family {
+export class FamilyInviteCode {
   @Column()
   @Index()
   @ApiModelProperty({ description: 'code id' })
