@@ -30,7 +30,7 @@ export class KakaoUser {
   @ApiModelProperty({ description: 'refreshToken' })
   refreshToken: string;
 
-  @Column({ nullable: true })
+  @Column()
   @Index()
   @ApiModelProperty({ description: 'userId' })
   userId: number;
