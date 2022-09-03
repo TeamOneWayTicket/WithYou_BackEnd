@@ -45,7 +45,7 @@ export class GoogleUser {
   @ApiModelProperty({ description: 'refresh Token' })
   refreshToken: string;
 
-  @Column({ nullable: true })
+  @Column()
   @Index()
   @ApiModelProperty({ description: '연결된 유저 id' })
   userId: number;
