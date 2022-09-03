@@ -1,14 +1,20 @@
-import { Entity, Column, CreateDateColumn, Index } from 'typeorm';
+import {
+  Entity,
+  Column,
+  CreateDateColumn,
+  Index,
+  PrimaryColumn,
+} from 'typeorm';
 import { ApiExtraModels } from '@nestjs/swagger';
 import { ApiModelProperty } from '@nestjs/swagger/dist/decorators/api-model-property.decorator';
 
 @Entity()
 @ApiExtraModels()
 export class FamilyInviteCode {
-  @Column()
+  @PrimaryColumn()
   @Index()
   @ApiModelProperty({ description: 'code id' })
-  code: string;
+  inviteCode: string;
 
   @Column()
   @Index()
@@ -18,8 +24,4 @@ export class FamilyInviteCode {
   @CreateDateColumn()
   @ApiModelProperty({ description: 'code 생성 시점' })
   createdAt: Date;
-
-  @CreateDateColumn()
-  @ApiModelProperty({ description: 'code 만료 시점' })
-  expiredAt: Date;
 }
