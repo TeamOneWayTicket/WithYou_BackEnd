@@ -20,7 +20,7 @@ import { AuthService } from '../service/auth.service';
 import axios from 'axios';
 import { KakaoTokenDto } from '../dto/kakao-token.dto';
 import { JwtService } from '@nestjs/jwt';
-import { JwtResponseDto } from '../dto/jwt-response.dto';
+import { JwtDto } from '../dto/jwt.dto';
 
 @Controller('auth/kakao')
 @ApiTags('카카오 인증 API')
@@ -63,9 +63,7 @@ export class KakaoAuthController {
     summary: 'kakao login callback',
     description: '카카오 access 토큰 받아 jwt 토큰 발급',
   })
-  async kakaoLoginCallback(
-    @Body() dto: KakaoTokenDto,
-  ): Promise<JwtResponseDto> {
+  async kakaoLoginCallback(@Body() dto: KakaoTokenDto): Promise<JwtDto> {
     const kakaoProfile = await this.kakaoAuthService.getKakaoProfile(
       dto.accessToken,
     );
@@ -88,16 +86,7 @@ export class KakaoAuthController {
         name: kakaoName,
         thumbnail: kakaoProfileImage,
       });
-      return {
-        user: {
-          id: newKakaoUser.userId,
-          vendor: 'kakao',
-          nickname: kakaoName,
-          thumbnail: kakaoProfileImage,
-          accessToken: jwtToken,
-          isNew: true,
-        },
-      };
+      return { jwtToken };
     } else {
       // just login
       const jwtToken = this.jwtService.sign({
@@ -106,16 +95,7 @@ export class KakaoAuthController {
         nickname: kakaoName,
         thumbnail: kakaoProfileImage,
       });
-      return {
-        user: {
-          id: kakaoUser.userId,
-          vendor: 'kakao',
-          nickname: kakaoName,
-          thumbnail: kakaoProfileImage,
-          accessToken: jwtToken,
-          isNew: false,
-        },
-      };
+      return { jwtToken };
     }
   }
 
