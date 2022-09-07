@@ -1,6 +1,5 @@
 import {
   Column,
-  CreateDateColumn,
   Entity,
   Index,
   JoinColumn,
@@ -12,6 +11,8 @@ import { User } from '../../user/entity/user.entity';
 import { ApiExtraModels } from '@nestjs/swagger';
 import { ApiModelProperty } from '@nestjs/swagger/dist/decorators/api-model-property.decorator';
 import { DiaryMedium } from './diary.medium.entity';
+import { LocalDateTime } from '@js-joda/core';
+import { LocalDatetimeTransformer } from '../../../transformer/local-datetime.transformer';
 
 @Entity()
 @ApiExtraModels()
@@ -38,10 +39,14 @@ export class Diary {
   @ApiModelProperty({ description: '일기장 내용' })
   content: string;
 
-  @CreateDateColumn()
+  @ApiModelProperty({ description: '일기장 작성 시점', type: Date })
   @Index()
-  @ApiModelProperty({ description: '일기장 작성 시점' })
-  createdAt: Date;
+  @Column({
+    type: 'timestamp without time zone',
+    default: () => 'CURRENT_TIMESTAMP',
+    transformer: new LocalDatetimeTransformer(),
+  })
+  createdAt: LocalDateTime;
 
   @ManyToOne(() => User, (user) => user.diaries, {
     createForeignKeyConstraints: false,

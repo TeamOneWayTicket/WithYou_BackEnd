@@ -44,7 +44,7 @@ export class FamilyController {
 
   @Patch()
   @Auth(Role.User)
-  @ApiOkResponse({ description: '성공', type: FamilyResponseDto })
+  @ApiOkResponse({ description: '성공', type: Family })
   @ApiOperation({
     summary: 'update family',
     description: '가족 이름 변경',
