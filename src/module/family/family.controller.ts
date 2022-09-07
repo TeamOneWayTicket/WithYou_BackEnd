@@ -12,6 +12,7 @@ import { FamilyResponseDto } from './dto/family-response.dto';
 import { Auth } from '../../decorator/http.decorator';
 import { Role } from '../../common/enum/role.enum';
 import { UserParam } from '../../decorator/user.decorator';
+import { FamilyInviteCodeDto } from './dto/family-invite-code.dto';
 
 @Controller('family')
 export class FamilyController {
@@ -29,6 +30,19 @@ export class FamilyController {
   })
   async findFamilyMember(@UserParam() user: User): Promise<User[]> {
     return await this.userService.findByFamilyId(user.familyId);
+  }
+
+  @Get('invite-code')
+  @Auth(Role.User)
+  @ApiOkResponse({ description: '성공', type: FamilyInviteCodeDto })
+  @ApiOperation({
+    summary: 'get invite family code',
+    description: '유저의 가족에 초대할 수 있는 초대 코드 발급',
+  })
+  async getInviteFamilyCode(
+    @UserParam() user: User,
+  ): Promise<FamilyInviteCodeDto> {
+    return this.familyService.getInviteCode(user.familyId);
   }
 
   @Post()
