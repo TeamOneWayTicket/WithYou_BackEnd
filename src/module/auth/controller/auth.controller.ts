@@ -35,11 +35,13 @@ export class AuthController {
     summary: 'validate jwt',
     description: 'token 유효성 검사 및 유저 최소 정보가 입력되었는지 알려줌',
   })
-  async validateToken(@UserParam() user: User): Promise<JwtValidationDto> {
+  async validateToken(@UserParam() dto: User): Promise<JwtValidationDto> {
     try {
       return {
-        ...user,
-        isNew: !(await this.userService.hasMinimumInfo(user.id)),
+        user: {
+          ...dto,
+          isNew: !(await this.userService.hasMinimumInfo(dto.id)),
+        },
       };
     } catch (e) {
       throw new BadRequestException('유효하지 않은 토큰입니다');
