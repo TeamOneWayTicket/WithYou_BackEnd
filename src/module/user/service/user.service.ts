@@ -7,6 +7,11 @@ import { UserPushToken } from '../entity/user-push-token.entity';
 import { SubInfoDto } from '../dto/sub-info.dto';
 import { CreateUserDto } from '../dto/create-user.dto';
 import { FamilyService } from '../../family/family.service';
+import AWS from 'aws-sdk';
+import { ApiConfigService } from '../../../shared/services/api-config.service';
+import { v4 as uuid } from 'uuid';
+import { ProfileResponseDto } from '../dto/profile-response.dto';
+import { ProfileUploadResponseDto } from '../dto/profileUpload-response.dto';
 
 @Injectable()
 export class UserService {
@@ -18,7 +23,14 @@ export class UserService {
     @InjectRepository(UserPushToken)
     private readonly pushTokenRepository: Repository<UserPushToken>,
     private readonly familyService: FamilyService,
-  ) {}
+    private readonly configService: ApiConfigService,
+  ) {
+    AWS.config.update({
+      region: this.configService.awsConfig.bucketRegion,
+      accessKeyId: this.configService.awsConfig.accessKey,
+      secretAccessKey: this.configService.awsConfig.secretAccessKey,
+    });
+  }
 
   async findAll(): Promise<User[]> {
     return await this.userRepository.find();
@@ -45,6 +57,37 @@ export class UserService {
     newToken.firebaseToken = userPushToken;
 
     return this.pushTokenRepository.save(newToken);
+  }
+
+  async getUrlsForUpload(fileType: string): Promise<ProfileUploadResponseDto> {
+    const s3 = new AWS.S3({ useAccelerateEndpoint: true });
+
+    const fileName = `profile/${uuid()}.${fileType}`;
+    const s3Url = await s3.getSignedUrlPromise('putObject', {
+      Bucket: this.configService.awsConfig.bucketName,
+      Key: fileName,
+      Expires: 3600,
+    });
+
+    return { s3Url, fileName };
+  }
+
+  async saveProfile(id: number, fileName: string): Promise<User> {
+    const user = await this.findOne(id);
+    user.thumbnail = fileName;
+    return await this.userRepository.save(user);
+  }
+
+  async getProfileUrl(id: number): Promise<ProfileResponseDto> {
+    const s3 = new AWS.S3({ useAccelerateEndpoint: true });
+
+    return {
+      s3Url: await s3.getSignedUrlPromise('getObject', {
+        Bucket: this.configService.awsConfig.bucketName,
+        Key: (await this.findOne(id)).thumbnail,
+        Expires: 3600,
+      }),
+    };
   }
 
   async updateUser(id: number, dto: SubInfoDto): Promise<User> {

@@ -20,6 +20,10 @@ import { Role } from '../../common/enum/role.enum';
 import { UserParam } from '../../decorator/user.decorator';
 import { UserPushTokenDto } from './dto/user-push-token.dto';
 import { FamilyResponseDto } from '../family/dto/family-response.dto';
+import { ProfileDto } from './dto/profile.dto';
+import { ProfileResponseDto } from './dto/profile-response.dto';
+import { ProfileUploadResponseDto } from './dto/profileUpload-response.dto';
+import { ProfileUploadDto } from './dto/profileUpload.dto';
 
 @Controller('user')
 @ApiTags('유저 API')
@@ -59,6 +63,42 @@ export class UserController {
   })
   async findOne(@Param('id', ParseIntPipe) id: number): Promise<User> {
     return await this.userService.findOne(id);
+  }
+
+  @Get('/profile/upload-url')
+  @Auth(Role.User)
+  @ApiOperation({
+    summary: 'get profile-url',
+    description: '유저 프로필 올릴 url 받아옴',
+  })
+  async getProfileUploadUrl(
+    @UserParam() user: User,
+    @Body() dto: ProfileUploadDto,
+  ): Promise<ProfileUploadResponseDto> {
+    return await this.userService.getUrlsForUpload(dto.contentType);
+  }
+
+  @Get('/profile/download')
+  @Auth(Role.User)
+  @ApiOperation({
+    summary: 'get profile',
+    description: '유저 프로필 url 받아옴',
+  })
+  async getProfile(@UserParam() user: User): Promise<ProfileResponseDto> {
+    return await this.userService.getProfileUrl(user.id);
+  }
+
+  @Post('/profile/upload')
+  @Auth(Role.User)
+  @ApiOperation({
+    summary: 'postThumbnailInfo',
+    description: '프로필 사진 정보 입력',
+  })
+  async postThumbnailInfo(
+    @UserParam() user: User,
+    @Body() dto: ProfileDto,
+  ): Promise<User> {
+    return await this.userService.saveProfile(user.id, dto.fileName);
   }
 
   @Post('sub-info')
