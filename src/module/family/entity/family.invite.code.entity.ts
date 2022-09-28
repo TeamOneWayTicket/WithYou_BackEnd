@@ -7,6 +7,8 @@ import {
 } from 'typeorm';
 import { ApiExtraModels } from '@nestjs/swagger';
 import { ApiModelProperty } from '@nestjs/swagger/dist/decorators/api-model-property.decorator';
+import { LocalDateTime } from '@js-joda/core';
+import { LocalDatetimeTransformer } from '../../../transformer/local-datetime.transformer';
 
 @Entity()
 @ApiExtraModels()
@@ -21,7 +23,11 @@ export class FamilyInviteCode {
   @ApiModelProperty({ description: 'family id' })
   familyId: number;
 
-  @CreateDateColumn()
+  @Column({
+    type: 'timestamp without time zone',
+    default: () => 'CURRENT_TIMESTAMP',
+    transformer: new LocalDatetimeTransformer(),
+  })
   @ApiModelProperty({ description: 'code 생성 시점' })
-  createdAt: Date;
+  createdAt: LocalDateTime;
 }

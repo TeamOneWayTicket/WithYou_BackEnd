@@ -8,6 +8,7 @@ import { FamilyInviteCodeDto } from './dto/family-invite-code.dto';
 import crypto from 'crypto';
 import { LocalDatetimeTransformer } from '../../transformer/local-datetime.transformer';
 import { User } from '../user/entity/user.entity';
+import { LocalDateTime } from '@js-joda/core';
 
 @Injectable()
 export class FamilyService {
@@ -24,6 +25,7 @@ export class FamilyService {
   async createFamily(userId: number, dto: CreateFamilyDto): Promise<Family> {
     let family;
     let user;
+    console.log(dto.name);
     const queryRunner = this.myDataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
@@ -67,7 +69,7 @@ export class FamilyService {
     });
   }
 
-  async isValidCode(inviteCode: string) {
+  async isValidCode(inviteCode: string): Promise<boolean> {
     const code = await this.familyInviteCodeRepository.findOne({
       where: { inviteCode },
     });
@@ -75,12 +77,8 @@ export class FamilyService {
     if (!code) {
       return false;
     }
-
-    const curTime = new LocalDatetimeTransformer().from(new Date());
-    const createdTime = new LocalDatetimeTransformer()
-      .from(code.createdAt)
-      .plusMinutes(10);
-
-    return curTime.isBefore(createdTime);
+    const curTime = LocalDateTime.now().minusMinutes(10);
+    const expireTime = code.createdAt;
+    return curTime.isBefore(expireTime);
   }
 }
