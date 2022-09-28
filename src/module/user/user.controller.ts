@@ -41,7 +41,7 @@ export class UserController {
     @UserParam() user: User,
     @Query('code') code: string,
   ): Promise<User> {
-    return this.userService.joinFamily(user.familyId, code);
+    return this.userService.joinFamily(user.id, code);
   }
 
   @Post('push-token')
