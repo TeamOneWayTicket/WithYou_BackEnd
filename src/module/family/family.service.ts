@@ -37,4 +37,10 @@ export class FamilyService {
 
     return { inviteCode };
   }
+
+  async getFamily(inviteCode: string): Promise<FamilyInviteCode> {
+    return await this.familyInviteCodeRepository.findOne({
+      where: { inviteCode },
+    });
+  }
 }

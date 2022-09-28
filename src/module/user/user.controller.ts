@@ -7,6 +7,7 @@ import {
   ParseIntPipe,
   Patch,
   Post,
+  Query,
 } from '@nestjs/common';
 import { UserService } from './service/user.service';
 import { User } from './entity/user.entity';
@@ -19,11 +20,27 @@ import { Auth } from '../../decorator/http.decorator';
 import { Role } from '../../common/enum/role.enum';
 import { UserParam } from '../../decorator/user.decorator';
 import { UserPushTokenDto } from './dto/user-push-token.dto';
+import { FamilyResponseDto } from '../family/dto/family-response.dto';
 
 @Controller('user')
 @ApiTags('유저 API')
 export class UserController {
   constructor(private readonly userService: UserService) {}
+
+  @Post('join')
+  @Auth(Role.User)
+  @ApiOkResponse({ description: '성공', type: FamilyResponseDto })
+  @ApiOperation({
+    summary: 'get invite-code',
+    description: '유저의 가족에 초대할 수 있는 초대 코드 발급',
+  })
+  async joinFamily(
+    @UserParam() user: User,
+    @Query('code') code: string,
+  ): Promise<User> {
+    return this.userService.joinFamily(user.familyId, code);
+  }
+
   @Post('push-token')
   @Auth(Role.User)
   @ApiOperation({ description: '사용자의 FCM 푸시토큰을 저장하는 API' })
