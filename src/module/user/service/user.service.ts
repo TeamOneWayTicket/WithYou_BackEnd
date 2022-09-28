@@ -72,10 +72,10 @@ export class UserService {
     return { s3Url, fileName };
   }
 
-  async saveProfile(id: number, fileName: string): Promise<User> {
+  async saveProfile(id: number, fileName: string): Promise<void> {
     const user = await this.findOne(id);
     user.thumbnail = fileName;
-    return await this.userRepository.save(user);
+    await this.userRepository.update(id, { thumbnail: fileName });
   }
 
   async getProfileUrl(id: number): Promise<ProfileResponseDto> {
@@ -91,11 +91,12 @@ export class UserService {
   }
 
   async updateUser(id: number, dto: SubInfoDto): Promise<User> {
-    const user = await this.findOne(id);
-    user.role = dto.role;
-    user.gender = dto.gender;
-    user.nickname = dto.nickname;
-    return await this.userRepository.save(user);
+    await this.userRepository.update(id, {
+      role: dto.role,
+      gender: dto.gender,
+      nickname: dto.nickname,
+    });
+    return await this.findOne(id);
   }
 
   async createUser(dto: CreateUserDto): Promise<User> {
@@ -106,9 +107,9 @@ export class UserService {
     return (await this.userRepository.delete({ id })).affected;
   }
 
-  async joinFamily(userId: number, code: string): Promise<User> {
-    const user = await this.findOne(userId);
-    user.familyId = (await this.familyService.getFamily(code)).familyId;
-    return await this.userRepository.save(user);
+  async joinFamily(userId: number, code: string): Promise<void> {
+    await this.userRepository.update(userId, {
+      familyId: (await this.familyService.getFamily(code)).familyId,
+    });
   }
 }

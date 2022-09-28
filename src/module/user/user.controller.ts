@@ -45,11 +45,12 @@ export class UserController {
   async joinFamily(
     @UserParam() user: User,
     @Query('code') code: string,
-  ): Promise<User> {
+  ): Promise<string> {
     if (!(await this.familyService.isValidCode(code))) {
       throw new BadRequestException('유효하지 않은 초대 코드 입니다');
     }
-    return this.userService.joinFamily(user.id, code);
+    await this.userService.joinFamily(user.id, code);
+    return 'join success';
   }
 
   @Post('push-token')
@@ -105,8 +106,8 @@ export class UserController {
   async postThumbnailInfo(
     @UserParam() user: User,
     @Body() dto: ProfileDto,
-  ): Promise<User> {
-    return await this.userService.saveProfile(user.id, dto.fileName);
+  ): Promise<void> {
+    await this.userService.saveProfile(user.id, dto.fileName);
   }
 
   @Post('sub-info')
