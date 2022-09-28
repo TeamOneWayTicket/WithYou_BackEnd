@@ -6,7 +6,6 @@ import { CreateFamilyDto } from './dto/create-family.dto';
 import { FamilyInviteCode } from './entity/family.invite.code.entity';
 import { FamilyInviteCodeDto } from './dto/family-invite-code.dto';
 import crypto from 'crypto';
-import { LocalDatetimeTransformer } from '../../transformer/local-datetime.transformer';
 import { User } from '../user/entity/user.entity';
 import { LocalDateTime } from '@js-joda/core';
 
@@ -23,26 +22,21 @@ export class FamilyService {
   ) {}
 
   async createFamily(userId: number, dto: CreateFamilyDto): Promise<Family> {
-    let family;
-    let user;
-    console.log(dto.name);
     const queryRunner = this.myDataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
     try {
-      family = await this.familyRepository.save(dto);
-      user = await this.userRepository.findOne({ where: { id: userId } });
+      const family = await this.familyRepository.save(dto);
+      const user = await this.userRepository.findOne({ where: { id: userId } });
       user.familyId = family.id;
       await this.userRepository.save(user);
-
       await queryRunner.commitTransaction();
+      return family;
     } catch (err) {
       await queryRunner.rollbackTransaction();
     } finally {
       await queryRunner.release();
     }
-
-    return family;
   }
 
   async updateFamily(id: number, name: string): Promise<Family> {

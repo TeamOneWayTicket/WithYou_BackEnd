@@ -1,10 +1,4 @@
-import {
-  Entity,
-  Column,
-  CreateDateColumn,
-  Index,
-  PrimaryColumn,
-} from 'typeorm';
+import { Entity, Column, Index, PrimaryColumn } from 'typeorm';
 import { ApiExtraModels } from '@nestjs/swagger';
 import { ApiModelProperty } from '@nestjs/swagger/dist/decorators/api-model-property.decorator';
 import { LocalDateTime } from '@js-joda/core';
