@@ -5,13 +5,12 @@ import {
   Get,
   Param,
   ParseIntPipe,
-  Patch,
   Post,
   Query,
 } from '@nestjs/common';
 import { UserService } from './service/user.service';
 import { User } from './entity/user.entity';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { SubInfoDto } from './dto/sub-info.dto';
 import { CreateUserDto } from './dto/create-user.dto';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { UserResponseDto } from './dto/user-response.dto';
@@ -62,17 +61,18 @@ export class UserController {
     return await this.userService.findOne(id);
   }
 
-  @Patch(':id')
+  @Post('sub-info')
+  @Auth(Role.User)
   @ApiOkResponse({ description: '성공', type: UserResponseDto })
   @ApiOperation({
-    summary: 'updateUser',
-    description: '특정 id 유저 정보를 수정한다.',
+    summary: 'input sub-info',
+    description: '유저 정보 입력.',
   })
   async updateUser(
-    @Param('id', ParseIntPipe) id: number,
-    @Body() dto: UpdateUserDto,
+    @UserParam() user: User,
+    @Body() dto: SubInfoDto,
   ): Promise<User> {
-    return await this.userService.updateUser(id, dto);
+    return await this.userService.updateUser(user.id, dto);
   }
 
   @Post()

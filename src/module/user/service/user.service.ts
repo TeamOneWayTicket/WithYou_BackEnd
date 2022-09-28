@@ -4,7 +4,7 @@ import { Repository } from 'typeorm';
 import { User } from '../entity/user.entity';
 import { LocalUser } from '../entity/local.user.entity';
 import { UserPushToken } from '../entity/user-push-token.entity';
-import { UpdateUserDto } from '../dto/update-user.dto';
+import { SubInfoDto } from '../dto/sub-info.dto';
 import { CreateUserDto } from '../dto/create-user.dto';
 import { FamilyService } from '../../family/family.service';
 
@@ -47,8 +47,12 @@ export class UserService {
     return this.pushTokenRepository.save(newToken);
   }
 
-  async updateUser(id: number, dto: UpdateUserDto): Promise<User> {
-    return await this.userRepository.save({ id, ...dto });
+  async updateUser(id: number, dto: SubInfoDto): Promise<User> {
+    const user = await this.findOne(id);
+    user.role = dto.role;
+    user.gender = dto.gender;
+    user.nickname = dto.nickname;
+    return await this.userRepository.save(user);
   }
 
   async createUser(dto: CreateUserDto): Promise<User> {
