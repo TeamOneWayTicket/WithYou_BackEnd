@@ -25,6 +25,7 @@ import { UserParam } from '../../decorator/user.decorator';
 import { Auth } from '../../decorator/http.decorator';
 import { Role } from '../../common/enum/role.enum';
 import { PutPresignedUrlsDto } from './dto/put-presigned-urls.dto';
+import { GetPresignedUrlsDto } from './dto/get-presigned-urls.dto';
 
 @Controller('diary')
 @ApiTags('일기장 API')
@@ -56,9 +57,9 @@ export class DiaryController {
     description: 's3에서 특정 객체 Get할 수 있는 preSigned URL들 발급 api.',
   })
   async getSignedUrlsForGetObject(
-    @Query('fileNamesInS3') fileNamesInS3: string[],
+    @Body() dto: GetPresignedUrlsDto,
   ): Promise<GetPresignedUrlsResponseDto> {
-    return await this.diaryService.getSignedUrlsForGetObject(fileNamesInS3);
+    return await this.diaryService.getSignedUrlsForGetObject(dto.fileNamesInS3);
   }
 
   @Get('/:diaryId/presigned-downlad')
