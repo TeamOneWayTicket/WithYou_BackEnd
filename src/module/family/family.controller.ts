@@ -1,4 +1,12 @@
-import { Body, Controller, Delete, Get, Patch, Post } from '@nestjs/common';
+import {
+  BadRequestException,
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Patch,
+  Post,
+} from '@nestjs/common';
 import { ApiOkResponse, ApiOperation } from '@nestjs/swagger';
 import { User } from '../user/entity/user.entity';
 import { UserService } from '../user/service/user.service';
@@ -52,7 +60,13 @@ export class FamilyController {
     summary: 'createFamily ',
     description: '가족 이름으로 가족 만든다',
   })
-  async createFamily(@Body() dto: CreateFamilyDto): Promise<Family> {
+  async createFamily(
+    @UserParam() user: User,
+    @Body() dto: CreateFamilyDto,
+  ): Promise<Family> {
+    if ((await this.userService.findOne(user.id)).familyId) {
+      throw new BadRequestException('이미 가족이 존재합니다');
+    }
     return await this.familyService.createFamily(dto);
   }
 
