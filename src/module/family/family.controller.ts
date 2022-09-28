@@ -67,7 +67,7 @@ export class FamilyController {
     if ((await this.userService.findOne(user.id)).familyId) {
       throw new BadRequestException('이미 가족이 존재합니다');
     }
-    return await this.familyService.createFamily(dto);
+    return await this.familyService.createFamily(user.id, dto);
   }
 
   @Patch()
