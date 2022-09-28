@@ -6,6 +6,7 @@ import { CreateFamilyDto } from './dto/create-family.dto';
 import { FamilyInviteCode } from './entity/family.invite.code.entity';
 import { FamilyInviteCodeDto } from './dto/family-invite-code.dto';
 import crypto from 'crypto';
+import { LocalDatetimeTransformer } from '../../transformer/local-datetime.transformer';
 
 @Injectable()
 export class FamilyService {
@@ -42,5 +43,22 @@ export class FamilyService {
     return await this.familyInviteCodeRepository.findOne({
       where: { inviteCode },
     });
+  }
+
+  async isValidCode(inviteCode: string) {
+    const code = await this.familyInviteCodeRepository.findOne({
+      where: { inviteCode },
+    });
+
+    if (!code) {
+      return false;
+    }
+
+    const curTime = new LocalDatetimeTransformer().from(new Date());
+    const createdTime = new LocalDatetimeTransformer()
+      .from(code.createdAt)
+      .plusMinutes(10);
+
+    return curTime.isBefore(createdTime);
   }
 }

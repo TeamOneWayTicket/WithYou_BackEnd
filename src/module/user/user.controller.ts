@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Delete,
@@ -24,11 +25,15 @@ import { ProfileDto } from './dto/profile.dto';
 import { ProfileResponseDto } from './dto/profile-response.dto';
 import { ProfileUploadResponseDto } from './dto/profileUpload-response.dto';
 import { ProfileUploadDto } from './dto/profileUpload.dto';
+import { FamilyService } from '../family/family.service';
 
 @Controller('user')
 @ApiTags('유저 API')
 export class UserController {
-  constructor(private readonly userService: UserService) {}
+  constructor(
+    private readonly userService: UserService,
+    private readonly familyService: FamilyService,
+  ) {}
 
   @Post('join')
   @Auth(Role.User)
@@ -41,6 +46,9 @@ export class UserController {
     @UserParam() user: User,
     @Query('code') code: string,
   ): Promise<User> {
+    if (!(await this.familyService.isValidCode(code))) {
+      throw new BadRequestException('유효하지 않은 초대 코드 입니다');
+    }
     return this.userService.joinFamily(user.id, code);
   }
 
