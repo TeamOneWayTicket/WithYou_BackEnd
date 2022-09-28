@@ -73,8 +73,6 @@ export class UserService {
   }
 
   async saveProfile(id: number, fileName: string): Promise<void> {
-    const user = await this.findOne(id);
-    user.thumbnail = fileName;
     await this.userRepository.update(id, { thumbnail: fileName });
   }
 
