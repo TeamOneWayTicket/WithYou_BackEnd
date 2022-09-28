@@ -6,8 +6,8 @@ import {
   Get,
   Param,
   ParseIntPipe,
+  Patch,
   Post,
-  Query,
 } from '@nestjs/common';
 import { UserService } from './service/user.service';
 import { User } from './entity/user.entity';
@@ -35,7 +35,7 @@ export class UserController {
     private readonly familyService: FamilyService,
   ) {}
 
-  @Post('join')
+  @Patch('/:inviteCode')
   @Auth(Role.User)
   @ApiOkResponse({ description: '성공', type: FamilyResponseDto })
   @ApiOperation({
@@ -44,12 +44,12 @@ export class UserController {
   })
   async joinFamily(
     @UserParam() user: User,
-    @Query('code') code: string,
+    @Param('inviteCode') inviteCode: string,
   ): Promise<string> {
-    if (!(await this.familyService.isValidCode(code))) {
+    if (!(await this.familyService.isValidCode(inviteCode))) {
       throw new BadRequestException('유효하지 않은 초대 코드 입니다');
     }
-    await this.userService.joinFamily(user.id, code);
+    await this.userService.joinFamily(user.id, inviteCode);
     return 'join success';
   }
 
