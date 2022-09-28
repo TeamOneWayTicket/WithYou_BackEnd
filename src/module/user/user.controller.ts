@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Delete,
@@ -10,7 +11,7 @@ import {
 } from '@nestjs/common';
 import { UserService } from './service/user.service';
 import { User } from './entity/user.entity';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { SubInfoDto } from './dto/sub-info.dto';
 import { CreateUserDto } from './dto/create-user.dto';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { UserResponseDto } from './dto/user-response.dto';
@@ -19,11 +20,39 @@ import { Auth } from '../../decorator/http.decorator';
 import { Role } from '../../common/enum/role.enum';
 import { UserParam } from '../../decorator/user.decorator';
 import { UserPushTokenDto } from './dto/user-push-token.dto';
+import { FamilyResponseDto } from '../family/dto/family-response.dto';
+import { ProfileDto } from './dto/profile.dto';
+import { ProfileResponseDto } from './dto/profile-response.dto';
+import { ProfileUploadResponseDto } from './dto/profileUpload-response.dto';
+import { ProfileUploadDto } from './dto/profileUpload.dto';
+import { FamilyService } from '../family/family.service';
 
 @Controller('user')
 @ApiTags('유저 API')
 export class UserController {
-  constructor(private readonly userService: UserService) {}
+  constructor(
+    private readonly userService: UserService,
+    private readonly familyService: FamilyService,
+  ) {}
+
+  @Patch('/:inviteCode')
+  @Auth(Role.User)
+  @ApiOkResponse({ description: '성공', type: FamilyResponseDto })
+  @ApiOperation({
+    summary: 'get invite-code',
+    description: '유저의 가족에 초대할 수 있는 초대 코드 발급',
+  })
+  async joinFamily(
+    @UserParam() user: User,
+    @Param('inviteCode') inviteCode: string,
+  ): Promise<string> {
+    if (!(await this.familyService.isValidCode(inviteCode))) {
+      throw new BadRequestException('유효하지 않은 초대 코드 입니다');
+    }
+    await this.userService.joinFamily(user.id, inviteCode);
+    return 'join success';
+  }
+
   @Post('push-token')
   @Auth(Role.User)
   @ApiOperation({ description: '사용자의 FCM 푸시토큰을 저장하는 API' })
@@ -45,17 +74,54 @@ export class UserController {
     return await this.userService.findOne(id);
   }
 
-  @Patch(':id')
+  @Get('/profile/upload-url')
+  @Auth(Role.User)
+  @ApiOperation({
+    summary: 'get profile-url',
+    description: '유저 프로필 올릴 url 받아옴',
+  })
+  async getProfileUploadUrl(
+    @UserParam() user: User,
+    @Body() dto: ProfileUploadDto,
+  ): Promise<ProfileUploadResponseDto> {
+    return await this.userService.getUrlsForUpload(dto.contentType);
+  }
+
+  @Get('/profile/download')
+  @Auth(Role.User)
+  @ApiOperation({
+    summary: 'get profile',
+    description: '유저 프로필 url 받아옴',
+  })
+  async getProfile(@UserParam() user: User): Promise<ProfileResponseDto> {
+    return await this.userService.getProfileUrl(user.id);
+  }
+
+  @Post('/profile/upload')
+  @Auth(Role.User)
+  @ApiOperation({
+    summary: 'postThumbnailInfo',
+    description: '프로필 사진 정보 입력',
+  })
+  async postThumbnailInfo(
+    @UserParam() user: User,
+    @Body() dto: ProfileDto,
+  ): Promise<void> {
+    await this.userService.saveProfile(user.id, dto.fileName);
+  }
+
+  @Post('sub-info')
+  @Auth(Role.User)
   @ApiOkResponse({ description: '성공', type: UserResponseDto })
   @ApiOperation({
-    summary: 'updateUser',
-    description: '특정 id 유저 정보를 수정한다.',
+    summary: 'input sub-info',
+    description: '유저 정보 입력.',
   })
   async updateUser(
-    @Param('id', ParseIntPipe) id: number,
-    @Body() dto: UpdateUserDto,
+    @UserParam() user: User,
+    @Body() dto: SubInfoDto,
   ): Promise<User> {
-    return await this.userService.updateUser(id, dto);
+    return await this.userService.updateUser(user.id, dto);
   }
 
   @Post()

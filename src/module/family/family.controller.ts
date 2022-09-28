@@ -1,4 +1,12 @@
-import { Body, Controller, Delete, Get, Patch, Post } from '@nestjs/common';
+import {
+  BadRequestException,
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Patch,
+  Post,
+} from '@nestjs/common';
 import { ApiOkResponse, ApiOperation } from '@nestjs/swagger';
 import { User } from '../user/entity/user.entity';
 import { UserService } from '../user/service/user.service';
@@ -25,8 +33,8 @@ export class FamilyController {
   @Auth(Role.User)
   @ApiOkResponse({ description: '성공', type: UsersResponseDto })
   @ApiOperation({
-    summary: 'get FamilyMembers By FamilyId',
-    description: 'familyId 로 해당 가족에 속한 유저들 가지고 온다.',
+    summary: 'getFamilyMembers',
+    description: '가족 구성원인 유저들 가지고 온다.',
   })
   async findFamilyMember(@UserParam() user: User): Promise<User[]> {
     return await this.userService.findByFamilyId(user.familyId);
@@ -36,7 +44,7 @@ export class FamilyController {
   @Auth(Role.User)
   @ApiOkResponse({ description: '성공', type: FamilyInviteCodeDto })
   @ApiOperation({
-    summary: 'get invite family code',
+    summary: 'get invite-code',
     description: '유저의 가족에 초대할 수 있는 초대 코드 발급',
   })
   async getInviteFamilyCode(
@@ -49,18 +57,24 @@ export class FamilyController {
   @Auth(Role.User)
   @ApiOkResponse({ description: '성공', type: FamilyResponseDto })
   @ApiOperation({
-    summary: 'create family ',
+    summary: 'createFamily ',
     description: '가족 이름으로 가족 만든다',
   })
-  async createFamily(@Body() dto: CreateFamilyDto): Promise<Family> {
-    return await this.familyService.createFamily(dto);
+  async createFamily(
+    @UserParam() user: User,
+    @Body() dto: CreateFamilyDto,
+  ): Promise<Family> {
+    if ((await this.userService.findOne(user.id)).familyId) {
+      throw new BadRequestException('이미 가족이 존재합니다');
+    }
+    return await this.familyService.createFamily(user.id, dto);
   }
 
   @Patch()
   @Auth(Role.User)
   @ApiOkResponse({ description: '성공', type: Family })
   @ApiOperation({
-    summary: 'update family',
+    summary: 'updateFamily',
     description: '가족 이름 변경',
   })
   async updateFamily(
@@ -74,7 +88,7 @@ export class FamilyController {
   @Auth(Role.User)
   @ApiOkResponse({ description: '성공', type: DeleteFamilyResponseDto })
   @ApiOperation({
-    summary: 'delete family information',
+    summary: 'deleteFamily',
     description: '가족정보를 삭제한다.',
   })
   async deleteUser(@UserParam() user: User): Promise<DeleteFamilyResponseDto> {

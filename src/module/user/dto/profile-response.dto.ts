@@ -1,8 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsString } from 'class-validator';
 
-export class CreateFamilyDto {
-  @ApiProperty({ description: '가족 이름' })
+export class ProfileResponseDto {
+  @ApiProperty({ description: 'profile s3 url' })
   @IsString()
-  name: string;
+  s3Url: string;
 }
