@@ -8,7 +8,6 @@ import {
   ManyToOne,
   JoinColumn,
 } from 'typeorm';
-import { LocalUser } from './local.user.entity';
 import { KakaoUser } from './kakao.user.entity';
 import { Diary } from '../../diary/entity/diary.entity';
 import { ApiExtraModels } from '@nestjs/swagger';
@@ -40,7 +39,9 @@ export class User {
   @ApiModelProperty({ description: '닉네임' })
   nickname: string;
 
-  @Column()
+  @Column({
+    default: '',
+  })
   @Index()
   @ApiModelProperty({ description: '가입 경로' })
   vendor: 'kakao' | 'google' | 'apple';
@@ -62,9 +63,6 @@ export class User {
   })
   @ApiModelProperty({ description: '역할' })
   role: string;
-
-  @OneToOne(() => LocalUser, (localUser) => localUser.user)
-  localUser: LocalUser;
 
   @OneToOne(() => KakaoUser, (kakaoUser) => kakaoUser.user)
   kakaoUser: KakaoUser;

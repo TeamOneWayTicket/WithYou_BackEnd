@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from '../entity/user.entity';
-import { LocalUser } from '../entity/local.user.entity';
 import { UserPushToken } from '../entity/user-push-token.entity';
 import { SubInfoDto } from '../dto/sub-info.dto';
 import { CreateUserDto } from '../dto/create-user.dto';
@@ -18,8 +17,6 @@ export class UserService {
   constructor(
     @InjectRepository(User)
     private userRepository: Repository<User>,
-    @InjectRepository(LocalUser)
-    private localUserRepository: Repository<LocalUser>,
     @InjectRepository(UserPushToken)
     private readonly pushTokenRepository: Repository<UserPushToken>,
     private readonly familyService: FamilyService,

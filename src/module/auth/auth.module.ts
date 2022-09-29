@@ -11,7 +11,6 @@ import { GoogleAuthService } from './service/google.auth.service';
 import { GoogleStrategy } from './strategy/google.strategy';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from '../user/entity/user.entity';
-import { LocalUser } from '../user/entity/local.user.entity';
 import { KakaoUser } from '../user/entity/kakao.user.entity';
 import { GoogleUser } from '../user/entity/google.user.entity';
 import { JwtStrategy } from './strategy/jwt.strategy';
@@ -21,18 +20,13 @@ import { AppleAuthController } from './controller/apple.auth.controller';
 import { AppleAuthService } from './service/apple.auth.service';
 import { AppleStrategy } from './strategy/apple.strategy';
 import { AppleUser } from '../user/entity/apple.user.entity';
+import { HttpModule } from '@nestjs/axios';
 
 @Module({
   imports: [
     UserModule,
     PassportModule,
-    TypeOrmModule.forFeature([
-      User,
-      LocalUser,
-      KakaoUser,
-      GoogleUser,
-      AppleUser,
-    ]),
+    TypeOrmModule.forFeature([User, KakaoUser, GoogleUser, AppleUser]),
     JwtModule.registerAsync({
       useFactory: (configService: ApiConfigService) => ({
         secret: configService.authConfig.secretkey,
@@ -44,6 +38,7 @@ import { AppleUser } from '../user/entity/apple.user.entity';
       }),
       inject: [ApiConfigService],
     }),
+    HttpModule,
   ],
   controllers: [
     AuthController,
