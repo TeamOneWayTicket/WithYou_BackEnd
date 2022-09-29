@@ -40,7 +40,9 @@ export class User {
   @ApiModelProperty({ description: '닉네임' })
   nickname: string;
 
-  @Column()
+  @Column({
+    default: '',
+  })
   @Index()
   @ApiModelProperty({ description: '가입 경로' })
   vendor: 'kakao' | 'google' | 'apple';
