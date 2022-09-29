@@ -12,6 +12,7 @@ import { DiaryMedium } from '../entity/diary.medium.entity';
 import { CreateMediumDto } from '../dto/create-medium.dto';
 import { CreateMediaResponseDto } from '../dto/create-media-response.dto';
 import { DiaryService } from './diary.service';
+import { Diary } from '../entity/diary.entity';
 
 @Injectable()
 export class DiaryMediumService {
@@ -19,6 +20,7 @@ export class DiaryMediumService {
     @InjectRepository(DiaryMedium)
     private readonly diaryMediumRepository: Repository<DiaryMedium>,
     private readonly configService: ApiConfigService,
+    @InjectRepository(Diary)
     private readonly diaryService: DiaryService,
   ) {
     AWS.config.update({

@@ -16,11 +16,15 @@ import { Auth } from '../../../decorator/http.decorator';
 import { Role } from '../../../common/enum/role.enum';
 import { PutPresignedUrlsDto } from '../dto/put-presigned-urls.dto';
 import { GetPresignedUrlsDto } from '../dto/get-presigned-urls.dto';
+import { DiaryMediumService } from '../service/diary.medium.service';
 
 @Controller('diary')
 @ApiTags('일기장 Medium API')
 export class DiaryMediumController {
-  constructor(private readonly diaryService: DiaryService) {}
+  constructor(
+    private readonly diaryService: DiaryService,
+    private readonly diaryMediumService: DiaryMediumService,
+  ) {}
 
   @Post('/presigned-upload')
   @Auth(Role.User)
@@ -33,7 +37,7 @@ export class DiaryMediumController {
   async getSignedUrlsForPutObject(
     @Body() dto: PutPresignedUrlsDto,
   ): Promise<PutSignedUrlsResponseDto> {
-    return await this.diaryService.getSignedUrlsForPutObject(dto);
+    return await this.diaryMediumService.getSignedUrlsForPutObject(dto);
   }
 
   @Get('/presigned-download')
@@ -46,7 +50,9 @@ export class DiaryMediumController {
   async getSignedUrlsForGetObject(
     @Body() dto: GetPresignedUrlsDto,
   ): Promise<GetPresignedUrlsResponseDto> {
-    return await this.diaryService.getSignedUrlsForGetObject(dto.fileNamesInS3);
+    return await this.diaryMediumService.getSignedUrlsForGetObject(
+      dto.fileNamesInS3,
+    );
   }
 
   @Get('/:diaryId/presigned-downlad')
@@ -59,7 +65,7 @@ export class DiaryMediumController {
   async getDiarySignedUrls(
     @Param('diaryId', ParseIntPipe) diaryId: number,
   ): Promise<GetPresignedUrlsResponseDto> {
-    return await this.diaryService.getDiaryMediaUrls(diaryId);
+    return await this.diaryMediumService.getDiaryMediaUrls(diaryId);
   }
 
   @Post('/:diaryId/upload-mediums')
@@ -73,6 +79,9 @@ export class DiaryMediumController {
     @Param('diaryId', ParseIntPipe) diaryId: number,
     @Query('fileNamesInS3') fileNamesInS3: string[],
   ): Promise<CreateMediaResponseDto> {
-    return await this.diaryService.createDiaryMedia(diaryId, fileNamesInS3);
+    return await this.diaryMediumService.createDiaryMedia(
+      diaryId,
+      fileNamesInS3,
+    );
   }
 }
