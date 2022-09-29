@@ -7,12 +7,12 @@ import {
   Param,
   ParseIntPipe,
   Post,
+  Query,
   Redirect,
-  UseGuards,
+  Res,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
 import { KakaoAuthService } from '../service/kakao.auth.service';
 import { ApiConfigService } from '../../../shared/services/api-config.service';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
@@ -120,20 +120,34 @@ export class KakaoAuthController {
     }
   }
 
-  @Get('/logoutRedirect')
+  @Get('/login')
   @Header('Content-Type', 'text/html')
-  @UseGuards(AuthGuard('kakao'))
-  @ApiOperation({
-    summary: 'kakao logout redirect',
-  })
-  async kakaoLogoutLogicRedirect(): Promise<string> {
-    return `
-          <div>
-            <h2>축하합니다!</h2>
-            <p>카카오 로그아웃 성공하였습니다!</p>
-            <a href="/auth/kakao/menu">메인으로</a>
-          </div>
-        `;
+  kakaoLoginLogic(@Res() res): void {
+    const _hostName = 'https://kauth.kakao.com';
+    const _restApiKey = this.configService.kakaoConfig.restApiKey;
+    const _redirectUrl = this.configService.kakaoConfig.loginRedirectUrl;
+    const url = `${_hostName}/oauth/authorize?client_id=${_restApiKey}&redirect_uri=${_redirectUrl}&response_type=code`;
+    return res.redirect(url);
+  }
+
+  @Get('/redirect')
+  @Header('Content-Type', 'text/html')
+  async kakaoLoginLogicRedirect(@Query() qs): Promise<JwtDto> {
+    const _restApiKey = this.configService.kakaoConfig.restApiKey;
+    const _redirectUrl = this.configService.kakaoConfig.loginRedirectUrl;
+    const _hostName = `https://kauth.kakao.com/oauth/token?grant_type=authorization_code&client_id=${_restApiKey}&redirect_uri=${_redirectUrl}&code=${qs.code}`;
+    const _headers = {
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
+      },
+    };
+    const accessToken = await this.kakaoAuthService
+      .getAccessToken(_hostName, _headers)
+      .catch((err) => {
+        throw new BadRequestException(err);
+      });
+
+    return await this.kakaoAuthService.login(accessToken);
   }
 
   @Get('/:id/unlink')

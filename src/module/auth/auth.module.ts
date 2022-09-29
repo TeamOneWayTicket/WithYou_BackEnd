@@ -20,6 +20,7 @@ import { AppleAuthController } from './controller/apple.auth.controller';
 import { AppleAuthService } from './service/apple.auth.service';
 import { AppleStrategy } from './strategy/apple.strategy';
 import { AppleUser } from '../user/entity/apple.user.entity';
+import { HttpModule } from '@nestjs/axios';
 
 @Module({
   imports: [
@@ -37,6 +38,7 @@ import { AppleUser } from '../user/entity/apple.user.entity';
       }),
       inject: [ApiConfigService],
     }),
+    HttpModule,
   ],
   controllers: [
     AuthController,
