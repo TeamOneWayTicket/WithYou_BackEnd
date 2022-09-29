@@ -23,9 +23,7 @@ export class KakaoAuthService {
     private readonly configService: ApiConfigService,
     private readonly jwtService: JwtService,
     private http: HttpService,
-  ) {
-    this.http = new HttpService();
-  }
+  ) {}
 
   async findKakaoUser(kakaoId: string): Promise<KakaoUser> {
     return await this.kakaoUserRepository.findOne({
@@ -92,7 +90,6 @@ export class KakaoAuthService {
   }
 
   async login(accessToken: string): Promise<JwtDto> {
-    console.log(accessToken);
     const kakaoProfile = await this.getKakaoProfile(accessToken);
 
     const kakaoInfo = kakaoProfile._json;
