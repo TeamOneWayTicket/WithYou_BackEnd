@@ -3,7 +3,6 @@ import { UserService } from './service/user.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './entity/user.entity';
 import { UserController } from './user.controller';
-import { LocalUser } from './entity/local.user.entity';
 import { KakaoUser } from './entity/kakao.user.entity';
 import { GoogleUser } from './entity/google.user.entity';
 import { UserPushToken } from './entity/user-push-token.entity';
@@ -16,7 +15,6 @@ import { FamilyInviteCode } from '../family/entity/family.invite.code.entity';
   imports: [
     TypeOrmModule.forFeature([
       User,
-      LocalUser,
       KakaoUser,
       GoogleUser,
       UserPushToken,
