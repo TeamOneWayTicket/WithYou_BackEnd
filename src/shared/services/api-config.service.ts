@@ -138,6 +138,16 @@ export class ApiConfigService {
     };
   }
 
+  get appleConfig() {
+    return {
+      clientID: this.getString('APPLE_REST_API_KEY'),
+      callbackURL: this.getString('APPLE_LOGIN_REDIRECT_URL'),
+      keyID: this.getString('APPLE_KEY_ID'),
+      teamID: this.getString('APPLE_TEAM_ID'),
+      keyFilePath: this.getString('APPLE_KEYFILE_PATH'),
+    };
+  }
+
   get kakaoConfig() {
     return {
       restApiKey: this.getString('KAKAO_REST_API_KEY'),
