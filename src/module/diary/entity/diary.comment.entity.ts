@@ -50,4 +50,10 @@ export class DiaryComment {
     transformer: new LocalDatetimeTransformer(),
   })
   createdAt: LocalDateTime;
+
+  @Index()
+  @Column({
+    default: false,
+  })
+  isDeleted: boolean;
 }

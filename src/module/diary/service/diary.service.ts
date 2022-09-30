@@ -34,7 +34,7 @@ export class DiaryService {
       diariesResponse.push({
         diary,
         commentCount: await this.diaryCommentRepository.count({
-          where: { diaryId: diary.id },
+          where: { diaryId: diary.id, isDeleted: false },
         }),
       });
     }
@@ -51,7 +51,7 @@ export class DiaryService {
       diariesResponse.push({
         diary,
         commentCount: await this.diaryCommentRepository.count({
-          where: { diaryId: diary.id },
+          where: { diaryId: diary.id, isDeleted: false },
         }),
       });
     }

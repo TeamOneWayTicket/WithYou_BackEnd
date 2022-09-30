@@ -15,7 +15,7 @@ export class DiaryCommentService {
   async findAllComments(diaryId: number): Promise<DiaryCommentsDto> {
     return {
       comments: await this.diaryCommentRepository.find({
-        where: { diaryId },
+        where: { diaryId, isDeleted: false },
       }),
     };
   }
