@@ -29,10 +29,6 @@ export class DiaryMediumService {
     });
   }
 
-  async createDiaryMedium(diaryMedium: CreateMediumDto): Promise<DiaryMedium> {
-    return await this.diaryMediumRepository.save(diaryMedium);
-  }
-
   async createDiaryMedia(
     diaryId: number,
     fileNamesInS3: string[],
@@ -40,18 +36,17 @@ export class DiaryMediumService {
     const diary = await this.diaryRepository.findOne({
       where: { id: diaryId },
     });
-    const diaryMedia: DiaryMedium[] = [];
-    for (let i = 0; i < fileNamesInS3.length; i++) {
-      diaryMedia.push(
-        await this.createDiaryMedium({
-          fileNameInS3: fileNamesInS3[i],
-          diary,
-          diaryId,
-          order: i,
-        }),
-      );
+    const diaryMedia: CreateMediumDto[] = [];
+    for (let order = 0; order < fileNamesInS3.length; order++) {
+      const medium: CreateMediumDto = {
+        fileNameInS3: fileNamesInS3[order],
+        diary,
+        diaryId,
+        order,
+      };
+      diaryMedia.push(medium);
     }
-    return { diaryMedia };
+    return { diaryMedia: await this.diaryMediumRepository.save(diaryMedia) };
   }
 
   async getDiaryMediaUrls(
