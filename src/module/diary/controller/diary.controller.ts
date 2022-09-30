@@ -66,7 +66,7 @@ export class DiaryController {
     return await this.diaryService.findDiaryWithUrls(diaryId);
   }
 
-  @Patch(':diaryId')
+  @Patch(':id')
   @Auth(Role.User)
   @ApiBody({ type: UpdateDiaryDto })
   @ApiOkResponse({ description: '성공', type: Diary })
@@ -75,7 +75,7 @@ export class DiaryController {
     description: '특정 id 일기 내용 입력한 내용으로 수정한다.',
   })
   async updateDiary(
-    @Param('diaryId', ParseIntPipe) diaryId: number,
+    @Param('id', ParseIntPipe) diaryId: number,
     @Body() diary: UpdateDiaryDto,
   ): Promise<Diary> {
     return await this.diaryService.updateDiary(diaryId, diary);
