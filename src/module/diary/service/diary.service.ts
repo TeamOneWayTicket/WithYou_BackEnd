@@ -1,0 +1,103 @@
+import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Diary } from '../entity/diary.entity';
+import { DataSource, Repository } from 'typeorm';
+import { UpdateDiaryDto } from '../dto/update-diary.dto';
+import { ApiConfigService } from '../../../shared/services/api-config.service';
+import { UserService } from '../../user/service/user.service';
+import { DiaryContentDto } from '../dto/diary-content.dto';
+import { DiaryMediumService } from './diary.medium.service';
+import { DiariesResponseDto } from '../dto/diaries-response.dto';
+import { DiaryResponseDto } from '../dto/diary-response.dto';
+import { DiaryComment } from '../entity/diary.comment.entity';
+
+@Injectable()
+export class DiaryService {
+  constructor(
+    @InjectRepository(Diary)
+    private readonly diaryRepository: Repository<Diary>,
+    private readonly configService: ApiConfigService,
+    private readonly userService: UserService,
+    private readonly diaryMediumService: DiaryMediumService,
+    private readonly myDataSource: DataSource,
+    @InjectRepository(DiaryComment)
+    private readonly diaryCommentRepository: Repository<DiaryComment>,
+  ) {}
+
+  async findAllByAuthorId(authorId: number): Promise<DiariesResponseDto> {
+    const diaries = await this.diaryRepository.find({
+      where: { authorId },
+      relations: ['media'],
+    });
+    const diariesResponse: DiaryResponseDto[] = [];
+    for (const diary of diaries) {
+      diariesResponse.push({
+        diary,
+        commentCount: await this.diaryCommentRepository.count({
+          where: { diaryId: diary.id, isDeleted: false },
+        }),
+      });
+    }
+    return { diaries: diariesResponse };
+  }
+
+  async findAllByFamilyId(familyId: number): Promise<DiariesResponseDto> {
+    const diaries = await this.diaryRepository.find({
+      where: { familyId },
+      relations: ['media'],
+    });
+    const diariesResponse: DiaryResponseDto[] = [];
+    for (const diary of diaries) {
+      diariesResponse.push({
+        diary,
+        commentCount: await this.diaryCommentRepository.count({
+          where: { diaryId: diary.id, isDeleted: false },
+        }),
+      });
+    }
+    return { diaries: diariesResponse };
+  }
+
+  async findDiaryWithUrls(id: number): Promise<Diary> {
+    return await this.diaryRepository.findOne({
+      where: { id },
+      relations: ['media'],
+    });
+  }
+
+  async createDiary(
+    authorId: number,
+    diarySource: DiaryContentDto,
+  ): Promise<Diary> {
+    const queryRunner = this.myDataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+    let diary: Diary;
+    try {
+      const familyId = (await this.userService.findOne(authorId)).familyId;
+      diary = await this.diaryRepository.save({
+        authorId,
+        content: diarySource.content,
+        familyId,
+      });
+      await this.diaryMediumService.createDiaryMedia(
+        diary.id,
+        diarySource.fileNamesInS3,
+      );
+      await queryRunner.commitTransaction();
+    } catch (err) {
+      await queryRunner.rollbackTransaction();
+    } finally {
+      await queryRunner.release();
+    }
+    return diary;
+  }
+
+  async updateDiary(targetId: number, diary: UpdateDiaryDto): Promise<Diary> {
+    const { content } = diary;
+    await this.diaryRepository.update(targetId, {
+      content,
+    });
+    return await this.diaryRepository.findOne({ where: { id: targetId } });
+  }
+}

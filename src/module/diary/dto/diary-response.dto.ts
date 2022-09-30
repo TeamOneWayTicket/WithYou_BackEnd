@@ -5,6 +5,6 @@ export class DiaryResponseDto {
   @ApiProperty({ description: '일기' })
   diary: Diary;
 
-  @ApiProperty({ description: 'presigned url' })
-  mediaUrls: string[];
+  @ApiProperty({ description: '댓글 갯수' })
+  commentCount: number;
 }

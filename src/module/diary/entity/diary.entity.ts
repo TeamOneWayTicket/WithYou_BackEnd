@@ -13,6 +13,7 @@ import { ApiModelProperty } from '@nestjs/swagger/dist/decorators/api-model-prop
 import { DiaryMedium } from './diary.medium.entity';
 import { LocalDateTime } from '@js-joda/core';
 import { LocalDatetimeTransformer } from '../../../transformer/local-datetime.transformer';
+import { DiaryComment } from './diary.comment.entity';
 
 @Entity()
 @ApiExtraModels()
@@ -34,6 +35,7 @@ export class Diary {
   authorId: number;
 
   @Column({
+    type: 'text',
     nullable: true,
   })
   @ApiModelProperty({ description: '일기장 내용' })
@@ -56,4 +58,7 @@ export class Diary {
 
   @OneToMany(() => DiaryMedium, (diaryMedium) => diaryMedium.diary)
   media: DiaryMedium[];
+
+  @OneToMany(() => DiaryComment, (diaryComment) => diaryComment.diary)
+  comments: DiaryComment[];
 }

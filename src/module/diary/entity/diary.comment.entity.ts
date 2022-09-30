@@ -14,10 +14,15 @@ import { LocalDateTime } from '@js-joda/core';
 
 @Entity()
 @ApiExtraModels()
-export class DiaryMedium {
+export class DiaryComment {
   @PrimaryGeneratedColumn()
   @ApiModelProperty({ description: 'id' })
   id: number;
+
+  @Column()
+  @Index()
+  @ApiModelProperty({ description: '댓글 작성자 id' })
+  authorId: number;
 
   @Column()
   @Index()
@@ -25,22 +30,19 @@ export class DiaryMedium {
   diaryId: number;
 
   @Column({
-    nullable: true,
+    length: 500,
+    default: '',
   })
-  @ApiModelProperty({ description: '순서 번호' })
-  order: number;
+  @ApiModelProperty({ description: '댓글 내용' })
+  content: string;
 
-  @Column()
-  @ApiModelProperty({ description: 's3에 저장된 파일명' })
-  fileNameInS3: string;
-
-  @ManyToOne(() => Diary, (diary) => diary.media, {
+  @ManyToOne(() => Diary, (diary) => diary.comments, {
     createForeignKeyConstraints: false,
   })
   @JoinColumn({ name: 'diary_id' })
   diary: Diary;
 
-  @ApiModelProperty({ description: 'medium 작성 시점', type: Date })
+  @ApiModelProperty({ description: '댓글 작성 시점', type: Date })
   @Index()
   @Column({
     type: 'timestamp without time zone',
@@ -48,4 +50,10 @@ export class DiaryMedium {
     transformer: new LocalDatetimeTransformer(),
   })
   createdAt: LocalDateTime;
+
+  @Index()
+  @Column({
+    default: false,
+  })
+  isDeleted: boolean;
 }
