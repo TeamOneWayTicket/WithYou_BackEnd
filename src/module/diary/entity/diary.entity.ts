@@ -35,6 +35,7 @@ export class Diary {
   authorId: number;
 
   @Column({
+    type: 'text',
     nullable: true,
   })
   @ApiModelProperty({ description: '일기장 내용' })
