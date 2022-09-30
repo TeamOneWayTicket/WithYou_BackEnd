@@ -15,11 +15,17 @@ import { UserParam } from '../../../decorator/user.decorator';
 import { User } from '../../user/entity/user.entity';
 import { DiaryComment } from '../entity/diary.comment.entity';
 import { CreateDiaryCommentDto } from '../dto/create-diary-comment.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 
 @Controller('diary/comment')
 @ApiTags('일기장 댓글 API')
 export class DiaryCommentController {
-  constructor(private readonly diaryCommentService: DiaryCommentService) {}
+  constructor(
+    private readonly diaryCommentService: DiaryCommentService,
+    @InjectRepository(DiaryComment)
+    private readonly diaryCommentRepository: Repository<DiaryComment>,
+  ) {}
 
   @Get(':diaryId')
   @Auth(Role.User)
@@ -42,7 +48,7 @@ export class DiaryCommentController {
   async getCommentCount(
     @Param('diaryId', ParseIntPipe) diaryId: number,
   ): Promise<number> {
-    return await this.diaryCommentService.getCommentCount(diaryId);
+    return await this.diaryCommentRepository.count({ where: { diaryId } });
   }
 
   @Post()

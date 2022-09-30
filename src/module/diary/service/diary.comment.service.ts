@@ -14,25 +14,10 @@ export class DiaryCommentService {
 
   async findAllComments(diaryId: number): Promise<DiaryCommentsDto> {
     return {
-      comments: (
-        await this.diaryCommentRepository.find({
-          where: { diaryId },
-        })
-      ).sort((a, b) => {
-        return a.createdAt.compareTo(b.createdAt);
+      comments: await this.diaryCommentRepository.find({
+        where: { diaryId },
       }),
     };
-  }
-
-  async getCommentCount(diaryId: number): Promise<number> {
-    return (
-      await this.diaryCommentRepository
-        .createQueryBuilder('comment')
-        .select('comment.diaryId AS diaryId')
-        .addSelect('COUNT(*) AS commentCount')
-        .groupBy('comment.diaryId')
-        .getRawMany()
-    )[diaryId];
   }
 
   async createComment(
