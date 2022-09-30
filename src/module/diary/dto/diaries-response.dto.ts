@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Diary } from '../entity/diary.entity';
+import { DiaryResponseDto } from './diary-response.dto';
 
 export class DiariesResponseDto {
   @ApiProperty({ description: '일기' })
-  diaries: Diary[];
+  diaries: DiaryResponseDto[];
 }

@@ -8,6 +8,8 @@ import { UserService } from '../../user/service/user.service';
 import { DiaryContentDto } from '../dto/diary-content.dto';
 import { DiaryMediumService } from './diary.medium.service';
 import { DiariesResponseDto } from '../dto/diaries-response.dto';
+import { DiaryResponseDto } from '../dto/diary-response.dto';
+import { DiaryComment } from '../entity/diary.comment.entity';
 
 @Injectable()
 export class DiaryService {
@@ -18,24 +20,42 @@ export class DiaryService {
     private readonly userService: UserService,
     private readonly diaryMediumService: DiaryMediumService,
     private readonly myDataSource: DataSource,
+    @InjectRepository(DiaryComment)
+    private readonly diaryCommentRepository: Repository<DiaryComment>,
   ) {}
 
   async findAllByAuthorId(authorId: number): Promise<DiariesResponseDto> {
-    return {
-      diaries: await this.diaryRepository.find({
-        where: { authorId },
-        relations: ['media'],
-      }),
-    };
+    const diaries = await this.diaryRepository.find({
+      where: { authorId },
+      relations: ['media'],
+    });
+    const diariesResponse: DiaryResponseDto[] = [];
+    for (const diary of diaries) {
+      diariesResponse.push({
+        diary,
+        commentCount: await this.diaryCommentRepository.count({
+          where: { diaryId: diary.id },
+        }),
+      });
+    }
+    return { diaries: diariesResponse };
   }
 
   async findAllByFamilyId(familyId: number): Promise<DiariesResponseDto> {
-    return {
-      diaries: await this.diaryRepository.find({
-        where: { familyId },
-        relations: ['media'],
-      }),
-    };
+    const diaries = await this.diaryRepository.find({
+      where: { familyId },
+      relations: ['media'],
+    });
+    const diariesResponse: DiaryResponseDto[] = [];
+    for (const diary of diaries) {
+      diariesResponse.push({
+        diary,
+        commentCount: await this.diaryCommentRepository.count({
+          where: { diaryId: diary.id },
+        }),
+      });
+    }
+    return { diaries: diariesResponse };
   }
 
   async findDiaryWithUrls(id: number): Promise<Diary> {
