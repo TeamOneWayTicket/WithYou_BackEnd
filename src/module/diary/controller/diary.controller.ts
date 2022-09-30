@@ -40,7 +40,7 @@ export class DiaryController {
     return await this.diaryService.findAllByAuthorId(user.id);
   }
 
-  @Get('family-diaries')
+  @Get('family')
   @Auth(Role.User)
   @ApiOkResponse({ description: '성공', type: DiariesResponseDto })
   @ApiOperation({
