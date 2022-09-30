@@ -29,7 +29,7 @@ export class DiaryController {
     private readonly userService: UserService,
   ) {}
 
-  @Get('user-diaries')
+  @Get('my')
   @Auth(Role.User)
   @ApiOkResponse({ description: '성공', type: DiariesResponseDto })
   @ApiOperation({
