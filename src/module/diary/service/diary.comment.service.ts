@@ -6,7 +6,7 @@ import { DiaryCommentsDto } from '../dto/diary-comments.dto';
 import { CreateDiaryCommentDto } from '../dto/create-diary-comment.dto';
 
 @Injectable()
-export class DiaryService {
+export class DiaryCommentService {
   constructor(
     @InjectRepository(DiaryComment)
     private readonly diaryCommentRepository: Repository<DiaryComment>,
@@ -18,7 +18,10 @@ export class DiaryService {
     };
   }
 
-  async createComment(dto: CreateDiaryCommentDto): Promise<DiaryComment> {
-    return await this.diaryCommentRepository.save({ ...dto });
+  async createComment(
+    authorId: number,
+    dto: CreateDiaryCommentDto,
+  ): Promise<DiaryComment> {
+    return await this.diaryCommentRepository.save({ authorId, ...dto });
   }
 }
