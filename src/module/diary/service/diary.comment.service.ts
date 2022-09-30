@@ -14,7 +14,13 @@ export class DiaryCommentService {
 
   async findAllComments(diaryId: number): Promise<DiaryCommentsDto> {
     return {
-      comments: await this.diaryCommentRepository.find({ where: { diaryId } }),
+      comments: (
+        await this.diaryCommentRepository.find({
+          where: { diaryId },
+        })
+      ).sort((a, b) => {
+        return a.createdAt.compareTo(b.createdAt);
+      }),
     };
   }
 
