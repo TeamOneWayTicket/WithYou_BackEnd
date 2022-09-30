@@ -33,6 +33,18 @@ export class DiaryCommentController {
     return await this.diaryCommentService.findAllComments(diaryId);
   }
 
+  @Get('count/:diaryId')
+  @Auth(Role.User)
+  @ApiOperation({
+    summary: 'get Comment count',
+    description: '특정 id로 일기 댓글들 개수 받아온다.',
+  })
+  async getCommentCount(
+    @Param('diaryId', ParseIntPipe) diaryId: number,
+  ): Promise<number> {
+    return await this.diaryCommentService.getCommentCount(diaryId);
+  }
+
   @Post()
   @Auth(Role.User)
   @ApiBody({ type: CreateDiaryCommentDto })

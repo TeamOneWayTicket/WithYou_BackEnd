@@ -24,6 +24,17 @@ export class DiaryCommentService {
     };
   }
 
+  async getCommentCount(diaryId: number): Promise<number> {
+    return (
+      await this.diaryCommentRepository
+        .createQueryBuilder('comment')
+        .select('comment.diaryId AS diaryId')
+        .addSelect('COUNT(*) AS commentCount')
+        .groupBy('comment.diaryId')
+        .getRawMany()
+    )[diaryId];
+  }
+
   async createComment(
     authorId: number,
     dto: CreateDiaryCommentDto,
