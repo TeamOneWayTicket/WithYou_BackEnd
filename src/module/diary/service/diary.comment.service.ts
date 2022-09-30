@@ -16,6 +16,7 @@ export class DiaryCommentService {
     return {
       comments: await this.diaryCommentRepository.find({
         where: { diaryId, isDeleted: false },
+        order: { id: 'ASC' },
       }),
     };
   }
