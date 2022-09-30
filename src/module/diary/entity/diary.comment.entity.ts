@@ -30,6 +30,7 @@ export class DiaryComment {
   diaryId: number;
 
   @Column({
+    length: 500,
     default: '',
   })
   @ApiModelProperty({ description: '댓글 내용' })
