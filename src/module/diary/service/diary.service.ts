@@ -4,10 +4,10 @@ import { Diary } from '../entity/diary.entity';
 import { DataSource, Repository } from 'typeorm';
 import { UpdateDiaryDto } from '../dto/update-diary.dto';
 import { ApiConfigService } from '../../../shared/services/api-config.service';
-import { DiaryResponseDto } from '../dto/diary-response.dto';
 import { UserService } from '../../user/service/user.service';
 import { DiaryContentDto } from '../dto/diary-content.dto';
 import { DiaryMediumService } from './diary.medium.service';
+import { DiariesResponseDto } from '../dto/diaries-response.dto';
 
 @Injectable()
 export class DiaryService {
@@ -20,47 +20,33 @@ export class DiaryService {
     private readonly myDataSource: DataSource,
   ) {}
 
-  async findAllByAuthorId(authorId: number): Promise<DiaryResponseDto[]> {
-    const diaries = await this.diaryRepository.find({ where: { authorId } });
-    return await Promise.all(
-      diaries.map(
-        async (diary) =>
-          <DiaryResponseDto>{
-            diary,
-            mediaUrls: (
-              await this.diaryMediumService.getDiaryMediaUrls(diary.id)
-            ).s3Urls,
-          },
-      ),
-    );
+  async findAllByAuthorId(authorId: number): Promise<DiariesResponseDto> {
+    return {
+      diaries: await this.diaryRepository.find({
+        where: { authorId },
+        relations: ['media'],
+      }),
+    };
   }
 
-  async findAllByFamilyId(familyId: number): Promise<DiaryResponseDto[]> {
-    const diaries = await this.diaryRepository.find({ where: { familyId } });
-    return await Promise.all(
-      diaries.map(
-        async (diary) =>
-          <DiaryResponseDto>{
-            diary,
-            mediaUrls: (
-              await this.diaryMediumService.getDiaryMediaUrls(diary.id)
-            ).s3Urls,
-          },
-      ),
-    );
+  async findAllByFamilyId(familyId: number): Promise<DiariesResponseDto> {
+    return {
+      diaries: await this.diaryRepository.find({
+        where: { familyId },
+        relations: ['media'],
+      }),
+    };
   }
 
   async findOne(id: number): Promise<Diary> {
     return await this.diaryRepository.findOne({ where: { id } });
   }
 
-  async findDiaryWithUrls(id: number): Promise<DiaryResponseDto> {
-    const diary = await this.diaryRepository.findOne({ where: { id } });
-
-    return {
-      diary,
-      mediaUrls: (await this.diaryMediumService.getDiaryMediaUrls(id)).s3Urls,
-    };
+  async findDiaryWithUrls(id: number): Promise<Diary> {
+    return await this.diaryRepository.findOne({
+      where: { id },
+      relations: ['media'],
+    });
   }
 
   async createDiary(

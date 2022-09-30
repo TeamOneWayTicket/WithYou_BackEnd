@@ -13,7 +13,6 @@ import { Diary } from '../entity/diary.entity';
 import { UpdateDiaryDto } from '../dto/update-diary.dto';
 import { DiaryContentDto } from '../dto/diary-content.dto';
 import { ApiBody, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { DiaryResponseDto } from '../dto/diary-response.dto';
 import { DiariesResponseDto } from '../dto/diaries-response.dto';
 import { UserService } from '../../user/service/user.service';
 import { User } from '../../user/entity/user.entity';
@@ -36,7 +35,7 @@ export class DiaryController {
     summary: 'get user Diaries',
     description: '현재 유저의 전체 일기 리스트 받아온다.',
   })
-  async getUserDiaries(@UserParam() user: User): Promise<DiaryResponseDto[]> {
+  async getUserDiaries(@UserParam() user: User): Promise<DiariesResponseDto> {
     return await this.diaryService.findAllByAuthorId(user.id);
   }
 
@@ -49,20 +48,20 @@ export class DiaryController {
   })
   async findFamilyDiaries(
     @UserParam() user: User,
-  ): Promise<DiaryResponseDto[]> {
+  ): Promise<DiariesResponseDto> {
     return await this.diaryService.findAllByFamilyId(user.familyId);
   }
 
   @Get(':diaryId')
   @Auth(Role.User)
-  @ApiOkResponse({ description: '성공', type: DiaryResponseDto })
+  @ApiOkResponse({ description: '성공', type: Diary })
   @ApiOperation({
     summary: 'get diary and urls by diaryId',
     description: '특정 id로 일기 받아온다.',
   })
   async findDiaryWithMediumUrls(
     @Param('diaryId', ParseIntPipe) diaryId: number,
-  ): Promise<DiaryResponseDto> {
+  ): Promise<Diary> {
     return await this.diaryService.findDiaryWithUrls(diaryId);
   }
 
