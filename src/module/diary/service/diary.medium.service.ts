@@ -11,7 +11,6 @@ import { GetPresignedUrlsResponseDto } from '../dto/get-presigned-urls-response.
 import { DiaryMedium } from '../entity/diary.medium.entity';
 import { CreateMediumDto } from '../dto/create-medium.dto';
 import { CreateMediaResponseDto } from '../dto/create-media-response.dto';
-import { DiaryService } from './diary.service';
 import { Diary } from '../entity/diary.entity';
 
 @Injectable()
@@ -21,7 +20,7 @@ export class DiaryMediumService {
     private readonly diaryMediumRepository: Repository<DiaryMedium>,
     private readonly configService: ApiConfigService,
     @InjectRepository(Diary)
-    private readonly diaryService: DiaryService,
+    private readonly diaryRepository: Repository<Diary>,
   ) {
     AWS.config.update({
       region: this.configService.awsConfig.bucketRegion,
@@ -38,7 +37,9 @@ export class DiaryMediumService {
     diaryId: number,
     fileNamesInS3: string[],
   ): Promise<CreateMediaResponseDto> {
-    const diary = await this.diaryService.findOne(diaryId);
+    const diary = await this.diaryRepository.findOne({
+      where: { id: diaryId },
+    });
     const diaryMedia: DiaryMedium[] = [];
     for (let i = 0; i < fileNamesInS3.length; i++) {
       diaryMedia.push(

@@ -38,10 +38,6 @@ export class DiaryService {
     };
   }
 
-  async findOne(id: number): Promise<Diary> {
-    return await this.diaryRepository.findOne({ where: { id } });
-  }
-
   async findDiaryWithUrls(id: number): Promise<Diary> {
     return await this.diaryRepository.findOne({
       where: { id },
@@ -82,6 +78,6 @@ export class DiaryService {
     await this.diaryRepository.update(targetId, {
       content,
     });
-    return await this.findOne(targetId);
+    return await this.diaryRepository.findOne({ where: { id: targetId } });
   }
 }
