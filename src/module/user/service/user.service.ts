@@ -3,7 +3,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from '../entity/user.entity';
 import { UserPushToken } from '../entity/user-push-token.entity';
-import { SubInfoDto } from '../dto/sub-info.dto';
 import { CreateUserDto } from '../dto/create-user.dto';
 import { FamilyService } from '../../family/family.service';
 import AWS from 'aws-sdk';
@@ -11,6 +10,7 @@ import { ApiConfigService } from '../../../shared/services/api-config.service';
 import { v4 as uuid } from 'uuid';
 import { ProfileResponseDto } from '../dto/profile-response.dto';
 import { ProfileUploadResponseDto } from '../dto/profileUpload-response.dto';
+import { ProfileDto } from '../dto/profile.dto';
 
 @Injectable()
 export class UserService {
@@ -69,8 +69,14 @@ export class UserService {
     return { s3Url, fileName };
   }
 
-  async saveProfile(id: number, fileName: string): Promise<void> {
-    await this.userRepository.update(id, { thumbnail: fileName });
+  async saveProfile(id: number, dto: ProfileDto): Promise<ProfileResponseDto> {
+    await this.userRepository.update(id, {
+      role: dto.role,
+      gender: dto.gender,
+      nickname: dto.nickname,
+      thumbnail: dto.fileName,
+    });
+    return await this.getProfileUrl(id);
   }
 
   async getProfileUrl(id: number): Promise<ProfileResponseDto> {
@@ -83,15 +89,6 @@ export class UserService {
         Expires: 3600,
       }),
     };
-  }
-
-  async updateUser(id: number, dto: SubInfoDto): Promise<User> {
-    await this.userRepository.update(id, {
-      role: dto.role,
-      gender: dto.gender,
-      nickname: dto.nickname,
-    });
-    return await this.findOne(id);
   }
 
   async createUser(dto: CreateUserDto): Promise<User> {

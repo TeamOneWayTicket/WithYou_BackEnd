@@ -11,7 +11,6 @@ import {
 } from '@nestjs/common';
 import { UserService } from './service/user.service';
 import { User } from './entity/user.entity';
-import { SubInfoDto } from './dto/sub-info.dto';
 import { CreateUserDto } from './dto/create-user.dto';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { UserResponseDto } from './dto/user-response.dto';
@@ -77,8 +76,7 @@ export class UserController {
   @Get('/profile/upload-url')
   @Auth(Role.User)
   @ApiOperation({
-    summary: 'get profile-url',
-    description: '유저 프로필 올릴 url 받아옴',
+    summary: '유저 프로필 올릴 url 받아옴',
   })
   async getProfileUploadUrl(
     @UserParam() user: User,
@@ -100,28 +98,13 @@ export class UserController {
   @Post('/profile/upload')
   @Auth(Role.User)
   @ApiOperation({
-    summary: 'postThumbnailInfo',
-    description: '프로필 사진 정보 입력',
+    summary: '프로필 사진 정보 입력, 프로필 사진 다운로드 url 반환',
   })
-  async postThumbnailInfo(
+  async postProfile(
     @UserParam() user: User,
     @Body() dto: ProfileDto,
-  ): Promise<void> {
-    await this.userService.saveProfile(user.id, dto.fileName);
-  }
-
-  @Post('sub-info')
-  @Auth(Role.User)
-  @ApiOkResponse({ description: '성공', type: UserResponseDto })
-  @ApiOperation({
-    summary: 'input sub-info',
-    description: '유저 정보 입력.',
-  })
-  async updateUser(
-    @UserParam() user: User,
-    @Body() dto: SubInfoDto,
-  ): Promise<User> {
-    return await this.userService.updateUser(user.id, dto);
+  ): Promise<ProfileResponseDto> {
+    return await this.userService.saveProfile(user.id, dto);
   }
 
   @Post()
