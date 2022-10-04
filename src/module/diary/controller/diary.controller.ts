@@ -20,11 +20,15 @@ import { User } from '../../user/entity/user.entity';
 import { UserParam } from '../../../decorator/user.decorator';
 import { Auth } from '../../../decorator/http.decorator';
 import { Role } from '../../../common/enum/role.enum';
+import { Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
 
 @Controller('diary')
 @ApiTags('일기장 API')
 export class DiaryController {
   constructor(
+    @InjectRepository(Diary)
+    private readonly diaryRepository: Repository<Diary>,
     private readonly diaryService: DiaryService,
     private readonly userService: UserService,
   ) {}
@@ -38,6 +42,22 @@ export class DiaryController {
   })
   async getUserDiaries(@UserParam() user: User): Promise<DiariesResponseDto> {
     return await this.diaryService.findAllByAuthorId(user.id);
+  }
+
+  @Get('family/nextId')
+  @Auth(Role.User)
+  @ApiOkResponse({ description: '성공', type: DiariesResponseDto })
+  @ApiOperation({
+    summary: 'get family diaries first nextId (infinite scroll)',
+    description: '가족 기준으로 일기들중 가장 최신 일기의 id 값 리턴',
+  })
+  async getFamilyDiariesLatestId(@UserParam() user: User): Promise<number> {
+    return (
+      await this.diaryRepository.findOne({
+        where: { familyId: user.familyId },
+        order: { id: 'DESC' },
+      })
+    ).id;
   }
 
   @Get('family')
