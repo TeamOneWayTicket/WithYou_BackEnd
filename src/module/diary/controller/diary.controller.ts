@@ -7,6 +7,7 @@ import {
   ParseIntPipe,
   Patch,
   Post,
+  Query,
 } from '@nestjs/common';
 import { DiaryService } from '../service/diary.service';
 import { Diary } from '../entity/diary.entity';
@@ -19,16 +20,53 @@ import { User } from '../../user/entity/user.entity';
 import { UserParam } from '../../../decorator/user.decorator';
 import { Auth } from '../../../decorator/http.decorator';
 import { Role } from '../../../common/enum/role.enum';
+import { Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
+import { DiariesInfiniteResponseDto } from '../dto/diaries-infinite-response.dto';
 
 @Controller('diary')
 @ApiTags('일기장 API')
 export class DiaryController {
   constructor(
+    @InjectRepository(Diary)
+    private readonly diaryRepository: Repository<Diary>,
     private readonly diaryService: DiaryService,
     private readonly userService: UserService,
   ) {}
 
+  @Get('my/latest')
+  @Auth(Role.User)
+  @ApiOkResponse({ description: '성공', type: Number })
+  @ApiOperation({
+    summary: 'get my diaries first nextId (infinite scroll)',
+    description: '나를 기준으로 일기들중 가장 최신 일기의 id 값 리턴',
+  })
+  async getMyDiariesLatestId(@UserParam() user: User): Promise<number> {
+    return await this.diaryRepository
+      .createQueryBuilder('diary')
+      .select('id')
+      .where('diary.authorId = :id', { id: user.id })
+      .orderBy('id', 'DESC')
+      .getRawOne();
+  }
+
   @Get('my')
+  @Auth(Role.User)
+  @ApiOkResponse({ description: '성공', type: DiariesInfiniteResponseDto })
+  @ApiOperation({
+    summary: 'get my diaries (infinite scroll)',
+    description:
+      'nextId부터 take 갯수 만큼 일기+ 끝인지 알 수 있는 isLast 값 리턴',
+  })
+  async infiniteScrollMyDiaries(
+    @UserParam() user: User,
+    @Query('nextId', ParseIntPipe) nextId: number,
+    @Query('take', ParseIntPipe) take: number,
+  ): Promise<DiariesInfiniteResponseDto> {
+    return await this.diaryService.getMyDiaries(user.id, nextId, take);
+  }
+
+  @Get('my/all')
   @Auth(Role.User)
   @ApiOkResponse({ description: '성공', type: DiariesResponseDto })
   @ApiOperation({
@@ -39,14 +77,50 @@ export class DiaryController {
     return await this.diaryService.findAllByAuthorId(user.id);
   }
 
+  @Get('family/latest')
+  @Auth(Role.User)
+  @ApiOkResponse({ description: '성공', type: Number })
+  @ApiOperation({
+    summary: 'get family diaries first nextId (infinite scroll)',
+    description: '가족 기준으로 일기들중 가장 최신 일기의 id 값 리턴',
+  })
+  async getFamilyDiariesLatestId(@UserParam() user: User): Promise<number> {
+    return await this.diaryRepository
+      .createQueryBuilder('diary')
+      .select('id')
+      .where('diary.familyId = :id', { id: user.familyId })
+      .orderBy('id', 'DESC')
+      .getRawOne();
+  }
+
   @Get('family')
+  @Auth(Role.User)
+  @ApiOkResponse({ description: '성공', type: DiariesInfiniteResponseDto })
+  @ApiOperation({
+    summary: 'get family diaries (infinite scroll)',
+    description:
+      'nextId부터 take 갯수 만큼 일기+ 끝인지 알 수 있는 isLast 값 리턴',
+  })
+  async infiniteScrollFamilyDiaries(
+    @UserParam() user: User,
+    @Query('nextId', ParseIntPipe) nextId: number,
+    @Query('take', ParseIntPipe) take: number,
+  ): Promise<DiariesInfiniteResponseDto> {
+    return await this.diaryService.getFamilyDiaries(
+      user.familyId,
+      nextId,
+      take,
+    );
+  }
+
+  @Get('family/all')
   @Auth(Role.User)
   @ApiOkResponse({ description: '성공', type: DiariesResponseDto })
   @ApiOperation({
     summary: 'get user family Diaries',
     description: '유저를 포함한 유저 가족의 일기들을 받아온다.',
   })
-  async findFamilyDiaries(
+  async findFamilyAllDiaries(
     @UserParam() user: User,
   ): Promise<DiariesResponseDto> {
     return await this.diaryService.findAllByFamilyId(user.familyId);
