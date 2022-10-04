@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Diary } from '../entity/diary.entity';
-import { DataSource, Repository } from 'typeorm';
+import { DataSource, LessThanOrEqual, Repository } from 'typeorm';
 import { UpdateDiaryDto } from '../dto/update-diary.dto';
 import { ApiConfigService } from '../../../shared/services/api-config.service';
 import { UserService } from '../../user/service/user.service';
@@ -10,6 +10,7 @@ import { DiaryMediumService } from './diary.medium.service';
 import { DiariesResponseDto } from '../dto/diaries-response.dto';
 import { DiaryResponseDto } from '../dto/diary-response.dto';
 import { DiaryComment } from '../entity/diary.comment.entity';
+import { DiariesInfiniteResponseDto } from '../dto/diaries-infinite-response.dto';
 
 @Injectable()
 export class DiaryService {
@@ -56,6 +57,33 @@ export class DiaryService {
       });
     }
     return { diaries: diariesResponse };
+  }
+
+  async getFamilyDiaries(
+    familyId: number,
+    nextId: number,
+    take: number,
+  ): Promise<DiariesInfiniteResponseDto> {
+    const diaries = await this.diaryRepository.find({
+      where: { familyId, id: LessThanOrEqual(nextId) },
+      relations: ['media'],
+      take: take + 1,
+      order: { id: 'DESC' },
+    });
+    const diariesResponse: DiaryResponseDto[] = [];
+
+    for (const diary of diaries) {
+      diariesResponse.push({
+        diary,
+        commentCount: await this.diaryCommentRepository.count({
+          where: { diaryId: diary.id, isDeleted: false },
+        }),
+      });
+    }
+    if (diariesResponse.length == take + 1)
+      return { diaries: diariesResponse, nextId: nextId - take, isLast: false };
+
+    return { diaries: diariesResponse, nextId: 0, isLast: true };
   }
 
   async findDiaryWithUrls(id: number): Promise<Diary> {
