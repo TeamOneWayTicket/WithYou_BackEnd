@@ -7,6 +7,7 @@ import {
   ParseIntPipe,
   Patch,
   Post,
+  Query,
 } from '@nestjs/common';
 import { DiaryService } from '../service/diary.service';
 import { Diary } from '../entity/diary.entity';
@@ -37,6 +38,26 @@ export class DiaryController {
   })
   async getUserDiaries(@UserParam() user: User): Promise<DiariesResponseDto> {
     return await this.diaryService.findAllByAuthorId(user.id);
+  }
+
+  @Get('family')
+  @Auth(Role.User)
+  @ApiOkResponse({ description: '성공', type: DiariesResponseDto })
+  @ApiOperation({
+    summary: 'get family diaries (infinite scroll)',
+    description:
+      'nextId부터 take 갯수 만큼 일기+ 끝인지 알 수 있는 isLast 값 리턴',
+  })
+  async finiteScrollFamilyDiaries(
+    @UserParam() user: User,
+    @Query('nextId') nextId: number,
+    @Query('take') take: number,
+  ): Promise<DiariesResponseDto> {
+    return await this.diaryService.getFamilyDiaries(
+      user.familyId,
+      nextId,
+      take,
+    );
   }
 
   @Get('family/all')
