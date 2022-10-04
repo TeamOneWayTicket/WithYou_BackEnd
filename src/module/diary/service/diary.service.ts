@@ -86,6 +86,33 @@ export class DiaryService {
     return { diaries: diariesResponse, nextId: 0, isLast: true };
   }
 
+  async getMyDiaries(
+    authorId: number,
+    nextId: number,
+    take: number,
+  ): Promise<DiariesInfiniteResponseDto> {
+    const diaries = await this.diaryRepository.find({
+      where: { authorId, id: LessThanOrEqual(nextId) },
+      relations: ['media'],
+      take: take + 1,
+      order: { id: 'DESC' },
+    });
+    const diariesResponse: DiaryResponseDto[] = [];
+
+    for (const diary of diaries) {
+      diariesResponse.push({
+        diary,
+        commentCount: await this.diaryCommentRepository.count({
+          where: { diaryId: diary.id, isDeleted: false },
+        }),
+      });
+    }
+    if (diariesResponse.length == take + 1)
+      return { diaries: diariesResponse, nextId: nextId - take, isLast: false };
+
+    return { diaries: diariesResponse, nextId: 0, isLast: true };
+  }
+
   async findDiaryWithUrls(id: number): Promise<Diary> {
     return await this.diaryRepository.findOne({
       where: { id },
