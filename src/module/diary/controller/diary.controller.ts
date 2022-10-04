@@ -34,7 +34,7 @@ export class DiaryController {
     private readonly userService: UserService,
   ) {}
 
-  @Get('my/nextId')
+  @Get('my/latest')
   @Auth(Role.User)
   @ApiOkResponse({ description: '성공', type: Number })
   @ApiOperation({
@@ -77,7 +77,7 @@ export class DiaryController {
     return await this.diaryService.findAllByAuthorId(user.id);
   }
 
-  @Get('family/nextId')
+  @Get('family/latest')
   @Auth(Role.User)
   @ApiOkResponse({ description: '성공', type: Number })
   @ApiOperation({
