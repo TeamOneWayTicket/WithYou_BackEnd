@@ -22,6 +22,7 @@ import { Auth } from '../../../decorator/http.decorator';
 import { Role } from '../../../common/enum/role.enum';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
+import { DiariesInfiniteResponseDto } from '../dto/diaries-infinite-response.dto';
 
 @Controller('diary')
 @ApiTags('일기장 API')
@@ -35,10 +36,10 @@ export class DiaryController {
 
   @Get('my/nextId')
   @Auth(Role.User)
-  @ApiOkResponse({ description: '성공', type: DiariesResponseDto })
+  @ApiOkResponse({ description: '성공', type: Number })
   @ApiOperation({
-    summary: 'get family diaries first nextId (infinite scroll)',
-    description: '가족 기준으로 일기들중 가장 최신 일기의 id 값 리턴',
+    summary: 'get my diaries first nextId (infinite scroll)',
+    description: '나를 기준으로 일기들중 가장 최신 일기의 id 값 리턴',
   })
   async getMyDiariesLatestId(@UserParam() user: User): Promise<number> {
     return (
@@ -51,17 +52,17 @@ export class DiaryController {
 
   @Get('my')
   @Auth(Role.User)
-  @ApiOkResponse({ description: '성공', type: DiariesResponseDto })
+  @ApiOkResponse({ description: '성공', type: DiariesInfiniteResponseDto })
   @ApiOperation({
-    summary: 'get family diaries (infinite scroll)',
+    summary: 'get my diaries (infinite scroll)',
     description:
       'nextId부터 take 갯수 만큼 일기+ 끝인지 알 수 있는 isLast 값 리턴',
   })
-  async finiteScrollMyDiaries(
+  async infiniteScrollMyDiaries(
     @UserParam() user: User,
     @Query('nextId') nextId: number,
     @Query('take') take: number,
-  ): Promise<DiariesResponseDto> {
+  ): Promise<DiariesInfiniteResponseDto> {
     return await this.diaryService.getMyDiaries(user.id, nextId, take);
   }
 
@@ -78,7 +79,7 @@ export class DiaryController {
 
   @Get('family/nextId')
   @Auth(Role.User)
-  @ApiOkResponse({ description: '성공', type: DiariesResponseDto })
+  @ApiOkResponse({ description: '성공', type: Number })
   @ApiOperation({
     summary: 'get family diaries first nextId (infinite scroll)',
     description: '가족 기준으로 일기들중 가장 최신 일기의 id 값 리턴',
@@ -94,17 +95,17 @@ export class DiaryController {
 
   @Get('family')
   @Auth(Role.User)
-  @ApiOkResponse({ description: '성공', type: DiariesResponseDto })
+  @ApiOkResponse({ description: '성공', type: DiariesInfiniteResponseDto })
   @ApiOperation({
     summary: 'get family diaries (infinite scroll)',
     description:
       'nextId부터 take 갯수 만큼 일기+ 끝인지 알 수 있는 isLast 값 리턴',
   })
-  async finiteScrollFamilyDiaries(
+  async infiniteScrollFamilyDiaries(
     @UserParam() user: User,
     @Query('nextId') nextId: number,
     @Query('take') take: number,
-  ): Promise<DiariesResponseDto> {
+  ): Promise<DiariesInfiniteResponseDto> {
     return await this.diaryService.getFamilyDiaries(
       user.familyId,
       nextId,
