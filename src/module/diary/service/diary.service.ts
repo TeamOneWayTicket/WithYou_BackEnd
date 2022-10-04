@@ -81,7 +81,11 @@ export class DiaryService {
       });
     }
     if (diariesResponse.length == take + 1)
-      return { diaries: diariesResponse, nextId: nextId - take, isLast: false };
+      return {
+        diaries: diariesResponse,
+        nextId: diariesResponse[take].diary.id,
+        isLast: false,
+      };
 
     return { diaries: diariesResponse, nextId: 0, isLast: true };
   }
@@ -108,7 +112,11 @@ export class DiaryService {
       });
     }
     if (diariesResponse.length == take + 1)
-      return { diaries: diariesResponse, nextId: nextId - take, isLast: false };
+      return {
+        diaries: diariesResponse,
+        nextId: diariesResponse[take].diary.id,
+        isLast: false,
+      };
 
     return { diaries: diariesResponse, nextId: 0, isLast: true };
   }
