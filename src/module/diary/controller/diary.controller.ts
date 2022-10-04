@@ -42,12 +42,12 @@ export class DiaryController {
     description: '나를 기준으로 일기들중 가장 최신 일기의 id 값 리턴',
   })
   async getMyDiariesLatestId(@UserParam() user: User): Promise<number> {
-    return (
-      await this.diaryRepository.findOne({
-        where: { id: user.id },
-        order: { id: 'DESC' },
-      })
-    ).id;
+    return await this.diaryRepository
+      .createQueryBuilder('diary')
+      .select('id')
+      .where('diary.authorId = :id', { id: user.id })
+      .orderBy('id', 'DESC')
+      .getRawOne();
   }
 
   @Get('my')
@@ -85,12 +85,12 @@ export class DiaryController {
     description: '가족 기준으로 일기들중 가장 최신 일기의 id 값 리턴',
   })
   async getFamilyDiariesLatestId(@UserParam() user: User): Promise<number> {
-    return (
-      await this.diaryRepository.findOne({
-        where: { familyId: user.familyId },
-        order: { id: 'DESC' },
-      })
-    ).id;
+    return await this.diaryRepository
+      .createQueryBuilder('diary')
+      .select('id')
+      .where('diary.familyId = :id', { id: user.familyId })
+      .orderBy('id', 'DESC')
+      .getRawOne();
   }
 
   @Get('family')
