@@ -82,7 +82,7 @@ export class DiaryService {
     }
     if (diariesResponse.length == take + 1)
       return {
-        diaries: diariesResponse,
+        diaries: diariesResponse.slice(0, take),
         nextId: diariesResponse[take].diary.id,
         isLast: false,
       };
@@ -113,7 +113,7 @@ export class DiaryService {
     }
     if (diariesResponse.length == take + 1)
       return {
-        diaries: diariesResponse,
+        diaries: diariesResponse.slice(0, take),
         nextId: diariesResponse[take].diary.id,
         isLast: false,
       };
