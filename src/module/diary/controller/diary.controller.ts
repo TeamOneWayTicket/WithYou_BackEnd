@@ -33,7 +33,7 @@ export class DiaryController {
     private readonly userService: UserService,
   ) {}
 
-  @Get('my')
+  @Get('my/all')
   @Auth(Role.User)
   @ApiOkResponse({ description: '성공', type: DiariesResponseDto })
   @ApiOperation({
