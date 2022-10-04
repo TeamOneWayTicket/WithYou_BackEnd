@@ -60,8 +60,8 @@ export class DiaryController {
   })
   async infiniteScrollMyDiaries(
     @UserParam() user: User,
-    @Query('nextId') nextId: number,
-    @Query('take') take: number,
+    @Query('nextId', ParseIntPipe) nextId: number,
+    @Query('take', ParseIntPipe) take: number,
   ): Promise<DiariesInfiniteResponseDto> {
     return await this.diaryService.getMyDiaries(user.id, nextId, take);
   }
@@ -103,8 +103,8 @@ export class DiaryController {
   })
   async infiniteScrollFamilyDiaries(
     @UserParam() user: User,
-    @Query('nextId') nextId: number,
-    @Query('take') take: number,
+    @Query('nextId', ParseIntPipe) nextId: number,
+    @Query('take', ParseIntPipe) take: number,
   ): Promise<DiariesInfiniteResponseDto> {
     return await this.diaryService.getFamilyDiaries(
       user.familyId,
