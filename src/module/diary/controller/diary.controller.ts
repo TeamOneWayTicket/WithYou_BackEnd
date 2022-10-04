@@ -33,6 +33,38 @@ export class DiaryController {
     private readonly userService: UserService,
   ) {}
 
+  @Get('my/nextId')
+  @Auth(Role.User)
+  @ApiOkResponse({ description: '성공', type: DiariesResponseDto })
+  @ApiOperation({
+    summary: 'get family diaries first nextId (infinite scroll)',
+    description: '가족 기준으로 일기들중 가장 최신 일기의 id 값 리턴',
+  })
+  async getMyDiariesLatestId(@UserParam() user: User): Promise<number> {
+    return (
+      await this.diaryRepository.findOne({
+        where: { id: user.id },
+        order: { id: 'DESC' },
+      })
+    ).id;
+  }
+
+  @Get('my')
+  @Auth(Role.User)
+  @ApiOkResponse({ description: '성공', type: DiariesResponseDto })
+  @ApiOperation({
+    summary: 'get family diaries (infinite scroll)',
+    description:
+      'nextId부터 take 갯수 만큼 일기+ 끝인지 알 수 있는 isLast 값 리턴',
+  })
+  async finiteScrollMyDiaries(
+    @UserParam() user: User,
+    @Query('nextId') nextId: number,
+    @Query('take') take: number,
+  ): Promise<DiariesResponseDto> {
+    return await this.diaryService.getMyDiaries(user.id, nextId, take);
+  }
+
   @Get('my/all')
   @Auth(Role.User)
   @ApiOkResponse({ description: '성공', type: DiariesResponseDto })
