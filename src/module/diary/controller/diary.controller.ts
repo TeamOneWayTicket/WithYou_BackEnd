@@ -39,14 +39,14 @@ export class DiaryController {
     return await this.diaryService.findAllByAuthorId(user.id);
   }
 
-  @Get('family')
+  @Get('family/all')
   @Auth(Role.User)
   @ApiOkResponse({ description: '성공', type: DiariesResponseDto })
   @ApiOperation({
     summary: 'get user family Diaries',
     description: '유저를 포함한 유저 가족의 일기들을 받아온다.',
   })
-  async findFamilyDiaries(
+  async findFamilyAllDiaries(
     @UserParam() user: User,
   ): Promise<DiariesResponseDto> {
     return await this.diaryService.findAllByFamilyId(user.familyId);
