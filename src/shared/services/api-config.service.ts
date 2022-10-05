@@ -87,7 +87,7 @@ export class ApiConfigService {
       password: this.getString('DB_PASSWORD'),
       database: this.getString('DB_DATABASE'),
       migrationsRun: false,
-      synchronize: true,
+      synchronize: !this.isProduction,
       logging: this.getBoolean('ENABLE_ORM_LOGS'),
       namingStrategy: new SnakeNamingStrategy(),
     };
