@@ -14,5 +14,6 @@ describe('AppController', () => {
 
   it('should be defined', () => {
     expect(controller).toBeDefined();
+    expect('a').toEqual('b');
   });
 });
