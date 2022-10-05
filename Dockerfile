@@ -1,4 +1,4 @@
-FROM node:16
+FROM node:16-slim AS builder
 
 ENV TERM="xterm" \
     TZ="Asia/Seoul" \
@@ -16,6 +16,11 @@ RUN npm install
 COPY . .
 
 RUN npm run build
+
+FROM node:16-slim
+WORKDIR /usr/src/app
+COPY --from=builder /usr/src/app ./
+
 EXPOSE 8080
 
 CMD ["npm", "run", "start:prod"]
