@@ -34,22 +34,6 @@ export class DiaryController {
     private readonly userService: UserService,
   ) {}
 
-  @Get('my/latest')
-  @Auth(Role.User)
-  @ApiOkResponse({ description: '성공', type: Number })
-  @ApiOperation({
-    summary: 'get my diaries first nextId (infinite scroll)',
-    description: '나를 기준으로 일기들중 가장 최신 일기의 id 값 리턴',
-  })
-  async getMyDiariesLatestId(@UserParam() user: User): Promise<number> {
-    return await this.diaryRepository
-      .createQueryBuilder('diary')
-      .select('id')
-      .where('diary.authorId = :id', { id: user.id })
-      .orderBy('id', 'DESC')
-      .getRawOne();
-  }
-
   @Get('my')
   @Auth(Role.User)
   @ApiOkResponse({ description: '성공', type: DiariesInfiniteResponseDto })
@@ -63,6 +47,9 @@ export class DiaryController {
     @Query('nextId', ParseIntPipe) nextId: number,
     @Query('take', ParseIntPipe) take: number,
   ): Promise<DiariesInfiniteResponseDto> {
+    if (!nextId) {
+      nextId = await this.diaryService.getMyDiariesLatestId(user.id);
+    }
     return await this.diaryService.getMyDiaries(user.id, nextId, take);
   }
 
@@ -75,22 +62,6 @@ export class DiaryController {
   })
   async getUserDiaries(@UserParam() user: User): Promise<DiariesResponseDto> {
     return await this.diaryService.findAllByAuthorId(user.id);
-  }
-
-  @Get('family/latest')
-  @Auth(Role.User)
-  @ApiOkResponse({ description: '성공', type: Number })
-  @ApiOperation({
-    summary: 'get family diaries first nextId (infinite scroll)',
-    description: '가족 기준으로 일기들중 가장 최신 일기의 id 값 리턴',
-  })
-  async getFamilyDiariesLatestId(@UserParam() user: User): Promise<number> {
-    return await this.diaryRepository
-      .createQueryBuilder('diary')
-      .select('id')
-      .where('diary.familyId = :id', { id: user.familyId })
-      .orderBy('id', 'DESC')
-      .getRawOne();
   }
 
   @Get('family')
@@ -106,6 +77,9 @@ export class DiaryController {
     @Query('nextId', ParseIntPipe) nextId: number,
     @Query('take', ParseIntPipe) take: number,
   ): Promise<DiariesInfiniteResponseDto> {
+    if (!nextId) {
+      nextId = await this.diaryService.getFamilyDiariesLatestId(user.familyId);
+    }
     return await this.diaryService.getFamilyDiaries(
       user.familyId,
       nextId,
