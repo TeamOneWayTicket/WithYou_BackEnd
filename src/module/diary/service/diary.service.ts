@@ -36,7 +36,7 @@ export class DiaryService {
     ).id;
   }
 
-  async getFamilyDiariesLatestId(familyId): Promise<number> {
+  async getFamilyDiariesLatestId(familyId: number): Promise<number> {
     return (
       await this.diaryRepository
         .createQueryBuilder('diary')
