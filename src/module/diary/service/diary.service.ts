@@ -25,6 +25,24 @@ export class DiaryService {
     private readonly diaryCommentRepository: Repository<DiaryComment>,
   ) {}
 
+  async getMyDiariesLatestId(id: number): Promise<number> {
+    return await this.diaryRepository
+      .createQueryBuilder('diary')
+      .select('id')
+      .where('diary.authorId = :id', { id })
+      .orderBy('id', 'DESC')
+      .getRawOne();
+  }
+
+  async getFamilyDiariesLatestId(familyId): Promise<number> {
+    return await this.diaryRepository
+      .createQueryBuilder('diary')
+      .select('id')
+      .where('diary.familyId = :familyId', { familyId })
+      .orderBy('id', 'DESC')
+      .getRawOne();
+  }
+
   async findAllByAuthorId(authorId: number): Promise<DiariesResponseDto> {
     const diaries = await this.diaryRepository.find({
       where: { authorId },
