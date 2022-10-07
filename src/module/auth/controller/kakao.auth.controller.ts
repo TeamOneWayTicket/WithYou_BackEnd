@@ -132,7 +132,7 @@ export class KakaoAuthController {
 
   @Get('/redirect')
   @Header('Content-Type', 'text/html')
-  async kakaoLoginLogicRedirect(@Query() qs): Promise<JwtDto> {
+  async kakaoLoginLogicRedirect(@Query() qs, @Res() res): Promise<any> {
     const _restApiKey = this.configService.kakaoConfig.restApiKey;
     const _redirectUrl = this.configService.kakaoConfig.loginRedirectUrl;
     const _hostName = `https://kauth.kakao.com/oauth/token?grant_type=authorization_code&client_id=${_restApiKey}&redirect_uri=${_redirectUrl}&code=${qs.code}`;
@@ -147,7 +147,14 @@ export class KakaoAuthController {
         throw new BadRequestException(err);
       });
 
-    return await this.kakaoAuthService.login(accessToken);
+    const token = (await this.kakaoAuthService.login(accessToken)).jwtToken;
+    res.cookie('jwt', token, {
+      domain: '.with-you.io',
+      httpOnly: true,
+      sameSite: 'strict',
+      secure: true,
+    });
+    return res.redirect(302, 'https://frontend.with-you.io/');
   }
 
   @Get('/:id/unlink')

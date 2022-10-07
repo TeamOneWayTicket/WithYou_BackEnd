@@ -12,6 +12,7 @@ async function bootstrap() {
   const whitelist = [
     'https://appleid.apple.com',
     'https://backend.with-you.io',
+    'https://frontend.with-you.io',
     'http://localhost:3030',
     'https://with-you-front-end.vercel.app',
     'https://accounts.kakao.com',
@@ -27,6 +28,7 @@ async function bootstrap() {
       }
     },
     credentials: true,
+    exposedHeaders: ['set-cookie'],
   });
   app.use(
     rateLimit({
