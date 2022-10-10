@@ -8,6 +8,7 @@ import {
   ParseIntPipe,
   Patch,
   Post,
+  Query,
 } from '@nestjs/common';
 import { UserService } from './service/user.service';
 import { User } from './entity/user.entity';
@@ -23,7 +24,6 @@ import { FamilyResponseDto } from '../family/dto/family-response.dto';
 import { ProfileDto } from './dto/profile.dto';
 import { ProfileResponseDto } from './dto/profile-response.dto';
 import { ProfileUploadResponseDto } from './dto/profileUpload-response.dto';
-import { ProfileUploadDto } from './dto/profileUpload.dto';
 import { FamilyService } from '../family/family.service';
 
 @Controller('user')
@@ -80,9 +80,9 @@ export class UserController {
   })
   async getProfileUploadUrl(
     @UserParam() user: User,
-    @Body() dto: ProfileUploadDto,
+    @Query('contentType') contentType,
   ): Promise<ProfileUploadResponseDto> {
-    return await this.userService.getUrlsForUpload(dto.contentType);
+    return await this.userService.getUrlsForUpload(contentType);
   }
 
   @Get('/profile/download')
