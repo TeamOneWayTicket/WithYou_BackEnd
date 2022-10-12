@@ -6,7 +6,7 @@ import { DiariesResponseDto } from '../diary/dto/diaries-response.dto';
 import { UserParam } from '../../decorator/user.decorator';
 import { User } from '../user/entity/user.entity';
 import { AlbumService } from './album.service';
-import { MediaDto } from './dto/media.dto';
+import { AlbumMediaDto } from './dto/album.media.dto';
 
 @Controller('album')
 export class AlbumController {
@@ -18,7 +18,7 @@ export class AlbumController {
     summary: 'get family photos',
     description: '유저를 포함한 유저 가족의 사진 받아온다.',
   })
-  async getFamilyPhotos(@UserParam() user: User): Promise<MediaDto> {
+  async getFamilyPhotos(@UserParam() user: User): Promise<AlbumMediaDto> {
     return await this.albumService.getFamilyPhotos(user.familyId);
   }
 }
