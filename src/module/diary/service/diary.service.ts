@@ -26,25 +26,29 @@ export class DiaryService {
   ) {}
 
   async getMyDiariesLatestId(id: number): Promise<number> {
-    return (
-      await this.diaryRepository
-        .createQueryBuilder('diary')
-        .select('id')
-        .where('diary.authorId = :id', { id })
-        .orderBy('id', 'DESC')
-        .getRawOne()
-    ).id;
+    const recentDiary = await this.diaryRepository
+      .createQueryBuilder('diary')
+      .select('id')
+      .where('diary.authorId = :id', { id })
+      .orderBy('id', 'DESC')
+      .getRawOne();
+    if (!recentDiary) {
+      return 0;
+    }
+    return recentDiary.id;
   }
 
   async getFamilyDiariesLatestId(familyId: number): Promise<number> {
-    return (
-      await this.diaryRepository
-        .createQueryBuilder('diary')
-        .select('id')
-        .where('diary.familyId = :familyId', { familyId })
-        .orderBy('id', 'DESC')
-        .getRawOne()
-    ).id;
+    const recentDiary = await this.diaryRepository
+      .createQueryBuilder('diary')
+      .select('id')
+      .where('diary.familyId = :familyId', { familyId })
+      .orderBy('id', 'DESC')
+      .getRawOne();
+    if (!recentDiary) {
+      return 0;
+    }
+    return recentDiary.id;
   }
 
   async findAllByAuthorId(authorId: number): Promise<DiariesResponseDto> {
