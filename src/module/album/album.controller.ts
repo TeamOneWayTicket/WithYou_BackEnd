@@ -1,10 +1,10 @@
 import { Controller, Get } from '@nestjs/common';
-import { Auth } from '../decorator/http.decorator';
-import { Role } from '../common/enum/role.enum';
+import { Auth } from '../../decorator/http.decorator';
+import { Role } from '../../common/enum/role.enum';
 import { ApiOkResponse, ApiOperation } from '@nestjs/swagger';
-import { DiariesResponseDto } from '../module/diary/dto/diaries-response.dto';
-import { UserParam } from '../decorator/user.decorator';
-import { User } from '../module/user/entity/user.entity';
+import { DiariesResponseDto } from '../diary/dto/diaries-response.dto';
+import { UserParam } from '../../decorator/user.decorator';
+import { User } from '../user/entity/user.entity';
 import { AlbumService } from './album.service';
 import { MediaDto } from './dto/media.dto';
 

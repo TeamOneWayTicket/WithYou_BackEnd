@@ -2,8 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { MediaDto } from './dto/media.dto';
-import { DiaryMedium } from '../module/diary/entity/diary.medium.entity';
-import { Diary } from '../module/diary/entity/diary.entity';
+import { DiaryMedium } from '../diary/entity/diary.medium.entity';
+import { Diary } from '../diary/entity/diary.entity';
 
 @Injectable()
 export class AlbumService {
