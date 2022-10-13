@@ -25,25 +25,18 @@ export class AlbumService {
   }
 
   async getFamilyPhotos(familyId: number): Promise<AlbumMediaDto> {
-    const s3 = new AWS.S3({ useAccelerateEndpoint: true });
     const diaries = await this.diaryRepository.find({
       where: { familyId },
       relations: ['media'],
     });
-    const bucketName =
-      this.configService.awsConfig.cfAddress +
-      this.configService.awsConfig.bucketName;
+    const cf = this.configService.awsConfig.cfAddress;
     const media = await Promise.all(
       _.flatMap(diaries, (item) => {
         return _(item.media)
           .map(async function (value) {
             return {
               diaryId: value.diaryId,
-              url: await s3.getSignedUrlPromise('getObject', {
-                Bucket: bucketName,
-                Key: value.fileNameInS3,
-                Expires: 36000,
-              }),
+              url: cf + value.fileNameInS3,
             };
           })
           .value();

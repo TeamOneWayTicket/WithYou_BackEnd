@@ -100,6 +100,7 @@ export class ApiConfigService {
       bucketRegion: this.getString('AWS_S3_BUCKET_REGION'),
       bucketApiVersion: this.getString('AWS_S3_API_VERSION'),
       bucketName: this.getString('AWS_S3_BUCKET_NAME'),
+      cfAddress: this.getString('AWS_CF'),
     };
   }
 
