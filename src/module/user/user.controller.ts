@@ -34,7 +34,7 @@ export class UserController {
     private readonly familyService: FamilyService,
   ) {}
 
-  @Patch('/:inviteCode')
+  @Patch('/join/:code')
   @Auth(Role.User)
   @ApiOkResponse({ description: '성공', type: FamilyResponseDto })
   @ApiOperation({
@@ -43,7 +43,7 @@ export class UserController {
   })
   async joinFamily(
     @UserParam() user: User,
-    @Param('inviteCode') inviteCode: string,
+    @Param('code') inviteCode: string,
   ): Promise<string> {
     if (!(await this.familyService.isValidCode(inviteCode))) {
       throw new BadRequestException('유효하지 않은 초대 코드 입니다');

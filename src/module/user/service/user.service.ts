@@ -99,8 +99,8 @@ export class UserService {
     return (await this.userRepository.delete({ id })).affected;
   }
 
-  async joinFamily(userId: number, code: string): Promise<void> {
-    await this.userRepository.update(userId, {
+  async joinFamily(id: number, code: string): Promise<void> {
+    await this.userRepository.update(id, {
       familyId: (await this.familyService.getFamily(code)).familyId,
     });
   }
