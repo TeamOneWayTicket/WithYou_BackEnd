@@ -6,7 +6,7 @@ import { DiaryMedium } from '../diary/entity/diary.medium.entity';
 import { Diary } from '../diary/entity/diary.entity';
 import AWS from 'aws-sdk';
 import { ApiConfigService } from '../../shared/services/api-config.service';
-import { AlbumMediumDto } from './dto/album.medium.dto';
+import _ from 'lodash';
 
 @Injectable()
 export class AlbumService {
@@ -30,19 +30,23 @@ export class AlbumService {
       where: { familyId },
       relations: ['media'],
     });
-    const media: AlbumMediumDto[] = [];
-    for (const diary of diaries) {
-      for (const diaryMedium of diary.media) {
-        media.push({
-          diaryId: diaryMedium.diaryId,
-          url: await s3.getSignedUrlPromise('getObject', {
-            Bucket: this.configService.awsConfig.bucketName,
-            Key: diaryMedium.fileNameInS3,
-            Expires: 36000,
-          }),
-        });
-      }
-    }
+    const bucketName = this.configService.awsConfig.bucketName;
+    const media = await Promise.all(
+      _.flatMap(diaries, (item) => {
+        return _(item.media)
+          .flatMap(async function (value) {
+            return {
+              diaryId: value.diaryId,
+              url: await s3.getSignedUrlPromise('getObject', {
+                Bucket: bucketName,
+                Key: value.fileNameInS3,
+                Expires: 36000,
+              }),
+            };
+          })
+          .value();
+      }),
+    );
     return { media };
   }
 }
