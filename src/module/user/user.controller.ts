@@ -104,6 +104,10 @@ export class UserController {
     @UserParam() user: User,
     @Body() dto: ProfileDto,
   ): Promise<ProfileResponseDto> {
+    if (!(await this.familyService.isValidCode(dto.code))) {
+      throw new BadRequestException('유효하지 않은 초대 코드 입니다');
+    }
+    await this.userService.joinFamily(user.id, dto.code);
     return await this.userService.saveProfile(user.id, dto);
   }
 
