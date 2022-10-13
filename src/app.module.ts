@@ -10,6 +10,7 @@ import { DiaryModule } from './module/diary/diary.module';
 import { RedisModule } from '@liaoliaots/nestjs-redis';
 import { FirebaseCloudMessageModule } from './module/firebase-cloud-message/firebase-cloud-message.module';
 import { FamilyModule } from './module/family/family.module';
+import { AlbumModule } from './module/album/album.module';
 
 @Module({
   imports: [
@@ -34,6 +35,7 @@ import { FamilyModule } from './module/family/family.module';
     DiaryModule,
     FirebaseCloudMessageModule,
     FamilyModule,
+    AlbumModule,
   ],
   controllers: [AppController],
 })
