@@ -30,11 +30,13 @@ export class AlbumService {
       where: { familyId },
       relations: ['media'],
     });
-    const bucketName = this.configService.awsConfig.bucketName;
+    const bucketName =
+      this.configService.awsConfig.cfAddress +
+      this.configService.awsConfig.bucketName;
     const media = await Promise.all(
       _.flatMap(diaries, (item) => {
         return _(item.media)
-          .flatMap(async function (value) {
+          .map(async function (value) {
             return {
               diaryId: value.diaryId,
               url: await s3.getSignedUrlPromise('getObject', {
