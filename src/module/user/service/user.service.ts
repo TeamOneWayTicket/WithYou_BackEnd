@@ -79,6 +79,16 @@ export class UserService {
     return await this.getProfileUrl(id);
   }
 
+  async getFileUrl(fileName: string): Promise<string> {
+    const s3 = new AWS.S3({ useAccelerateEndpoint: true });
+
+    return await s3.getSignedUrlPromise('getObject', {
+      Bucket: this.configService.awsConfig.bucketName,
+      Key: fileName,
+      Expires: 3600,
+    });
+  }
+
   async getProfileUrl(id: number): Promise<ProfileResponseDto> {
     const s3 = new AWS.S3({ useAccelerateEndpoint: true });
 

@@ -40,6 +40,7 @@ export class AuthController {
       return {
         user: {
           ...dto,
+          thumbnail: await this.userService.getFileUrl(dto.thumbnail),
           isNew: !(await this.userService.hasMinimumInfo(dto.id)),
         },
       };
