@@ -18,7 +18,7 @@ export class Family {
   @ApiModelProperty({ description: 'family id' })
   id: number;
 
-  @Column()
+  @Column({ nullable: true })
   @ApiModelProperty({ description: 'family name' })
   name: string;
 
