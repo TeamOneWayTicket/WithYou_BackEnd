@@ -12,10 +12,10 @@ import { AlbumMediumDto } from './dto/album.medium.dto';
 export class AlbumService {
   constructor(
     @InjectRepository(DiaryMedium)
-    private diaryMediumRepository: Repository<DiaryMedium>,
+    private readonly diaryMediumRepository: Repository<DiaryMedium>,
     private readonly configService: ApiConfigService,
     @InjectRepository(Diary)
-    private diaryRepository: Repository<Diary>,
+    private readonly diaryRepository: Repository<Diary>,
   ) {
     AWS.config.update({
       region: this.configService.awsConfig.bucketRegion,
