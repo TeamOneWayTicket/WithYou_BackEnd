@@ -150,7 +150,7 @@ export class KakaoAuthController {
     const token = (await this.kakaoAuthService.login(accessToken)).jwtToken;
     res.cookie('jwt', token, {
       domain: '.with-you.io',
-      httpOnly: true,
+      httpOnly: false,
       sameSite: 'strict',
       secure: true,
     });
