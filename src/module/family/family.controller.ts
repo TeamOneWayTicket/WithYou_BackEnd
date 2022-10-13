@@ -50,6 +50,10 @@ export class FamilyController {
   async getInviteFamilyCode(
     @UserParam() user: User,
   ): Promise<FamilyInviteCodeDto> {
+    if (!(await this.userService.findOne(user.id)).familyId) {
+      throw new BadRequestException('가족이 없습니다');
+    }
+
     return this.familyService.getInviteCode(user.familyId);
   }
 
