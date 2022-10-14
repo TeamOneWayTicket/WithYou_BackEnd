@@ -107,7 +107,7 @@ export class UserController {
     if ((await this.userService.findOne(user.id)).familyId) {
       throw new BadRequestException('이미 가족이 존재합니다');
     }
-    if (!dto.code || dto.code == '') {
+    if (dto.code == '') {
       await this.familyService.createFamily(user.id, { name: '' });
     } else if (!(await this.familyService.isValidCode(dto.code))) {
       throw new BadRequestException('유효하지 않은 초대 코드 입니다');
