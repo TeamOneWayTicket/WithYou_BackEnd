@@ -2,13 +2,13 @@ import { BadRequestException, Controller, Get, Query } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { AuthService } from '../service/auth.service';
 import { JwtValidationDto } from '../dto/jwt-validation.dto';
-
 import { UserService } from '../../user/service/user.service';
 import { JwtPayload } from '../interface/jwt.payload.interface';
 import { Auth } from '../../../decorator/http.decorator';
 import { Role } from '../../../common/enum/role.enum';
 import { User } from '../../user/entity/user.entity';
 import { UserParam } from '../../../decorator/user.decorator';
+import { ApiConfigService } from '../../../shared/services/api-config.service';
 
 @Controller('auth')
 @ApiTags('인증 API')
@@ -16,6 +16,7 @@ export class AuthController {
   constructor(
     private readonly authService: AuthService,
     private readonly userService: UserService,
+    private readonly configService: ApiConfigService,
   ) {}
 
   @Get('/get-jwt-token')
@@ -40,6 +41,7 @@ export class AuthController {
       return {
         user: {
           ...dto,
+          thumbnail: this.configService.awsConfig.cfAddress + dto.thumbnail,
           isNew: !(await this.userService.hasMinimumInfo(dto.id)),
         },
       };
