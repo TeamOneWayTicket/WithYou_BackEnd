@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString } from 'class-validator';
+import { IsBoolean, IsString } from 'class-validator';
 
 export class ProfileDto {
   @ApiProperty({ description: 'profile name' })
@@ -21,4 +21,8 @@ export class ProfileDto {
   @IsString()
   @ApiProperty({ description: '가족 초대 코드' })
   code: string;
+
+  @IsBoolean()
+  @ApiProperty({ description: '가족 생성 여부' })
+  createFamily: boolean;
 }
