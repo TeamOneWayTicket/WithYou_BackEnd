@@ -17,6 +17,8 @@ import { Role } from '../../../common/enum/role.enum';
 import { PutPresignedUrlsDto } from '../dto/put-presigned-urls.dto';
 import { GetPresignedUrlsDto } from '../dto/get-presigned-urls.dto';
 import { DiaryMediumService } from '../service/diary.medium.service';
+import { UserParam } from '../../../decorator/user.decorator';
+import { User } from '../../user/entity/user.entity';
 
 @Controller('diary')
 @ApiTags('일기장 Medium API')
@@ -36,8 +38,12 @@ export class DiaryMediumController {
   })
   async getSignedUrlsForPutObject(
     @Body() dto: PutPresignedUrlsDto,
+    @UserParam() user: User,
   ): Promise<PutSignedUrlsResponseDto> {
-    return await this.diaryMediumService.getSignedUrlsForPutObject(dto);
+    return await this.diaryMediumService.getSignedUrlsForPutObject(
+      dto,
+      user.id,
+    );
   }
 
   @Get('/presigned-download')

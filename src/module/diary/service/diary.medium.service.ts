@@ -90,6 +90,7 @@ export class DiaryMediumService {
 
   async getSignedUrlsForPutObject(
     dto: PutPresignedUrlsDto,
+    id: number,
   ): Promise<PutSignedUrlsResponseDto> {
     const _infos = dto.mediaInfo;
     const s3 = new AWS.S3({ useAccelerateEndpoint: true });
@@ -98,10 +99,10 @@ export class DiaryMediumService {
     for (const info of _infos) {
       const fileType: string = info.contentType.split('/')[1];
       for (let i = 0; i < info.quantity; i++) {
-        const fileName = `diary/${uuid()}.${fileType}`;
+        const fileName = `diary/${id}/${uuid()}.${fileType}`;
         const s3Url = await s3.getSignedUrlPromise('putObject', {
           Bucket: this.configService.awsConfig.bucketName,
-          Key: fileName,
+          Key: 'origins/' + fileName,
           Expires: 3600,
         });
 
