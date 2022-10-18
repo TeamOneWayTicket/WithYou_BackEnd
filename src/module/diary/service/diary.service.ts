@@ -102,7 +102,7 @@ export class DiaryService {
 
     for (const diary of diaries) {
       for (const medium of diary.media) {
-        medium.fileNameInS3 = await getUrl(medium.fileNameInS3, size);
+        medium.fileNameInS3 = getUrl(medium.fileNameInS3, size);
       }
       diariesResponse.push({
         diary,
@@ -137,7 +137,7 @@ export class DiaryService {
 
     for (const diary of diaries) {
       for (const medium of diary.media) {
-        medium.fileNameInS3 = await getUrl(medium.fileNameInS3, size);
+        medium.fileNameInS3 = getUrl(medium.fileNameInS3, size);
       }
       diariesResponse.push({
         diary,
@@ -162,7 +162,7 @@ export class DiaryService {
       relations: ['media'],
     });
     for (const medium of diary.media) {
-      medium.fileNameInS3 = await getUrl(medium.fileNameInS3, 0);
+      medium.fileNameInS3 = getUrl(medium.fileNameInS3, 0);
     }
     return diary;
   }

@@ -69,7 +69,7 @@ export class DiaryController {
     if (!nextId) {
       nextId = await this.diaryService.getMyDiariesLatestId(user.id);
     }
-    return await this.diaryService.getMyDiaries(user.id, nextId, take, 200);
+    return await this.diaryService.getMyDiaries(user.id, nextId, take, 480);
   }
 
   @Get('my/all')
@@ -127,7 +127,7 @@ export class DiaryController {
       user.familyId,
       nextId,
       take,
-      200,
+      480,
     );
   }
 

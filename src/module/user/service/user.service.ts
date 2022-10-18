@@ -80,7 +80,7 @@ export class UserService {
       nickname: dto.nickname,
       thumbnail: dto.fileName,
     });
-    return { s3Url: await getUrl(dto.fileName, 200) };
+    return { s3Url: getUrl(dto.fileName, 480) };
   }
 
   async createUser(dto: CreateUserDto): Promise<User> {

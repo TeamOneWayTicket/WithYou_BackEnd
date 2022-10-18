@@ -29,7 +29,7 @@ export class AlbumService {
           .map(async function (value) {
             return {
               diaryId: value.diaryId,
-              url: await getUrl(value.fileNameInS3, 200),
+              url: getUrl(value.fileNameInS3, 480),
             };
           })
           .value();

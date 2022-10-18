@@ -94,12 +94,7 @@ export class UserController {
   })
   async getProfile(@UserParam() user: User): Promise<ProfileResponseDto> {
     return {
-      s3Url: await getUrl(
-        (
-          await this.userService.findOne(user.id)
-        ).thumbnail,
-        200,
-      ),
+      s3Url: getUrl((await this.userService.findOne(user.id)).thumbnail, 480),
     };
   }
 
