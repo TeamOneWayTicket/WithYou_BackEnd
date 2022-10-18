@@ -11,6 +11,7 @@ import { DiariesResponseDto } from '../dto/diaries-response.dto';
 import { DiaryResponseDto } from '../dto/diary-response.dto';
 import { DiaryComment } from '../entity/diary.comment.entity';
 import { DiariesInfiniteResponseDto } from '../dto/diaries-infinite-response.dto';
+import { getUrl } from '../../../transformer/url.transformer';
 
 @Injectable()
 export class DiaryService {
@@ -120,6 +121,7 @@ export class DiaryService {
     authorId: number,
     nextId: number,
     take: number,
+    size: number,
   ): Promise<DiariesInfiniteResponseDto> {
     const diaries = await this.diaryRepository.find({
       where: { authorId, id: LessThanOrEqual(nextId) },
@@ -130,6 +132,9 @@ export class DiaryService {
     const diariesResponse: DiaryResponseDto[] = [];
 
     for (const diary of diaries) {
+      for (const medium of diary.media) {
+        medium.fileNameInS3 = await getUrl(medium.fileNameInS3, size);
+      }
       diariesResponse.push({
         diary,
         commentCount: await this.diaryCommentRepository.count({
