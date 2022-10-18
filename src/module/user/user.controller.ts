@@ -25,6 +25,7 @@ import { ProfileDto } from './dto/profile.dto';
 import { ProfileResponseDto } from './dto/profile-response.dto';
 import { ProfileUploadResponseDto } from './dto/profileUpload-response.dto';
 import { FamilyService } from '../family/family.service';
+import { getUrl } from '../../transformer/url.transformer';
 
 @Controller('user')
 @ApiTags('유저 API')
@@ -92,7 +93,14 @@ export class UserController {
     description: '유저 프로필 url 받아옴',
   })
   async getProfile(@UserParam() user: User): Promise<ProfileResponseDto> {
-    return await this.userService.getProfileUrl(user.id);
+    return {
+      s3Url: await getUrl(
+        (
+          await this.userService.findOne(user.id)
+        ).thumbnail,
+        200,
+      ),
+    };
   }
 
   @Post('/profile/upload')
@@ -104,15 +112,21 @@ export class UserController {
     @UserParam() user: User,
     @Body() dto: ProfileDto,
   ): Promise<ProfileResponseDto> {
-    if ((await this.userService.findOne(user.id)).familyId) {
-      throw new BadRequestException('이미 가족이 존재합니다');
-    }
     if (dto.createFamily) {
+      if ((await this.userService.findOne(user.id)).familyId) {
+        throw new BadRequestException('이미 가족이 존재합니다');
+      }
       await this.familyService.createFamily(user.id, { name: '' });
-    } else if (!(await this.familyService.isValidCode(dto.code))) {
-      throw new BadRequestException('유효하지 않은 초대 코드 입니다');
     } else {
-      await this.userService.joinFamily(user.id, dto.code);
+      if (dto.code === '') {
+      } else if (!(await this.familyService.isValidCode(dto.code))) {
+        throw new BadRequestException('유효하지 않은 초대 코드 입니다');
+      } else {
+        if ((await this.userService.findOne(user.id)).familyId) {
+          throw new BadRequestException('이미 가족이 존재합니다');
+        }
+        await this.userService.joinFamily(user.id, dto.code);
+      }
     }
     return await this.userService.saveProfile(user.id, dto);
   }
