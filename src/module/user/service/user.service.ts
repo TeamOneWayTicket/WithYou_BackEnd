@@ -56,13 +56,16 @@ export class UserService {
     return this.pushTokenRepository.save(newToken);
   }
 
-  async getUrlsForUpload(fileType: string): Promise<ProfileUploadResponseDto> {
+  async getUrlsForUpload(
+    fileType: string,
+    id: number,
+  ): Promise<ProfileUploadResponseDto> {
     const s3 = new AWS.S3({ useAccelerateEndpoint: true });
 
-    const fileName = `profile/${uuid()}.${fileType}`;
+    const fileName = `profile/${id}/${uuid()}.${fileType}`;
     const s3Url = await s3.getSignedUrlPromise('putObject', {
       Bucket: this.configService.awsConfig.bucketName,
-      Key: fileName,
+      Key: 'origins/' + fileName,
       Expires: 3600,
     });
 

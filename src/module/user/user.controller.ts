@@ -82,7 +82,7 @@ export class UserController {
     @UserParam() user: User,
     @Query('contentType') contentType,
   ): Promise<ProfileUploadResponseDto> {
-    return await this.userService.getUrlsForUpload(contentType);
+    return await this.userService.getUrlsForUpload(contentType, user.id);
   }
 
   @Get('/profile/download')
