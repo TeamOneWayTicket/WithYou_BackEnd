@@ -11,6 +11,7 @@ import { v4 as uuid } from 'uuid';
 import { ProfileResponseDto } from '../dto/profile-response.dto';
 import { ProfileUploadResponseDto } from '../dto/profileUpload-response.dto';
 import { ProfileDto } from '../dto/profile.dto';
+import { getUrl } from '../../../transformer/url.transformer';
 
 @Injectable()
 export class UserService {
@@ -56,13 +57,16 @@ export class UserService {
     return this.pushTokenRepository.save(newToken);
   }
 
-  async getUrlsForUpload(fileType: string): Promise<ProfileUploadResponseDto> {
+  async getUrlsForUpload(
+    fileType: string,
+    id: number,
+  ): Promise<ProfileUploadResponseDto> {
     const s3 = new AWS.S3({ useAccelerateEndpoint: true });
 
-    const fileName = `profile/${uuid()}.${fileType}`;
+    const fileName = `profile/${id}/${uuid()}.${fileType}`;
     const s3Url = await s3.getSignedUrlPromise('putObject', {
       Bucket: this.configService.awsConfig.bucketName,
-      Key: fileName,
+      Key: 'origins/' + fileName,
       Expires: 3600,
     });
 
@@ -76,19 +80,7 @@ export class UserService {
       nickname: dto.nickname,
       thumbnail: dto.fileName,
     });
-    return await this.getProfileUrl(id);
-  }
-
-  async getProfileUrl(id: number): Promise<ProfileResponseDto> {
-    const s3 = new AWS.S3({ useAccelerateEndpoint: true });
-
-    return {
-      s3Url: await s3.getSignedUrlPromise('getObject', {
-        Bucket: this.configService.awsConfig.bucketName,
-        Key: (await this.findOne(id)).thumbnail,
-        Expires: 3600,
-      }),
-    };
+    return { s3Url: getUrl(dto.fileName, 480) };
   }
 
   async createUser(dto: CreateUserDto): Promise<User> {

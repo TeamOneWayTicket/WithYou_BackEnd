@@ -11,6 +11,7 @@ import { DiariesResponseDto } from '../dto/diaries-response.dto';
 import { DiaryResponseDto } from '../dto/diary-response.dto';
 import { DiaryComment } from '../entity/diary.comment.entity';
 import { DiariesInfiniteResponseDto } from '../dto/diaries-infinite-response.dto';
+import { getUrl } from '../../../transformer/url.transformer';
 
 @Injectable()
 export class DiaryService {
@@ -89,7 +90,11 @@ export class DiaryService {
     familyId: number,
     nextId: number,
     take: number,
+    size: number,
   ): Promise<DiariesInfiniteResponseDto> {
+    if (!nextId) {
+      nextId = await this.getFamilyDiariesLatestId(familyId);
+    }
     const diaries = await this.diaryRepository.find({
       where: { familyId, id: LessThanOrEqual(nextId) },
       relations: ['media'],
@@ -99,6 +104,10 @@ export class DiaryService {
     const diariesResponse: DiaryResponseDto[] = [];
 
     for (const diary of diaries) {
+      diary.media = diary.media.map((item) => {
+        item.fileNameInS3 = getUrl(item.fileNameInS3, size);
+        return item;
+      });
       diariesResponse.push({
         diary,
         commentCount: await this.diaryCommentRepository.count({
@@ -120,7 +129,11 @@ export class DiaryService {
     authorId: number,
     nextId: number,
     take: number,
+    size: number,
   ): Promise<DiariesInfiniteResponseDto> {
+    if (!nextId) {
+      nextId = await this.getMyDiariesLatestId(authorId);
+    }
     const diaries = await this.diaryRepository.find({
       where: { authorId, id: LessThanOrEqual(nextId) },
       relations: ['media'],
@@ -130,6 +143,10 @@ export class DiaryService {
     const diariesResponse: DiaryResponseDto[] = [];
 
     for (const diary of diaries) {
+      diary.media = diary.media.map((item) => {
+        item.fileNameInS3 = getUrl(item.fileNameInS3, size);
+        return item;
+      });
       diariesResponse.push({
         diary,
         commentCount: await this.diaryCommentRepository.count({
@@ -148,10 +165,17 @@ export class DiaryService {
   }
 
   async findDiaryWithUrls(id: number): Promise<Diary> {
-    return await this.diaryRepository.findOne({
+    const diary = await this.diaryRepository.findOne({
       where: { id },
       relations: ['media'],
     });
+
+    return {
+      media: diary.media.map((item) => {
+        item.fileNameInS3 = getUrl(item.fileNameInS3, 0);
+      }),
+      ...diary,
+    };
   }
 
   async createDiary(
