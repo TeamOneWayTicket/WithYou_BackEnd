@@ -165,13 +165,17 @@ export class DiaryService {
   }
 
   async findDiaryWithUrls(id: number): Promise<Diary> {
-    const diary = await this.diaryRepository.findOne({
+    let diary = await this.diaryRepository.findOne({
       where: { id },
       relations: ['media'],
     });
-    for (const medium of diary.media) {
-      medium.fileNameInS3 = getUrl(medium.fileNameInS3, 0);
-    }
+
+    diary = {
+      media: diary.media.map((item) => {
+        item.fileNameInS3 = getUrl(item.fileNameInS3, 0);
+      }),
+      ...diary,
+    };
     return diary;
   }
 
