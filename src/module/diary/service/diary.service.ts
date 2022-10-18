@@ -104,9 +104,10 @@ export class DiaryService {
     const diariesResponse: DiaryResponseDto[] = [];
 
     for (const diary of diaries) {
-      for (const medium of diary.media) {
-        medium.fileNameInS3 = getUrl(medium.fileNameInS3, size);
-      }
+      diary.media = diary.media.map((item) => {
+        item.fileNameInS3 = getUrl(item.fileNameInS3, size);
+        return item;
+      });
       diariesResponse.push({
         diary,
         commentCount: await this.diaryCommentRepository.count({
@@ -142,9 +143,10 @@ export class DiaryService {
     const diariesResponse: DiaryResponseDto[] = [];
 
     for (const diary of diaries) {
-      for (const medium of diary.media) {
-        medium.fileNameInS3 = getUrl(medium.fileNameInS3, size);
-      }
+      diary.media = diary.media.map((item) => {
+        item.fileNameInS3 = getUrl(item.fileNameInS3, size);
+        return item;
+      });
       diariesResponse.push({
         diary,
         commentCount: await this.diaryCommentRepository.count({
