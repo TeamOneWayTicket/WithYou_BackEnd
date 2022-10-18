@@ -90,6 +90,7 @@ export class DiaryService {
     familyId: number,
     nextId: number,
     take: number,
+    size: number,
   ): Promise<DiariesInfiniteResponseDto> {
     const diaries = await this.diaryRepository.find({
       where: { familyId, id: LessThanOrEqual(nextId) },
@@ -100,6 +101,9 @@ export class DiaryService {
     const diariesResponse: DiaryResponseDto[] = [];
 
     for (const diary of diaries) {
+      for (const medium of diary.media) {
+        medium.fileNameInS3 = await getUrl(medium.fileNameInS3, size);
+      }
       diariesResponse.push({
         diary,
         commentCount: await this.diaryCommentRepository.count({

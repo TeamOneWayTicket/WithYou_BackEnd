@@ -103,6 +103,31 @@ export class DiaryController {
       user.familyId,
       nextId,
       take,
+      0,
+    );
+  }
+
+  @Get('family/resized')
+  @Auth(Role.User)
+  @ApiOkResponse({ description: '성공', type: DiariesInfiniteResponseDto })
+  @ApiOperation({
+    summary: 'get family resized diaries (infinite scroll)',
+    description:
+      'nextId부터 take 갯수 만큼 일기+ 끝인지 알 수 있는 isLast 값 리턴',
+  })
+  async infiniteScrollResizedFamilyDiaries(
+    @UserParam() user: User,
+    @Query('nextId', ParseIntPipe) nextId: number,
+    @Query('take', ParseIntPipe) take: number,
+  ): Promise<DiariesInfiniteResponseDto> {
+    if (!nextId) {
+      nextId = await this.diaryService.getFamilyDiariesLatestId(user.familyId);
+    }
+    return await this.diaryService.getFamilyDiaries(
+      user.familyId,
+      nextId,
+      take,
+      200,
     );
   }
 
