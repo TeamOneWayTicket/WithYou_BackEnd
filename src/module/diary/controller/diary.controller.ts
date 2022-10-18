@@ -47,9 +47,6 @@ export class DiaryController {
     @Query('nextId', ParseIntPipe) nextId: number,
     @Query('take', ParseIntPipe) take: number,
   ): Promise<DiariesInfiniteResponseDto> {
-    if (!nextId) {
-      nextId = await this.diaryService.getMyDiariesLatestId(user.id);
-    }
     return await this.diaryService.getMyDiaries(user.id, nextId, take, 480);
   }
 
@@ -77,9 +74,6 @@ export class DiaryController {
     @Query('nextId', ParseIntPipe) nextId: number,
     @Query('take', ParseIntPipe) take: number,
   ): Promise<DiariesInfiniteResponseDto> {
-    if (!nextId) {
-      nextId = await this.diaryService.getFamilyDiariesLatestId(user.familyId);
-    }
     return await this.diaryService.getFamilyDiaries(
       user.familyId,
       nextId,

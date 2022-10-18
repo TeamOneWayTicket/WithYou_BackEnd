@@ -92,6 +92,9 @@ export class DiaryService {
     take: number,
     size: number,
   ): Promise<DiariesInfiniteResponseDto> {
+    if (!nextId) {
+      nextId = await this.getFamilyDiariesLatestId(familyId);
+    }
     const diaries = await this.diaryRepository.find({
       where: { familyId, id: LessThanOrEqual(nextId) },
       relations: ['media'],
@@ -127,6 +130,9 @@ export class DiaryService {
     take: number,
     size: number,
   ): Promise<DiariesInfiniteResponseDto> {
+    if (!nextId) {
+      nextId = await this.getMyDiariesLatestId(authorId);
+    }
     const diaries = await this.diaryRepository.find({
       where: { authorId, id: LessThanOrEqual(nextId) },
       relations: ['media'],
