@@ -10,6 +10,7 @@ import { UserPushTokenService } from './service/user-push-token.service';
 import { Family } from '../family/entity/family.entity';
 import { FamilyService } from '../family/family.service';
 import { FamilyInviteCode } from '../family/entity/family.invite.code.entity';
+import { FamilySubject } from '../family/entity/family.subject.entity';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { FamilyInviteCode } from '../family/entity/family.invite.code.entity';
       UserPushToken,
       Family,
       FamilyInviteCode,
+      FamilySubject,
     ]),
   ],
   controllers: [UserController],

@@ -8,16 +8,23 @@ import { FamilyInviteCodeDto } from './dto/family-invite-code.dto';
 import crypto from 'crypto';
 import { User } from '../user/entity/user.entity';
 import { LocalDateTime } from '@js-joda/core';
+import { FamilySubject } from './entity/family.subject.entity';
+import { FamilySubjectResponseDto } from './dto/family-subject-response.dto';
 
 @Injectable()
 export class FamilyService {
   constructor(
     @InjectRepository(Family)
     private familyRepository: Repository<Family>,
+
     @InjectRepository(FamilyInviteCode)
     private familyInviteCodeRepository: Repository<FamilyInviteCode>,
+
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
+
+    @InjectRepository(FamilySubject)
+    private familySubjectRepository: Repository<FamilySubject>,
     private readonly myDataSource: DataSource,
   ) {}
 
@@ -37,6 +44,17 @@ export class FamilyService {
     } finally {
       await queryRunner.release();
     }
+  }
+
+  async getFamilyTodaySubject(
+    familyId: number,
+  ): Promise<FamilySubjectResponseDto> {
+    return await this.familySubjectRepository
+      .createQueryBuilder('familySubject')
+      .select('subject')
+      .where('familySubject.familyId = :familyId', { familyId })
+      .orderBy('id', 'DESC')
+      .getRawOne();
   }
 
   async updateFamily(id: number, name: string): Promise<Family> {
