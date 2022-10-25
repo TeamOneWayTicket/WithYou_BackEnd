@@ -5,7 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { DataSource, Repository } from 'typeorm';
 import { User } from '../../user/entity/user.entity';
 import { LocalUser } from '../../user/entity/local.user.entity';
-import { CreateLocalUserDto } from '../../user/dto/create-local.user.dto';
+import { LocalUserDto } from '../../user/dto/local.user.dto';
 import * as bcrypt from 'bcrypt';
 
 @Injectable()
@@ -20,7 +20,7 @@ export class LocalAuthService {
     private readonly myDataSource: DataSource,
   ) {}
 
-  async register(dto: CreateLocalUserDto): Promise<LocalUser> {
+  async register(dto: LocalUserDto): Promise<LocalUser> {
     const queryRunner = this.myDataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();

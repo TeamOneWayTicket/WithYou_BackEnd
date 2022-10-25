@@ -6,7 +6,7 @@ import { Role } from '../../../common/enum/role.enum';
 import { User } from '../../user/entity/user.entity';
 import { UserParam } from '../../../decorator/user.decorator';
 import { JwtService } from '@nestjs/jwt';
-import { CreateLocalUserDto } from '../../user/dto/create-local.user.dto';
+import { LocalUserDto } from '../../user/dto/local.user.dto';
 import { LocalAuthService } from '../service/local.auth.service';
 
 @Controller('auth/local')
@@ -22,7 +22,7 @@ export class LocalAuthController {
   @ApiOperation({
     summary: 'local register',
   })
-  async register(@Body() dto: CreateLocalUserDto, @Res() res): Promise<void> {
+  async register(@Body() dto: LocalUserDto, @Res() res): Promise<void> {
     const user = await this.localAuthService.register(dto);
     const token = this.jwtService.sign({
       id: user.userId,
