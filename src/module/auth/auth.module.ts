@@ -21,6 +21,8 @@ import { AppleAuthService } from './service/apple.auth.service';
 import { AppleStrategy } from './strategy/apple.strategy';
 import { AppleUser } from '../user/entity/apple.user.entity';
 import { HttpModule } from '@nestjs/axios';
+import { LocalAuthController } from './controller/local.auth.controller';
+import { LocalAuthService } from './service/local.auth.service';
 
 @Module({
   imports: [
@@ -45,9 +47,11 @@ import { HttpModule } from '@nestjs/axios';
     KakaoAuthController,
     GoogleAuthController,
     AppleAuthController,
+    LocalAuthController,
   ],
   providers: [
     AuthService,
+    LocalAuthService,
     KakaoAuthService,
     KakaoStrategy,
     GoogleAuthService,
