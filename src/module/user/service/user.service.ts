@@ -87,10 +87,6 @@ export class UserService {
     return await this.userRepository.save(dto);
   }
 
-  async registerUser(dto: ProfileDto): Promise<User> {
-    return await this.userRepository.save(dto);
-  }
-
   async deleteUser(id: number): Promise<number | undefined> {
     return (await this.userRepository.delete({ id })).affected;
   }
