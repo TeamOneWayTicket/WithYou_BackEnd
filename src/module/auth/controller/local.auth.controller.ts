@@ -61,11 +61,11 @@ export class LocalAuthController {
       where: { email: dto.email },
     });
     if (!localUser) {
-      throw new BadRequestException(400, '일치하는 유저가 없습니다');
+      throw new BadRequestException('일치하는 유저가 없습니다');
     }
-    const isValid = bcrypt.compare(dto.password, localUser.password);
+    const isValid = await bcrypt.compare(dto.password, localUser.password);
     if (!isValid) {
-      throw new BadRequestException(400, '비밀번호가 틀렸습니다');
+      throw new BadRequestException('비밀번호가 틀렸습니다');
     }
     const user = await this.userRepository.findOne({
       where: { id: localUser.userId },
