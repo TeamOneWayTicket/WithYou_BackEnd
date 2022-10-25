@@ -1,26 +1,18 @@
 import {
   BadRequestException,
-  Body,
   Controller,
   Get,
   Header,
   Param,
   ParseIntPipe,
-  Post,
   Query,
   Redirect,
   Res,
-  UsePipes,
-  ValidationPipe,
 } from '@nestjs/common';
 import { KakaoAuthService } from '../service/kakao.auth.service';
 import { ApiConfigService } from '../../../shared/services/api-config.service';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
-import { AuthService } from '../service/auth.service';
 import axios from 'axios';
-import { KakaoTokenDto } from '../dto/kakao-token.dto';
-import { JwtService } from '@nestjs/jwt';
-import { JwtDto } from '../dto/jwt.dto';
 
 @Controller('auth/kakao')
 @ApiTags('카카오 인증 API')
@@ -28,8 +20,6 @@ export class KakaoAuthController {
   constructor(
     private readonly kakaoAuthService: KakaoAuthService,
     private readonly configService: ApiConfigService,
-    private readonly authService: AuthService,
-    private readonly jwtService: JwtService,
   ) {}
 
   @Get('menu')
@@ -55,48 +45,6 @@ export class KakaoAuthController {
           <input type="submit" value="카카오 로그아웃(unlink)" />
         </form>
     `;
-  }
-
-  @Post('callback')
-  @UsePipes(ValidationPipe)
-  @ApiOperation({
-    summary: 'kakao login callback',
-    description: '카카오 access 토큰 받아 jwt 토큰 발급',
-  })
-  async kakaoLoginCallback(@Body() dto: KakaoTokenDto): Promise<JwtDto> {
-    const kakaoProfile = await this.kakaoAuthService.getKakaoProfile(
-      dto.accessToken,
-    );
-
-    const kakaoInfo = kakaoProfile._json;
-    const kakaoId = kakaoInfo.id;
-    const kakaoName = kakaoInfo.properties.nickname;
-    const kakaoProfileImage = kakaoInfo.properties.profile_image;
-    const kakaoUser = await this.kakaoAuthService.findKakaoUser(kakaoId);
-    if (!kakaoUser) {
-      // need to register
-      const newKakaoUser = await this.kakaoAuthService.register(
-        kakaoId,
-        dto.accessToken,
-        kakaoProfileImage,
-      );
-      const jwtToken = this.jwtService.sign({
-        id: newKakaoUser.userId,
-        vendor: 'kakao',
-        name: kakaoName,
-        thumbnail: kakaoProfileImage,
-      });
-      return { jwtToken };
-    } else {
-      // just login
-      const jwtToken = this.jwtService.sign({
-        id: kakaoUser.userId,
-        vendor: 'kakao',
-        nickname: kakaoName,
-        thumbnail: kakaoProfileImage,
-      });
-      return { jwtToken };
-    }
   }
 
   @Get('/:id/logout')
