@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { ApiConfigService } from '../../../shared/services/api-config.service';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -21,6 +21,13 @@ export class LocalAuthService {
   ) {}
 
   async register(dto: LocalUserDto): Promise<LocalUser> {
+    const isValid = this.localUserRepository.find({
+      where: { email: dto.email },
+    });
+    if (!isValid) {
+      throw new BadRequestException('400', '이메일 중복입니다');
+    }
+
     const queryRunner = this.myDataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
