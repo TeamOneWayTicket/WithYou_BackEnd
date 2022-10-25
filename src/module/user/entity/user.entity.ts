@@ -44,7 +44,7 @@ export class User {
   })
   @Index()
   @ApiModelProperty({ description: '가입 경로' })
-  vendor: 'kakao' | 'google' | 'apple';
+  vendor: 'kakao' | 'google' | 'apple' | 'local';
 
   @Column({
     default: '',
