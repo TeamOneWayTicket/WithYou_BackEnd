@@ -25,7 +25,7 @@ export class LocalAuthService {
       where: { email: dto.email },
     });
     if (!isValid) {
-      throw new BadRequestException('400', '이메일 중복입니다');
+      throw new BadRequestException('이메일 중복입니다');
     }
 
     const queryRunner = this.myDataSource.createQueryRunner();
