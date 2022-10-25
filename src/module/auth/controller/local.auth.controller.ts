@@ -1,22 +1,20 @@
 import { Body, Controller, Post, Res } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { JwtValidationDto } from '../dto/jwt-validation.dto';
-import { UserService } from '../../user/service/user.service';
 import { Auth } from '../../../decorator/http.decorator';
 import { Role } from '../../../common/enum/role.enum';
 import { User } from '../../user/entity/user.entity';
 import { UserParam } from '../../../decorator/user.decorator';
-import { ApiConfigService } from '../../../shared/services/api-config.service';
-import { RegisterDto } from '../dto/register.dto';
 import { JwtService } from '@nestjs/jwt';
+import { CreateLocalUserDto } from '../../user/dto/create-local.user.dto';
+import { LocalAuthService } from '../service/local.auth.service';
 
 @Controller('auth/local')
 @ApiTags('인증 API')
 export class LocalAuthController {
   constructor(
-    private readonly userService: UserService,
+    private readonly localAuthService: LocalAuthService,
     private readonly jwtService: JwtService,
-    private readonly configService: ApiConfigService,
   ) {}
 
   @Post('/register')
@@ -24,13 +22,14 @@ export class LocalAuthController {
   @ApiOperation({
     summary: 'local register',
   })
-  async register(@Body() dto: RegisterDto, @Res() res): Promise<User> {
-    const user = await this.userService.registerUser(dto);
+  async register(@Body() dto: CreateLocalUserDto, @Res() res): Promise<void> {
+    const user = await this.localAuthService.register(dto);
     const token = this.jwtService.sign({
-      id: user.id,
+      id: user.userId,
       vendor: 'local',
-      nickname: user.nickname,
-      thumbnail: user.thumbnail,
+      nickname: '',
+      thumbnail: '',
+      isNew: true,
     });
     res.cookie('jwt', token, {
       domain: '.with-you.io',
@@ -38,8 +37,7 @@ export class LocalAuthController {
       sameSite: 'strict',
       secure: true,
     });
-
-    return await this.userService.registerUser(dto);
+    return res.redirect(302, 'https://frontend.with-you.io/');
   }
 
   @Post('/login')
