@@ -12,6 +12,7 @@ import { DiaryMediumService } from './service/diary.medium.service';
 import { DiaryCommentController } from './controller/diary.comment.controller';
 import { DiaryCommentService } from './service/diary.comment.service';
 import { DiaryComment } from './entity/diary.comment.entity';
+import { RecommendDiaryController } from './controller/recommend.diary.controller';
 
 @Module({
   imports: [
@@ -20,7 +21,12 @@ import { DiaryComment } from './entity/diary.comment.entity';
     JwtModule,
     UserModule,
   ],
-  controllers: [DiaryController, DiaryMediumController, DiaryCommentController],
+  controllers: [
+    DiaryController,
+    DiaryMediumController,
+    DiaryCommentController,
+    RecommendDiaryController,
+  ],
   providers: [DiaryService, DiaryMediumService, DiaryCommentService],
 })
 export class DiaryModule {}
