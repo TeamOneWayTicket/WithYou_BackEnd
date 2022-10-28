@@ -8,7 +8,7 @@ import { LocalDatetimeTransformer } from '../../../transformer/local-datetime.tr
 @ApiExtraModels()
 export class FamilySubject {
   @PrimaryGeneratedColumn()
-  @ApiModelProperty({ description: 'family id' })
+  @ApiModelProperty({ description: 'id' })
   id: number;
 
   @Column()
@@ -16,10 +16,10 @@ export class FamilySubject {
   subject: string;
 
   @Column()
-  @ApiModelProperty({ description: 'subject' })
+  @ApiModelProperty({ description: 'familyId' })
   familyId: number;
 
-  @ApiModelProperty({ description: 'family 생성 시점', type: Date })
+  @ApiModelProperty({ description: 'subject 생성 시점', type: Date })
   @Index()
   @Column({
     type: 'timestamp without time zone',
