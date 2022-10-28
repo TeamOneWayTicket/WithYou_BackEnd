@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Diary } from '../entity/diary.entity';
-import { DataSource, LessThanOrEqual, Repository } from 'typeorm';
+import { Between, DataSource, LessThanOrEqual, Repository } from 'typeorm';
 import { UpdateDiaryDto } from '../dto/update-diary.dto';
 import { ApiConfigService } from '../../../shared/services/api-config.service';
 import { UserService } from '../../user/service/user.service';
@@ -12,6 +12,7 @@ import { DiaryResponseDto } from '../dto/diary-response.dto';
 import { DiaryComment } from '../entity/diary.comment.entity';
 import { DiariesInfiniteResponseDto } from '../dto/diaries-infinite-response.dto';
 import { getUrl } from '../../../transformer/url.transformer';
+import { ChronoUnit, LocalDateTime } from '@js-joda/core';
 
 @Injectable()
 export class DiaryService {
@@ -90,13 +91,14 @@ export class DiaryService {
     familyId: number,
     nextId: number,
     take: number,
+    type: 'recommend' | 'normal',
     size: number,
   ): Promise<DiariesInfiniteResponseDto> {
     if (!nextId) {
       nextId = await this.getFamilyDiariesLatestId(familyId);
     }
     const diaries = await this.diaryRepository.find({
-      where: { familyId, id: LessThanOrEqual(nextId) },
+      where: { familyId, id: LessThanOrEqual(nextId), type },
       relations: ['media'],
       take: take + 1,
       order: { id: 'DESC' },
@@ -123,6 +125,41 @@ export class DiaryService {
       };
 
     return { diaries: diariesResponse, nextId: 0, isLast: true };
+  }
+
+  async getFamilyDiariesByDay(
+    familyId: number,
+    type: 'recommend' | 'normal',
+    size: number,
+    date: LocalDateTime,
+  ): Promise<DiariesResponseDto> {
+    const familyLogs = await this.diaryRepository.find({
+      where: {
+        familyId,
+        type,
+        createdAt: Between(
+          date.truncatedTo(ChronoUnit.DAYS),
+          date.truncatedTo(ChronoUnit.DAYS).plusDays(1),
+        ),
+      },
+      relations: ['media'],
+    });
+    const diaries: DiaryResponseDto[] = [];
+
+    for (const diary of familyLogs) {
+      diary.media = diary.media.map((item) => {
+        item.fileNameInS3 = getUrl(item.fileNameInS3, size);
+        return item;
+      });
+      diaries.push({
+        diary,
+        commentCount: await this.diaryCommentRepository.count({
+          where: { diaryId: diary.id, isDeleted: false },
+        }),
+      });
+    }
+
+    return { diaries };
   }
 
   async getMyDiaries(
@@ -180,6 +217,7 @@ export class DiaryService {
 
   async createDiary(
     authorId: number,
+    type: 'recommend' | 'normal',
     diarySource: DiaryContentDto,
   ): Promise<Diary> {
     const queryRunner = this.myDataSource.createQueryRunner();
@@ -190,6 +228,7 @@ export class DiaryService {
       const familyId = (await this.userService.findOne(authorId)).familyId;
       diary = await this.diaryRepository.save({
         authorId,
+        type,
         content: diarySource.content,
         familyId,
       });
