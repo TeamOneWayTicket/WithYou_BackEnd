@@ -78,6 +78,7 @@ export class DiaryController {
       user.familyId,
       nextId,
       take,
+      'normal',
       480,
     );
   }
@@ -138,6 +139,6 @@ export class DiaryController {
     if (!(await this.userService.hasMinimumInfo(user.id))) {
       throw new BadRequestException('유효하지 않은 유저입니다');
     }
-    return await this.diaryService.createDiary(user.id, dto);
+    return await this.diaryService.createDiary(user.id, 'normal', dto);
   }
 }
