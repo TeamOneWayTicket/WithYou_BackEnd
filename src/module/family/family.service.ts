@@ -1,13 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DataSource, Repository } from 'typeorm';
+import { Between, DataSource, Repository } from 'typeorm';
 import { Family } from './entity/family.entity';
 import { CreateFamilyDto } from './dto/create-family.dto';
 import { FamilyInviteCode } from './entity/family.invite.code.entity';
 import { FamilyInviteCodeDto } from './dto/family-invite-code.dto';
 import crypto from 'crypto';
 import { User } from '../user/entity/user.entity';
-import { LocalDateTime } from '@js-joda/core';
+import { ChronoUnit, LocalDateTime } from '@js-joda/core';
 import { FamilySubject } from './entity/family.subject.entity';
 import { FamilySubjectResponseDto } from './dto/family-subject-response.dto';
 
@@ -49,12 +49,15 @@ export class FamilyService {
   async getFamilyTodaySubject(
     familyId: number,
   ): Promise<FamilySubjectResponseDto> {
-    return await this.familySubjectRepository
-      .createQueryBuilder('familySubject')
-      .select('subject')
-      .where('familySubject.familyId = :familyId', { familyId })
-      .orderBy('id', 'DESC')
-      .getRawOne();
+    return await this.familySubjectRepository.findOne({
+      where: {
+        familyId,
+        createdAt: Between(
+          LocalDateTime.now().truncatedTo(ChronoUnit.DAYS).minusDays(1),
+          LocalDateTime.now().truncatedTo(ChronoUnit.DAYS),
+        ),
+      },
+    });
   }
 
   async updateFamily(id: number, name: string): Promise<Family> {
