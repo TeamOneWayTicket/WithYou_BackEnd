@@ -15,7 +15,7 @@ import { DiaryContentDto } from '../dto/diary-content.dto';
 import { ApiBody, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { UserService } from '../../user/service/user.service';
 import { User } from '../../user/entity/user.entity';
-import { UserParam } from '../../../decorator/user.decorator';
+import { DateParam, UserParam } from '../../../decorator/user.decorator';
 import { Auth } from '../../../decorator/http.decorator';
 import { Role } from '../../../common/enum/role.enum';
 import { Repository } from 'typeorm';
@@ -23,6 +23,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { DiariesInfiniteResponseDto } from '../dto/diaries-infinite-response.dto';
 import { LocalDateTime } from '@js-joda/core';
 import { DiariesResponseDto } from '../dto/diaries-response.dto';
+import { DateDto } from '../dto/date.dto';
 
 @Controller('diary/recommend')
 @ApiTags('일기장 API')
@@ -43,20 +44,16 @@ export class RecommendDiaryController {
   })
   async getFamilyDiaries(
     @UserParam() user: User,
-    @Param('date') date: string,
+    @DateParam() date: DateDto,
   ): Promise<DiariesResponseDto> {
-    const data = date.split(':');
-    if (data.length != 3) {
-      throw new BadRequestException('잘못된 날짜 형식');
-    }
     return await this.diaryService.getFamilyDiariesByDay(
       user.familyId,
       'recommend',
       480,
       LocalDateTime.of(
-        Number(data[0]),
-        Number(data[1]),
-        Number(data[2]),
+        Number(date.year),
+        Number(date.month),
+        Number(date.day),
         0,
         0,
         0,
