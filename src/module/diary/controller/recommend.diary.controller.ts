@@ -34,7 +34,7 @@ export class RecommendDiaryController {
     private readonly userService: UserService,
   ) {}
 
-  @Get(':year/:month/:day')
+  @Get(':date')
   @Auth(Role.User)
   @ApiOkResponse({ description: '성공', type: DiariesInfiniteResponseDto })
   @ApiOperation({
@@ -43,15 +43,25 @@ export class RecommendDiaryController {
   })
   async getFamilyDiaries(
     @UserParam() user: User,
-    @Param('year', new ParseIntPipe()) year: number,
-    @Param('month', new ParseIntPipe()) month: number,
-    @Param('day', new ParseIntPipe()) day: number,
+    @Param('date') date: string,
   ): Promise<DiariesResponseDto> {
+    const data = date.split(':');
+    if (data.length != 3) {
+      throw new BadRequestException('잘못된 날짜 형식');
+    }
     return await this.diaryService.getFamilyDiariesByDay(
       user.familyId,
       'recommend',
       480,
-      LocalDateTime.of(year, month, day, 0, 0, 0, 0),
+      LocalDateTime.of(
+        Number(data[0]),
+        Number(data[1]),
+        Number(data[2]),
+        0,
+        0,
+        0,
+        0,
+      ),
     );
   }
 
