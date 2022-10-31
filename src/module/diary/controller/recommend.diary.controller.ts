@@ -24,6 +24,7 @@ import { DiariesInfiniteResponseDto } from '../dto/diaries-infinite-response.dto
 import { DiariesResponseDto } from '../dto/diaries-response.dto';
 import { FamilyDiaryQueryDto } from '../dto/family-diary-queury.dto';
 import { LocalDateTime, LocalTime } from '@js-joda/core';
+import { DiaryResponseDto } from '../dto/diary-response.dto';
 
 @Controller('diary/recommend')
 @ApiTags('일기장 API')
@@ -93,7 +94,7 @@ export class RecommendDiaryController {
   async createDiary(
     @UserParam() user: User,
     @Body() dto: DiaryContentDto,
-  ): Promise<Diary> {
+  ): Promise<DiaryResponseDto> {
     if (!(await this.userService.hasMinimumInfo(user.id))) {
       throw new BadRequestException('유효하지 않은 유저입니다');
     }
