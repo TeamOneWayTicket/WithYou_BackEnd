@@ -181,7 +181,7 @@ export class DiaryService {
   async createDiary(
     authorId: number,
     diarySource: DiaryContentDto,
-  ): Promise<Diary> {
+  ): Promise<DiaryResponseDto> {
     const queryRunner = this.myDataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
@@ -203,7 +203,18 @@ export class DiaryService {
     } finally {
       await queryRunner.release();
     }
-    return diary;
+
+    const result = await this.diaryRepository.findOne({
+      where: { id: diary.id },
+      relations: ['media'],
+    });
+
+    result.media = result.media.map((item) => {
+      item.fileNameInS3 = getUrl(item.fileNameInS3, 480);
+      return item;
+    });
+
+    return { diary: result, commentCount: 0 };
   }
 
   async updateDiary(targetId: number, diary: UpdateDiaryDto): Promise<Diary> {
