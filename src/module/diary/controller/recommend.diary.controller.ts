@@ -21,9 +21,8 @@ import { Role } from '../../../common/enum/role.enum';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DiariesInfiniteResponseDto } from '../dto/diaries-infinite-response.dto';
-import { LocalDateTime } from '@js-joda/core';
 import { DiariesResponseDto } from '../dto/diaries-response.dto';
-import { DateDto } from '../dto/date.dto';
+import { FamilyDiaryQueryDto } from '../dto/family-diary-queury.dto';
 
 @Controller('diary/recommend')
 @ApiTags('일기장 API')
@@ -44,21 +43,13 @@ export class RecommendDiaryController {
   })
   async getFamilyDiaries(
     @UserParam() user: User,
-    @DateParam() date: DateDto,
+    @DateParam() dto: FamilyDiaryQueryDto,
   ): Promise<DiariesResponseDto> {
     return await this.diaryService.getFamilyDiariesByDay(
       user.familyId,
       'recommend',
       480,
-      LocalDateTime.of(
-        Number(date.year),
-        Number(date.month),
-        Number(date.day),
-        0,
-        0,
-        0,
-        0,
-      ),
+      dto.date,
     );
   }
 
