@@ -15,7 +15,7 @@ import { DiaryContentDto } from '../dto/diary-content.dto';
 import { ApiBody, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { UserService } from '../../user/service/user.service';
 import { User } from '../../user/entity/user.entity';
-import { DateParam, UserParam } from '../../../decorator/user.decorator';
+import { UserParam } from '../../../decorator/user.decorator';
 import { Auth } from '../../../decorator/http.decorator';
 import { Role } from '../../../common/enum/role.enum';
 import { Repository } from 'typeorm';
@@ -23,6 +23,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { DiariesInfiniteResponseDto } from '../dto/diaries-infinite-response.dto';
 import { DiariesResponseDto } from '../dto/diaries-response.dto';
 import { FamilyDiaryQueryDto } from '../dto/family-diary-queury.dto';
+import { LocalDateTime, LocalTime } from '@js-joda/core';
 
 @Controller('diary/recommend')
 @ApiTags('일기장 API')
@@ -43,13 +44,13 @@ export class RecommendDiaryController {
   })
   async getFamilyDiaries(
     @UserParam() user: User,
-    @DateParam() dto: FamilyDiaryQueryDto,
+    @Param() dto: FamilyDiaryQueryDto,
   ): Promise<DiariesResponseDto> {
     return await this.diaryService.getFamilyDiariesByDay(
       user.familyId,
       'recommend',
       480,
-      dto.date,
+      LocalDateTime.of(dto.date, LocalTime.MIDNIGHT),
     );
   }
 
