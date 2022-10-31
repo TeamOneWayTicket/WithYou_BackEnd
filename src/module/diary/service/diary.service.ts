@@ -11,8 +11,8 @@ import { DiariesResponseDto } from '../dto/diaries-response.dto';
 import { DiaryResponseDto } from '../dto/diary-response.dto';
 import { DiaryComment } from '../entity/diary.comment.entity';
 import { DiariesInfiniteResponseDto } from '../dto/diaries-infinite-response.dto';
-import { getUrl } from '../../../transformer/url.transformer';
 import { ChronoUnit, LocalDateTime } from '@js-joda/core';
+import { getUrl } from 'src/transformer/url.transformer';
 
 @Injectable()
 export class DiaryService {
@@ -219,7 +219,7 @@ export class DiaryService {
     authorId: number,
     type: 'recommend' | 'normal',
     diarySource: DiaryContentDto,
-  ): Promise<Diary> {
+  ): Promise<DiaryResponseDto> {
     const queryRunner = this.myDataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
@@ -242,7 +242,20 @@ export class DiaryService {
     } finally {
       await queryRunner.release();
     }
-    return diary;
+
+    const result = await this.diaryRepository.findOne({
+      where: { id: diary.id },
+      relations: ['media'],
+    });
+
+    result.media = result.media.map((item) => {
+      item.fileNameInS3 = getUrl(item.fileNameInS3, 480);
+      return item;
+    });
+    return {
+      diary: result,
+      commentCount: 0,
+    };
   }
 
   async updateDiary(targetId: number, diary: UpdateDiaryDto): Promise<Diary> {
