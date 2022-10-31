@@ -1,23 +1,30 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DataSource, Repository } from 'typeorm';
+import { Between, DataSource, Repository } from 'typeorm';
 import { Family } from './entity/family.entity';
 import { CreateFamilyDto } from './dto/create-family.dto';
 import { FamilyInviteCode } from './entity/family.invite.code.entity';
 import { FamilyInviteCodeDto } from './dto/family-invite-code.dto';
 import crypto from 'crypto';
 import { User } from '../user/entity/user.entity';
-import { LocalDateTime } from '@js-joda/core';
+import { ChronoUnit, LocalDateTime } from '@js-joda/core';
+import { FamilySubject } from './entity/family.subject.entity';
+import { FamilySubjectResponseDto } from './dto/family-subject-response.dto';
 
 @Injectable()
 export class FamilyService {
   constructor(
     @InjectRepository(Family)
     private familyRepository: Repository<Family>,
+
     @InjectRepository(FamilyInviteCode)
     private familyInviteCodeRepository: Repository<FamilyInviteCode>,
+
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
+
+    @InjectRepository(FamilySubject)
+    private familySubjectRepository: Repository<FamilySubject>,
     private readonly myDataSource: DataSource,
   ) {}
 
@@ -37,6 +44,20 @@ export class FamilyService {
     } finally {
       await queryRunner.release();
     }
+  }
+
+  async getFamilyTodaySubject(
+    familyId: number,
+  ): Promise<FamilySubjectResponseDto> {
+    return await this.familySubjectRepository.findOne({
+      where: {
+        familyId,
+        createdAt: Between(
+          LocalDateTime.now().truncatedTo(ChronoUnit.DAYS).minusDays(1),
+          LocalDateTime.now().truncatedTo(ChronoUnit.DAYS),
+        ),
+      },
+    });
   }
 
   async updateFamily(id: number, name: string): Promise<Family> {

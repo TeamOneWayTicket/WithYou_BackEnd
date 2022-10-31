@@ -41,6 +41,11 @@ export class Diary {
   @ApiModelProperty({ description: '일기장 내용' })
   content: string;
 
+  @Column({ default: 'normal' })
+  @Index()
+  @ApiModelProperty({ description: '일기 타입' })
+  type: 'normal' | 'recommend';
+
   @ApiModelProperty({ description: '일기장 작성 시점', type: Date })
   @Index()
   @Column({
