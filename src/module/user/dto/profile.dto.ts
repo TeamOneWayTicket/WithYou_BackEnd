@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsBoolean, IsString } from 'class-validator';
+import { IsBoolean, IsString, Matches } from 'class-validator';
 
 export class ProfileDto {
   @ApiProperty({ description: 'profile name' })
@@ -8,6 +8,7 @@ export class ProfileDto {
 
   @ApiProperty({ description: '역할' })
   @IsString()
+  @Matches(/^[가-힣a-zA-Z0-9]{2,10}$/)
   role: string;
 
   @IsString()

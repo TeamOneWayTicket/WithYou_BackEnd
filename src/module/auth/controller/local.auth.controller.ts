@@ -63,7 +63,11 @@ export class LocalAuthController {
     if (!localUser) {
       throw new BadRequestException('일치하는 유저가 없습니다');
     }
-    const isValid = await bcrypt.compare(dto.password, localUser.password);
+
+    const isValid = await bcrypt.compare(
+      this.localAuthService.createHashedPassword(dto.password),
+      localUser.password,
+    );
     if (!isValid) {
       throw new BadRequestException('비밀번호가 틀렸습니다');
     }
