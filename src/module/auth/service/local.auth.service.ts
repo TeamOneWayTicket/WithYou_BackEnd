@@ -7,6 +7,7 @@ import { User } from '../../user/entity/user.entity';
 import { LocalUser } from '../../user/entity/local.user.entity';
 import { LocalUserDto } from '../../user/dto/local.user.dto';
 import * as bcrypt from 'bcrypt';
+import * as crypto from 'crypto';
 
 @Injectable()
 export class LocalAuthService {
@@ -20,11 +21,15 @@ export class LocalAuthService {
     private readonly myDataSource: DataSource,
   ) {}
 
+  createHashedPassword(password: string) {
+    return crypto.createHash('sha256').update(password).digest('hex');
+  }
+
   async register(dto: LocalUserDto): Promise<LocalUser> {
-    const isValid = this.localUserRepository.find({
+    const isExisted = await this.localUserRepository.find({
       where: { email: dto.email },
     });
-    if (!isValid) {
+    if (isExisted.length > 0) {
       throw new BadRequestException('이메일 중복입니다');
     }
 
@@ -39,7 +44,10 @@ export class LocalAuthService {
       localUser = await this.localUserRepository.save({
         userId: user.id,
         email: dto.email,
-        password: await bcrypt.hash(dto.password, 10),
+        password: await bcrypt.hash(
+          this.createHashedPassword(dto.password),
+          10,
+        ),
       });
       await queryRunner.commitTransaction();
     } catch (err) {
