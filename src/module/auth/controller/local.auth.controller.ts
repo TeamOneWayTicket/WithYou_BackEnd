@@ -48,7 +48,6 @@ export class LocalAuthController {
       sameSite: 'strict',
       secure: true,
     });
-    return res.redirect(302, 'https://frontend.with-you.io/');
   }
 
   @Post('/login')
@@ -86,6 +85,5 @@ export class LocalAuthController {
       sameSite: 'strict',
       secure: true,
     });
-    return res.redirect(302, 'https://frontend.with-you.io/');
   }
 }
