@@ -48,6 +48,7 @@ export class LocalAuthController {
       sameSite: 'strict',
       secure: true,
     });
+    return res.send();
   }
 
   @Post('/login')
@@ -85,5 +86,6 @@ export class LocalAuthController {
       sameSite: 'strict',
       secure: true,
     });
+    return res.send();
   }
 }
