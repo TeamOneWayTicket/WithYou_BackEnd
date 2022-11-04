@@ -8,7 +8,7 @@ import { Auth } from '../../../decorator/http.decorator';
 import { Role } from '../../../common/enum/role.enum';
 import { User } from '../../user/entity/user.entity';
 import { UserParam } from '../../../decorator/user.decorator';
-import { ApiConfigService } from '../../../shared/services/api-config.service';
+import { getUrl } from '../../../transformer/url.transformer';
 
 @Controller('auth')
 @ApiTags('인증 API')
@@ -16,7 +16,6 @@ export class AuthController {
   constructor(
     private readonly authService: AuthService,
     private readonly userService: UserService,
-    private readonly configService: ApiConfigService,
   ) {}
 
   @Get('/get-jwt-token')
@@ -41,7 +40,7 @@ export class AuthController {
       return {
         user: {
           ...dto,
-          thumbnail: this.configService.awsConfig.cfAddress + dto.thumbnail,
+          thumbnail: getUrl(dto.thumbnail, 480),
           isNew: !(await this.userService.hasMinimumInfo(dto.id)),
         },
       };

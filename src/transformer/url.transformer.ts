@@ -1,4 +1,8 @@
 export function getUrl(fileName: string, size: number) {
+  if (fileName === '' || !fileName) {
+    return '';
+  }
+
   if (size == 0) {
     return 'https://resource.with-you.io/origins/' + fileName;
   }

@@ -1,10 +1,4 @@
-import {
-  BadRequestException,
-  Body,
-  Controller,
-  Post,
-  Res,
-} from '@nestjs/common';
+import { BadRequestException, Body, Controller, Post } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { JwtValidationDto } from '../dto/jwt-validation.dto';
 import { User } from '../../user/entity/user.entity';
@@ -15,6 +9,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { LocalUser } from '../../user/entity/local.user.entity';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
+import { JwtDto } from '../dto/jwt.dto';
 
 @Controller('auth/local')
 @ApiTags('인증 API')
@@ -33,7 +28,7 @@ export class LocalAuthController {
   @ApiOperation({
     summary: 'local register',
   })
-  async register(@Body() dto: LocalUserDto, @Res() res): Promise<void> {
+  async register(@Body() dto: LocalUserDto): Promise<JwtDto> {
     const user = await this.localAuthService.register(dto);
     const token = this.jwtService.sign({
       id: user.userId,
@@ -42,13 +37,8 @@ export class LocalAuthController {
       thumbnail: '',
       isNew: true,
     });
-    res.cookie('jwt', token, {
-      domain: '.with-you.io',
-      httpOnly: false,
-      sameSite: 'strict',
-      secure: true,
-    });
-    return res.redirect(302, 'https://frontend.with-you.io/');
+
+    return { jwtToken: token };
   }
 
   @Post('/login')
@@ -56,7 +46,7 @@ export class LocalAuthController {
   @ApiOperation({
     summary: 'local login',
   })
-  async login(@Body() dto: LocalUserDto, @Res() res): Promise<void> {
+  async login(@Body() dto: LocalUserDto): Promise<JwtDto> {
     const localUser = await this.localUserRepository.findOne({
       where: { email: dto.email },
     });
@@ -80,12 +70,7 @@ export class LocalAuthController {
       nickname: user.nickname,
       thumbnail: user.nickname,
     });
-    res.cookie('jwt', token, {
-      domain: '.with-you.io',
-      httpOnly: false,
-      sameSite: 'strict',
-      secure: true,
-    });
-    return res.redirect(302, 'https://frontend.with-you.io/');
+
+    return { jwtToken: token };
   }
 }
