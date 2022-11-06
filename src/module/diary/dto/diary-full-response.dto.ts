@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Diary } from '../entity/diary.entity';
 import { User } from '../../user/entity/user.entity';
-import { DiaryComment } from '../entity/diary.comment.entity';
+import { DiaryCommentResponseDto } from './diary-coment-response.dto';
 
 export class DiaryFullResponseDto {
   @ApiProperty({ description: '일기' })
@@ -11,7 +11,7 @@ export class DiaryFullResponseDto {
   author: User;
 
   @ApiProperty({ description: '댓글들' })
-  comments: DiaryComment[];
+  comments: DiaryCommentResponseDto[];
 
   @ApiProperty({ description: '댓글 갯수' })
   commentCount: number;
