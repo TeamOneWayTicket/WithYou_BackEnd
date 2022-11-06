@@ -42,6 +42,12 @@ export class UserService {
     return await this.userRepository.findOne({ where: { id } });
   }
 
+  async findOneWithResizedThumbnail(id: number, size: number) {
+    const user = await this.userRepository.findOne({ where: { id } });
+    user.thumbnail = getUrl(user.thumbnail, size);
+    return user;
+  }
+
   async hasMinimumInfo(id: number): Promise<boolean> {
     const user = await this.findOne(id);
     return !(!user.familyId || !user.role);

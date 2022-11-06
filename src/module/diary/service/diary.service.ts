@@ -62,6 +62,10 @@ export class DiaryService {
     for (const diary of diaries) {
       diariesResponse.push({
         diary,
+        author: await this.userService.findOneWithResizedThumbnail(
+          diary.authorId,
+          480,
+        ),
         commentCount: await this.diaryCommentRepository.count({
           where: { diaryId: diary.id, isDeleted: false },
         }),
@@ -79,6 +83,10 @@ export class DiaryService {
     for (const diary of diaries) {
       diariesResponse.push({
         diary,
+        author: await this.userService.findOneWithResizedThumbnail(
+          diary.authorId,
+          480,
+        ),
         commentCount: await this.diaryCommentRepository.count({
           where: { diaryId: diary.id, isDeleted: false },
         }),
@@ -112,6 +120,10 @@ export class DiaryService {
       });
       diariesResponse.push({
         diary,
+        author: await this.userService.findOneWithResizedThumbnail(
+          diary.authorId,
+          480,
+        ),
         commentCount: await this.diaryCommentRepository.count({
           where: { diaryId: diary.id, isDeleted: false },
         }),
@@ -153,6 +165,10 @@ export class DiaryService {
       });
       diaries.push({
         diary,
+        author: await this.userService.findOneWithResizedThumbnail(
+          diary.authorId,
+          480,
+        ),
         commentCount: await this.diaryCommentRepository.count({
           where: { diaryId: diary.id, isDeleted: false },
         }),
@@ -186,6 +202,10 @@ export class DiaryService {
       });
       diariesResponse.push({
         diary,
+        author: await this.userService.findOneWithResizedThumbnail(
+          diary.authorId,
+          480,
+        ),
         commentCount: await this.diaryCommentRepository.count({
           where: { diaryId: diary.id, isDeleted: false },
         }),
@@ -254,6 +274,10 @@ export class DiaryService {
     });
     return {
       diary: result,
+      author: await this.userService.findOneWithResizedThumbnail(
+        diary.authorId,
+        480,
+      ),
       commentCount: 0,
     };
   }
