@@ -1,5 +1,5 @@
 export function getUrl(fileName: string, size: number) {
-  if (fileName === '' || !fileName) {
+  if (fileName === '' || fileName === ' ' || !fileName) {
     return '';
   }
 

@@ -13,6 +13,8 @@ import { DiaryComment } from '../entity/diary.comment.entity';
 import { DiariesInfiniteResponseDto } from '../dto/diaries-infinite-response.dto';
 import { ChronoUnit, LocalDateTime } from '@js-joda/core';
 import { getUrl } from 'src/transformer/url.transformer';
+import { DiaryFullResponseDto } from '../dto/diary-full-response.dto';
+import { DiaryCommentService } from './diary.comment.service';
 
 @Injectable()
 export class DiaryService {
@@ -25,6 +27,7 @@ export class DiaryService {
     private readonly myDataSource: DataSource,
     @InjectRepository(DiaryComment)
     private readonly diaryCommentRepository: Repository<DiaryComment>,
+    private readonly diaryCommentService: DiaryCommentService,
   ) {}
 
   async getMyDiariesLatestId(id: number): Promise<number> {
@@ -221,17 +224,26 @@ export class DiaryService {
     return { diaries: diariesResponse, nextId: 0, isLast: true };
   }
 
-  async findDiaryWithUrls(id: number): Promise<Diary> {
+  async findDiaryWithUrls(id: number): Promise<DiaryFullResponseDto> {
     const diary = await this.diaryRepository.findOne({
       where: { id },
       relations: ['media'],
     });
-
+    diary.media = diary.media.map((item) => {
+      item.fileNameInS3 = getUrl(item.fileNameInS3, 0);
+      return item;
+    });
+    const comments = await this.diaryCommentService.getCommentsByDiaryId(
+      diary.id,
+    );
     return {
-      media: diary.media.map((item) => {
-        item.fileNameInS3 = getUrl(item.fileNameInS3, 0);
-      }),
-      ...diary,
+      diary,
+      author: await this.userService.findOneWithResizedThumbnail(
+        diary.authorId,
+        480,
+      ),
+      commentCount: comments.length,
+      comments,
     };
   }
 

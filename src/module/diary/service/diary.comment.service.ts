@@ -4,12 +4,15 @@ import { Repository } from 'typeorm';
 import { DiaryComment } from '../entity/diary.comment.entity';
 import { DiaryCommentsDto } from '../dto/diary-comments.dto';
 import { CreateDiaryCommentDto } from '../dto/create-diary-comment.dto';
+import { DiaryCommentResponseDto } from '../dto/diary-coment-response.dto';
+import { UserService } from '../../user/service/user.service';
 
 @Injectable()
 export class DiaryCommentService {
   constructor(
     @InjectRepository(DiaryComment)
     private readonly diaryCommentRepository: Repository<DiaryComment>,
+    private readonly userService: UserService,
   ) {}
 
   async findAllComments(diaryId: number): Promise<DiaryCommentsDto> {
@@ -26,5 +29,24 @@ export class DiaryCommentService {
     dto: CreateDiaryCommentDto,
   ): Promise<DiaryComment> {
     return await this.diaryCommentRepository.save({ authorId, ...dto });
+  }
+
+  async getCommentsByDiaryId(id: number): Promise<DiaryCommentResponseDto[]> {
+    const comments = await this.diaryCommentRepository.find({
+      where: { diaryId: id },
+    });
+    comments.sort((comment1, comment2) => {
+      return comment1.createdAt.compareTo(comment2.createdAt);
+    });
+
+    const commentResponse = [];
+
+    for (const comment of comments) {
+      commentResponse.push({
+        author: (await this.userService.findOne(comment.authorId)).nickname,
+        comment: comment.content,
+      });
+    }
+    return commentResponse;
   }
 }

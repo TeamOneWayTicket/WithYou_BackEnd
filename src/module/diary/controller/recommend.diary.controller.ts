@@ -25,6 +25,7 @@ import { DiariesResponseDto } from '../dto/diaries-response.dto';
 import { FamilyDiaryQueryDto } from '../dto/family-diary-queury.dto';
 import { LocalDateTime, LocalTime } from '@js-joda/core';
 import { DiaryResponseDto } from '../dto/diary-response.dto';
+import { DiaryFullResponseDto } from '../dto/diary-full-response.dto';
 
 @Controller('diary/recommend')
 @ApiTags('일기장 API')
@@ -64,7 +65,7 @@ export class RecommendDiaryController {
   })
   async findDiaryWithMediumUrls(
     @Param('diaryId', ParseIntPipe) diaryId: number,
-  ): Promise<Diary> {
+  ): Promise<DiaryFullResponseDto> {
     return await this.diaryService.findDiaryWithUrls(diaryId);
   }
 

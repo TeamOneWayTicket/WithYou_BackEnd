@@ -24,6 +24,7 @@ import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DiariesInfiniteResponseDto } from '../dto/diaries-infinite-response.dto';
 import { DiaryResponseDto } from '../dto/diary-response.dto';
+import { DiaryFullResponseDto } from '../dto/diary-full-response.dto';
 
 @Controller('diary')
 @ApiTags('일기장 API')
@@ -106,7 +107,7 @@ export class DiaryController {
   })
   async findDiaryWithMediumUrls(
     @Param('diaryId', ParseIntPipe) diaryId: number,
-  ): Promise<Diary> {
+  ): Promise<DiaryFullResponseDto> {
     return await this.diaryService.findDiaryWithUrls(diaryId);
   }
 
