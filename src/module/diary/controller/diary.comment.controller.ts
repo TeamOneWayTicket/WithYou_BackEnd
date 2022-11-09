@@ -9,7 +9,6 @@ import {
 import { ApiBody, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Auth } from '../../../decorator/http.decorator';
 import { Role } from '../../../common/enum/role.enum';
-import { DiaryCommentsDto } from '../dto/diary-comments.dto';
 import { DiaryCommentService } from '../service/diary.comment.service';
 import { UserParam } from '../../../decorator/user.decorator';
 import { User } from '../../user/entity/user.entity';
@@ -17,6 +16,7 @@ import { DiaryComment } from '../entity/diary.comment.entity';
 import { CreateDiaryCommentDto } from '../dto/create-diary-comment.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { DiaryCommentResponseDto } from '../dto/diary-coment-response.dto';
 
 @Controller('diary/comment')
 @ApiTags('일기장 댓글 API')
@@ -35,8 +35,8 @@ export class DiaryCommentController {
   })
   async getComments(
     @Param('diaryId', ParseIntPipe) diaryId: number,
-  ): Promise<DiaryCommentsDto> {
-    return await this.diaryCommentService.findAllComments(diaryId);
+  ): Promise<DiaryCommentResponseDto[]> {
+    return await this.diaryCommentService.getCommentsByDiaryId(diaryId);
   }
 
   @Get('count/:diaryId')
