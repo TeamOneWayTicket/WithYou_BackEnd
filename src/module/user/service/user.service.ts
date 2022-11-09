@@ -12,6 +12,7 @@ import { ProfileResponseDto } from '../dto/profile-response.dto';
 import { ProfileUploadResponseDto } from '../dto/profileUpload-response.dto';
 import { ProfileDto } from '../dto/profile.dto';
 import { getUrl } from '../../../transformer/url.transformer';
+import { ThumbnailDto } from '../dto/thumbnail.dto';
 
 @Injectable()
 export class UserService {
@@ -84,6 +85,16 @@ export class UserService {
       role: dto.role,
       gender: dto.gender,
       nickname: dto.nickname,
+      thumbnail: dto.fileName,
+    });
+    return { s3Url: getUrl(dto.fileName, 480) };
+  }
+
+  async updateThumbnail(
+    id: number,
+    dto: ThumbnailDto,
+  ): Promise<ProfileResponseDto> {
+    await this.userRepository.update(id, {
       thumbnail: dto.fileName,
     });
     return { s3Url: getUrl(dto.fileName, 480) };

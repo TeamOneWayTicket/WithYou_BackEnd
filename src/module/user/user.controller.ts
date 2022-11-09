@@ -26,6 +26,7 @@ import { ProfileResponseDto } from './dto/profile-response.dto';
 import { ProfileUploadResponseDto } from './dto/profileUpload-response.dto';
 import { FamilyService } from '../family/family.service';
 import { getUrl } from '../../transformer/url.transformer';
+import { ThumbnailDto } from './dto/thumbnail.dto';
 
 @Controller('user')
 @ApiTags('유저 API')
@@ -124,6 +125,18 @@ export class UserController {
       }
     }
     return await this.userService.saveProfile(user.id, dto);
+  }
+
+  @Post('/thumbnail/upload')
+  @Auth(Role.User)
+  @ApiOperation({
+    summary: '프로필 사진 변경',
+  })
+  async postThumbnail(
+    @UserParam() user: User,
+    @Body() dto: ThumbnailDto,
+  ): Promise<ProfileResponseDto> {
+    return await this.userService.updateThumbnail(user.id, dto);
   }
 
   @Post()
