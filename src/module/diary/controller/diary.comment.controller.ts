@@ -62,7 +62,7 @@ export class DiaryCommentController {
   async createDiary(
     @UserParam() user: User,
     @Body() dto: CreateDiaryCommentDto,
-  ): Promise<DiaryComment> {
+  ): Promise<DiaryCommentResponseDto[]> {
     return await this.diaryCommentService.createComment(user.id, dto);
   }
 }

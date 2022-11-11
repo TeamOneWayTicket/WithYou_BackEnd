@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 import { DiaryComment } from '../entity/diary.comment.entity';
 import { DiaryCommentsDto } from '../dto/diary-comments.dto';
 import { CreateDiaryCommentDto } from '../dto/create-diary-comment.dto';
@@ -13,6 +13,7 @@ export class DiaryCommentService {
     @InjectRepository(DiaryComment)
     private readonly diaryCommentRepository: Repository<DiaryComment>,
     private readonly userService: UserService,
+    private readonly myDataSource: DataSource,
   ) {}
 
   async findAllComments(diaryId: number): Promise<DiaryCommentsDto> {
@@ -27,8 +28,18 @@ export class DiaryCommentService {
   async createComment(
     authorId: number,
     dto: CreateDiaryCommentDto,
-  ): Promise<DiaryComment> {
-    return await this.diaryCommentRepository.save({ authorId, ...dto });
+  ): Promise<DiaryCommentResponseDto[]> {
+    const queryRunner = this.myDataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+    try {
+      await this.diaryCommentRepository.save({ authorId, ...dto });
+      return await this.getCommentsByDiaryId(dto.diaryId);
+    } catch (err) {
+      await queryRunner.rollbackTransaction();
+    } finally {
+      await queryRunner.release();
+    }
   }
 
   async getCommentsByDiaryId(id: number): Promise<DiaryCommentResponseDto[]> {
