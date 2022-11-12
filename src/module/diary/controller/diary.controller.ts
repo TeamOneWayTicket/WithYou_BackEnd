@@ -18,13 +18,14 @@ import { DiariesResponseDto } from '../dto/diaries-response.dto';
 import { UserService } from '../../user/service/user.service';
 import { User } from '../../user/entity/user.entity';
 import { UserParam } from '../../../decorator/user.decorator';
-import { Auth } from '../../../decorator/http.decorator';
+import { Auth, Privacy } from '../../../decorator/http.decorator';
 import { Role } from '../../../common/enum/role.enum';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DiariesInfiniteResponseDto } from '../dto/diaries-infinite-response.dto';
 import { DiaryResponseDto } from '../dto/diary-response.dto';
 import { DiaryFullResponseDto } from '../dto/diary-full-response.dto';
+import { Scope } from '../../../common/enum/scope.enum';
 
 @Controller('diary')
 @ApiTags('일기장 API')
@@ -100,6 +101,7 @@ export class DiaryController {
 
   @Get(':diaryId')
   @Auth(Role.User)
+  @Privacy(Scope.Family)
   @ApiOkResponse({ description: '성공', type: Diary })
   @ApiOperation({
     summary: 'get diary and urls by diaryId',
@@ -111,8 +113,9 @@ export class DiaryController {
     return await this.diaryService.findDiaryWithUrls(diaryId);
   }
 
-  @Patch(':id')
+  @Patch(':diaryId')
   @Auth(Role.User)
+  @Privacy(Scope.User)
   @ApiBody({ type: UpdateDiaryDto })
   @ApiOkResponse({ description: '성공', type: Diary })
   @ApiOperation({
@@ -120,7 +123,7 @@ export class DiaryController {
     description: '특정 id 일기 내용 입력한 내용으로 수정한다.',
   })
   async updateDiary(
-    @Param('id', ParseIntPipe) diaryId: number,
+    @Param('diaryId', ParseIntPipe) diaryId: number,
     @Body() diary: UpdateDiaryDto,
   ): Promise<Diary> {
     return await this.diaryService.updateDiary(diaryId, diary);
