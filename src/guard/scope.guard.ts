@@ -12,7 +12,7 @@ export class ScopeGuard implements CanActivate {
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const { user, params } = context.switchToHttp().getRequest();
+    const { user, params, body } = context.switchToHttp().getRequest();
 
     const requiredScopes = this.reflector.getAllAndOverride<Scope[]>(
       SCOPES_KEY,
@@ -22,7 +22,13 @@ export class ScopeGuard implements CanActivate {
     if (requiredScopes.includes(Scope.Anonymous)) {
       return true;
     }
-    const diary = await this.diaryService.findDiaryWithUrls(params.diaryId);
+
+    let diary;
+    if (!params.diaryId) {
+      diary = await this.diaryService.findDiaryWithUrls(body.diaryId);
+    } else {
+      diary = await this.diaryService.findDiaryWithUrls(params.diaryId);
+    }
     if (requiredScopes.includes(Scope.Family)) {
       return diary.author.familyId == user.familyId;
     }

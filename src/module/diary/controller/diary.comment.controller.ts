@@ -7,7 +7,7 @@ import {
   Post,
 } from '@nestjs/common';
 import { ApiBody, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { Auth } from '../../../decorator/http.decorator';
+import { Auth, Privacy } from '../../../decorator/http.decorator';
 import { Role } from '../../../common/enum/role.enum';
 import { DiaryCommentService } from '../service/diary.comment.service';
 import { UserParam } from '../../../decorator/user.decorator';
@@ -17,6 +17,7 @@ import { CreateDiaryCommentDto } from '../dto/create-diary-comment.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { DiaryCommentResponseDto } from '../dto/diary-coment-response.dto';
+import { Scope } from '../../../common/enum/scope.enum';
 
 @Controller('diary/comment')
 @ApiTags('일기장 댓글 API')
@@ -29,6 +30,7 @@ export class DiaryCommentController {
 
   @Get(':diaryId')
   @Auth(Role.User)
+  @Privacy(Scope.Family)
   @ApiOperation({
     summary: 'get Comments',
     description: '특정 id로 일기 댓글들 받아온다.',
@@ -53,6 +55,7 @@ export class DiaryCommentController {
 
   @Post()
   @Auth(Role.User)
+  @Privacy(Scope.Family)
   @ApiBody({ type: CreateDiaryCommentDto })
   @ApiOkResponse({ description: '성공', type: DiaryComment })
   @ApiOperation({
