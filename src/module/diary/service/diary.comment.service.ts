@@ -6,6 +6,7 @@ import { DiaryCommentsDto } from '../dto/diary-comments.dto';
 import { CreateDiaryCommentDto } from '../dto/create-diary-comment.dto';
 import { DiaryCommentResponseDto } from '../dto/diary-coment-response.dto';
 import { UserService } from '../../user/service/user.service';
+import { getUrl } from '../../../transformer/url.transformer';
 
 @Injectable()
 export class DiaryCommentService {
@@ -53,9 +54,12 @@ export class DiaryCommentService {
     const commentResponse = [];
 
     for (const comment of comments) {
+      const author = await this.userService.findOne(comment.authorId);
       commentResponse.push({
-        author: (await this.userService.findOne(comment.authorId)).nickname,
+        author: author.nickname,
+        thumbnail: getUrl(author.thumbnail, 480),
         comment: comment.content,
+        createdAt: comment.createdAt,
       });
     }
     return commentResponse;
