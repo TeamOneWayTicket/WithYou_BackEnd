@@ -23,6 +23,9 @@ export class AlbumService {
       where: { familyId },
       relations: ['media'],
     });
+    diaries.sort((diary1, diary2) => {
+      return diary2.createdAt.compareTo(diary1.createdAt);
+    });
     const media = await Promise.all(
       _.flatMap(diaries, (item) => {
         return _(item.media)
