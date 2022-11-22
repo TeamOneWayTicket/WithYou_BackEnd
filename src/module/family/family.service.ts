@@ -60,6 +60,21 @@ export class FamilyService {
     });
   }
 
+  async getFamilySubject(
+    familyId: number,
+    day: LocalDateTime,
+  ): Promise<FamilySubjectResponseDto> {
+    return await this.familySubjectRepository.findOne({
+      where: {
+        familyId,
+        createdAt: Between(
+          day.truncatedTo(ChronoUnit.DAYS).minusDays(1),
+          day.truncatedTo(ChronoUnit.DAYS),
+        ),
+      },
+    });
+  }
+
   async updateFamily(id: number, name: string): Promise<Family> {
     return await this.familyRepository.save({ id, name });
   }
