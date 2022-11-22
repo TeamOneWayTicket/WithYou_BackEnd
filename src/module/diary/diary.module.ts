@@ -13,6 +13,7 @@ import { DiaryCommentController } from './controller/diary.comment.controller';
 import { DiaryCommentService } from './service/diary.comment.service';
 import { DiaryComment } from './entity/diary.comment.entity';
 import { RecommendDiaryController } from './controller/recommend.diary.controller';
+import { FamilyModule } from '../family/family.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { RecommendDiaryController } from './controller/recommend.diary.controlle
     AuthModule,
     JwtModule,
     UserModule,
+    FamilyModule,
   ],
   controllers: [
     DiaryController,
