@@ -15,6 +15,9 @@ import { ChronoUnit, LocalDateTime } from '@js-joda/core';
 import { getUrl } from 'src/transformer/url.transformer';
 import { DiaryFullResponseDto } from '../dto/diary-full-response.dto';
 import { DiaryCommentService } from './diary.comment.service';
+import { RecommendBannerDto } from '../dto/recommend-banner.dto';
+import { FamilyService } from '../../family/family.service';
+import { FamilyDiariesInfiniteResponseDto } from '../dto/family-diaries-infinite-response.dto';
 
 @Injectable()
 export class DiaryService {
@@ -25,9 +28,12 @@ export class DiaryService {
     private readonly userService: UserService,
     private readonly diaryMediumService: DiaryMediumService,
     private readonly myDataSource: DataSource,
+
     @InjectRepository(DiaryComment)
     private readonly diaryCommentRepository: Repository<DiaryComment>,
     private readonly diaryCommentService: DiaryCommentService,
+
+    private readonly familyService: FamilyService,
   ) {}
 
   async getMyDiariesLatestId(id: number): Promise<number> {
@@ -98,13 +104,36 @@ export class DiaryService {
     return { diaries: diariesResponse };
   }
 
+  async getBannerInfo(
+    familyId: number,
+    day: LocalDateTime,
+  ): Promise<RecommendBannerDto> {
+    const diaryInfo = await this.getRecommendDiaries(familyId, day);
+
+    if (!diaryInfo) {
+      return {
+        date: day.toLocalDate(),
+        image: '',
+        subject: (await this.familyService.getFamilySubject(familyId, day))
+          .subject,
+      };
+    }
+
+    return {
+      date: diaryInfo.diary.createdAt.toLocalDate(),
+      image: '',
+      subject: (await this.familyService.getFamilySubject(familyId, day))
+        .subject,
+    };
+  }
+
   async getFamilyDiaries(
     familyId: number,
     nextId: number,
     take: number,
     type: 'recommend' | 'normal',
     size: number,
-  ): Promise<DiariesInfiniteResponseDto> {
+  ): Promise<FamilyDiariesInfiniteResponseDto> {
     if (!nextId) {
       nextId = await this.getFamilyDiariesLatestId(familyId);
     }
@@ -135,11 +164,51 @@ export class DiaryService {
     if (diariesResponse.length == take + 1)
       return {
         diaries: diariesResponse.slice(0, take),
+        banner: await this.getBannerInfo(familyId, LocalDateTime.now()),
         nextId: diariesResponse[take].diary.id,
         isLast: false,
       };
 
-    return { diaries: diariesResponse, nextId: 0, isLast: true };
+    return {
+      diaries: diariesResponse,
+      banner: await this.getBannerInfo(familyId, LocalDateTime.now()),
+      nextId: 0,
+      isLast: true,
+    };
+  }
+
+  async getRecommendDiaries(
+    familyId: number,
+    date: LocalDateTime,
+  ): Promise<DiaryResponseDto> {
+    const diary = await this.diaryRepository.findOne({
+      where: {
+        familyId,
+        type: 'recommend',
+        createdAt: Between(
+          date.truncatedTo(ChronoUnit.DAYS).minusDays(30),
+          date.truncatedTo(ChronoUnit.DAYS),
+        ),
+      },
+      order: { id: { direction: 'desc' } },
+      relations: ['media'],
+    });
+
+    diary.media = diary.media.map((item) => {
+      item.fileNameInS3 = getUrl(item.fileNameInS3, 480);
+      return item;
+    });
+
+    return {
+      author: await this.userService.findOneWithResizedThumbnail(
+        diary.authorId,
+        480,
+      ),
+      commentCount: await this.diaryCommentRepository.count({
+        where: { diaryId: diary.id, isDeleted: false },
+      }),
+      diary: diary,
+    };
   }
 
   async getFamilyDiariesByDay(

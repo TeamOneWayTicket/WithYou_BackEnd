@@ -26,6 +26,7 @@ import { DiariesInfiniteResponseDto } from '../dto/diaries-infinite-response.dto
 import { DiaryResponseDto } from '../dto/diary-response.dto';
 import { DiaryFullResponseDto } from '../dto/diary-full-response.dto';
 import { Scope } from '../../../common/enum/scope.enum';
+import { FamilyDiariesInfiniteResponseDto } from '../dto/family-diaries-infinite-response.dto';
 
 @Controller('diary')
 @ApiTags('일기장 API')
@@ -76,7 +77,7 @@ export class DiaryController {
     @UserParam() user: User,
     @Query('nextId', ParseIntPipe) nextId: number,
     @Query('take', ParseIntPipe) take: number,
-  ): Promise<DiariesInfiniteResponseDto> {
+  ): Promise<FamilyDiariesInfiniteResponseDto> {
     return await this.diaryService.getFamilyDiaries(
       user.familyId,
       nextId,
