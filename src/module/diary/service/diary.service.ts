@@ -11,7 +11,7 @@ import { DiariesResponseDto } from '../dto/diaries-response.dto';
 import { DiaryResponseDto } from '../dto/diary-response.dto';
 import { DiaryComment } from '../entity/diary.comment.entity';
 import { DiariesInfiniteResponseDto } from '../dto/diaries-infinite-response.dto';
-import { ChronoUnit, LocalDateTime } from '@js-joda/core';
+import { ChronoUnit, LocalDate, LocalDateTime } from '@js-joda/core';
 import { getUrl } from 'src/transformer/url.transformer';
 import { DiaryFullResponseDto } from '../dto/diary-full-response.dto';
 import { DiaryCommentService } from './diary.comment.service';
@@ -104,26 +104,29 @@ export class DiaryService {
     return { diaries: diariesResponse };
   }
 
-  async getBannerInfo(
-    familyId: number,
-    day: LocalDateTime,
-  ): Promise<RecommendBannerDto> {
-    const diaryInfo = await this.getRecommendDiaries(familyId, day);
+  async getBannerInfo(familyId: number): Promise<RecommendBannerDto> {
+    const diaryInfo = await this.getRecommendDiaries(
+      familyId,
+      LocalDateTime.now(),
+    );
 
     if (!diaryInfo) {
       return {
-        date: day.toLocalDate(),
+        date: LocalDate.now(),
         image: '',
-        subject: (await this.familyService.getFamilySubject(familyId, day))
-          .subject,
+        subject: '위드유에 추억을 쌓아봐요',
       };
     }
 
     return {
       date: diaryInfo.diary.createdAt.toLocalDate(),
       image: '',
-      subject: (await this.familyService.getFamilySubject(familyId, day))
-        .subject,
+      subject: (
+        await this.familyService.getFamilySubject(
+          familyId,
+          diaryInfo.diary.createdAt,
+        )
+      ).subject,
     };
   }
 
@@ -143,8 +146,8 @@ export class DiaryService {
       take: take + 1,
       order: { id: 'DESC' },
     });
+    console.log(diaries);
     const diariesResponse: DiaryResponseDto[] = [];
-
     for (const diary of diaries) {
       diary.media = diary.media.map((item) => {
         item.fileNameInS3 = getUrl(item.fileNameInS3, size);
@@ -161,17 +164,18 @@ export class DiaryService {
         }),
       });
     }
+
     if (diariesResponse.length == take + 1)
       return {
         diaries: diariesResponse.slice(0, take),
-        banner: await this.getBannerInfo(familyId, LocalDateTime.now()),
+        banner: await this.getBannerInfo(familyId),
         nextId: diariesResponse[take].diary.id,
         isLast: false,
       };
 
     return {
       diaries: diariesResponse,
-      banner: await this.getBannerInfo(familyId, LocalDateTime.now()),
+      banner: await this.getBannerInfo(familyId),
       nextId: 0,
       isLast: true,
     };
@@ -194,10 +198,9 @@ export class DiaryService {
       relations: ['media'],
     });
 
-    diary.media = diary.media.map((item) => {
-      item.fileNameInS3 = getUrl(item.fileNameInS3, 480);
-      return item;
-    });
+    if (!diary) {
+      return null;
+    }
 
     return {
       author: await this.userService.findOneWithResizedThumbnail(
